@@ -1,0 +1,10 @@
+, , , , , , [], 
+, , , , , , [], 
+, , , , , , [XS;S;L;XL;], 
+, , , , , , [XS;S;L;XL;], 
+, , , , , , [M;], 
+, , , , , , [M;], 
+, , , , , , [M;], 
+, , , , , , [M;], 
+Jorge, Morua, Gonzalez, correo@test.com, 89891223, 15, [XS;S;M;L;XL;], Prueba de escritura de formulario, test4.
+Jorge TEST, Morua, Honzalez, test@test.com, +50688098098, 32, [XS;M;L;XL;], Prueba con concatenacion del +506 en el telefono.
