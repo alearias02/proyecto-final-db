@@ -1,205 +1,308 @@
--- creacion de usuario
-
+-- Creación de usuario
 CREATE USER FIDE_SAMDESIGN IDENTIFIED BY SAMDESIGN;
 
 GRANT CONNECT TO FIDE_SAMDESIGN;
 GRANT DBA TO FIDE_SAMDESIGN;
 GRANT RESOURCE TO FIDE_SAMDESIGN;
 
--- creacion de tablas
+-- 1
 CREATE TABLE FIDE_SAMDESIGN.FIDE_Users_TB (
     PK_User_ID NUMBER CONSTRAINT FIDE_PK_USER_ID PRIMARY KEY,
     User_Name VARCHAR2(100),
-    User_Email VARCHAR2(100) CONSTRAINT FIDE_USER_EMAIL_IDX INDEX
-                             CONSTRAINT FIDE_USER_EMAIL_NN NOT NULL,
-    Created_By VARCHAR2(50),
-    Created_On TIMESTAMP,
-    Modified_By VARCHAR2(50),
-    Modified_On TIMESTAMP
-);
-
-CREATE TABLE FIDE_SAMDESIGN.FIDE_Status_TB (
-    PK_Status_ID NUMBER PRIMARY KEY,
-    Status_Name VARCHAR2(50),
-    Created_By VARCHAR2(50),
-    Created_On TIMESTAMP,
-    Modified_By VARCHAR2(50),
-    Modified_On TIMESTAMP
-);
-
-CREATE TABLE FIDE_SAMDESIGN.FIDE_Category_TB (
-    PK_Category_ID NUMBER PRIMARY KEY,
-    Category_Name VARCHAR2(100),
-    Description VARCHAR2(255),
-    Created_By VARCHAR2(50),
-    Created_On TIMESTAMP,
-    Modified_By VARCHAR2(50),
-    Modified_On TIMESTAMP
-);
-
-CREATE TABLE FIDE_SAMDESIGN.FIDE_Payment_Method_TB (
-    PK_Payment_Method_ID NUMBER PRIMARY KEY,
-    Payment_Method_Name VARCHAR2(100),
-    Created_By VARCHAR2(50),
-    Created_On TIMESTAMP,
-    Modified_By VARCHAR2(50),
-    Modified_On TIMESTAMP
-);
-
---ARREGLAR ESTA PARTE
-CREATE TABLE FIDE_SAMDESIGN.FIDE_Address_TB (
-    PK_Address_ID NUMBER PRIMARY KEY,
-    Address VARCHAR2(255),
-    City VARCHAR2(100),
-    State VARCHAR2(100),
-    Country VARCHAR2(100),
-    Zip_Code VARCHAR2(20),
-    Created_By VARCHAR2(50),
-    Created_On TIMESTAMP,
-    Modified_By VARCHAR2(50),
-    Modified_On TIMESTAMP
-    --FALTA FOREIGN KEY CUSTOMER
-);
-
---FALTAN TABLAS DE ADDRESS
-
-
-CREATE TABLE FIDE_SAMDESIGN.FIDE_Customer_TB (
-    PK_Customer_ID NUMBER PRIMARY KEY,
-    Customer_Name VARCHAR2(100),
-    Customer_Email VARCHAR2(100),
-    FK_Address_ID NUMBER,
+    User_Email VARCHAR2(100) CONSTRAINT FIDE_USER_EMAIL_NN NOT NULL,
+    Status_ID NUMBER,
     Created_By VARCHAR2(50),
     Created_On TIMESTAMP,
     Modified_By VARCHAR2(50),
     Modified_On TIMESTAMP,
-    FOREIGN KEY (FK_Address_ID) REFERENCES FIDE_SAMDESIGN.FIDE_Address_TB(PK_Address_ID)
+    FOREIGN KEY (Status_ID) REFERENCES FIDE_SAMDESIGN.FIDE_Status_TB(Status_ID)
 );
 
-CREATE TABLE FIDE_SAMDESIGN.FIDE_Product_TB (
-    PK_Product_ID NUMBER PRIMARY KEY,
-    FK_Category_ID NUMBER,
-    Description VARCHAR2(255),
-    Unit_Price NUMBER,
-    Quantity_Limit NUMBER,
-    Created_By VARCHAR2(50),
-    Created_On TIMESTAMP,
-    Modified_By VARCHAR2(50),
-    Modified_On TIMESTAMP,
-    FOREIGN KEY (FK_Category_ID) REFERENCES FIDE_SAMDESIGN.FIDE_Category_TB(PK_Category_ID)
-);
-
-CREATE TABLE FIDE_SAMDESIGN.FIDE_Order_TB (
-    PK_Order_ID NUMBER PRIMARY KEY,
-    FK_Customer_ID NUMBER,
-    Order_Amount NUMBER,
-    Order_Date TIMESTAMP,
-    FK_Payment_Method_ID NUMBER,
-    Created_By VARCHAR2(50),
-    Created_On TIMESTAMP,
-    Modified_By VARCHAR2(50),
-    Modified_On TIMESTAMP,
-    FOREIGN KEY (FK_Customer_ID) REFERENCES FIDE_SAMDESIGN.FIDE_Customer_TB(PK_Customer_ID),
-    FOREIGN KEY (FK_Payment_Method_ID) REFERENCES FIDE_SAMDESIGN.FIDE_Payment_Method_TB(PK_Payment_Method_ID)
-);
-
--- ORDER LINES TABLE
-
-CREATE TABLE FIDE_SAMDESIGN.FIDE_Cart_TB (
-    PK_Cart_ID NUMBER PRIMARY KEY,
-    FK_Customer_ID NUMBER,
-    FK_Address_ID NUMBER,
-    FK_Payment_Method_ID NUMBER,
-    Created_By VARCHAR2(50),
-    Created_On TIMESTAMP,
-    Modified_By VARCHAR2(50),
-    Modified_On TIMESTAMP,
-    FOREIGN KEY (FK_Customer_ID) REFERENCES FIDE_SAMDESIGN.FIDE_Customer_TB(PK_Customer_ID),
-    FOREIGN KEY (FK_Address_ID) REFERENCES FIDE_SAMDESIGN.FIDE_Address_TB(PK_Address_ID),
-    FOREIGN KEY (FK_Payment_Method_ID) REFERENCES FIDE_SAMDESIGN.FIDE_Payment_Method_TB(PK_Payment_Method_ID)
-);
-
-CREATE TABLE FIDE_SAMDESIGN.FIDE_Cart_Lines_TB (
-    PK_Cart_Item_ID NUMBER PRIMARY KEY,
-    FK_Cart_ID NUMBER,
-    FK_Product_ID NUMBER,
-    Quantity NUMBER,
-    FK_Status_ID NUMBER,
-    Created_By VARCHAR2(50),
-    Created_On TIMESTAMP,
-    Modified_By VARCHAR2(50),
-    Modified_On TIMESTAMP,
-    FOREIGN KEY (FK_Cart_ID) REFERENCES FIDE_SAMDESIGN.FIDE_Cart_TB(PK_Cart_ID),
-    FOREIGN KEY (FK_Product_ID) REFERENCES FIDE_SAMDESIGN.FIDE_Product_TB(PK_Product_ID),
-    FOREIGN KEY (FK_Status_ID) REFERENCES FIDE_SAMDESIGN.FIDE_Status_TB(PK_Status_ID)
-);
-
-CREATE TABLE FIDE_SAMDESIGN.FIDE_Billing_TB (
-    PK_Billing_ID NUMBER PRIMARY KEY,
-    FK_Order_ID NUMBER,
-    FK_Billing_Address_ID NUMBER,
-    Billing_Amount NUMBER,
-    Billing_Date TIMESTAMP,
-    FK_Payment_Method_ID NUMBER,
-    Created_By VARCHAR2(50),
-    Created_On TIMESTAMP,
-    Modified_By VARCHAR2(50),
-    Modified_On TIMESTAMP,
-    FOREIGN KEY (FK_Order_ID) REFERENCES FIDE_SAMDESIGN.FIDE_Order_TB(PK_Order_ID),
-    FOREIGN KEY (FK_Billing_Address_ID) REFERENCES FIDE_SAMDESIGN.FIDE_Address_TB(PK_Address_ID),
-    FOREIGN KEY (FK_Payment_Method_ID) REFERENCES FIDE_SAMDESIGN.FIDE_Payment_Method_TB(PK_Payment_Method_ID)
-);
-
+-- 2
 CREATE TABLE FIDE_SAMDESIGN.FIDE_Vendor_TB (
-    PK_Vendor_ID NUMBER PRIMARY KEY,
+    Vendor_ID NUMBER CONSTRAINT FIDE_PK_VENDOR_ID PRIMARY KEY,
     Vendor_Name VARCHAR2(100),
     Vendor_Address_ID NUMBER,
+    Vendor_eMail VARCHAR2(100) CONSTRAINT FIDE_VENDOR_EMAIL_NN NOT NULL,
+    Vendor_Balance FLOAT,
     Created_By VARCHAR2(50),
     Created_On TIMESTAMP,
     Modified_By VARCHAR2(50),
     Modified_On TIMESTAMP,
-    FOREIGN KEY (Vendor_Address_ID) REFERENCES FIDE_SAMDESIGN.FIDE_Address_TB(PK_Address_ID)
+    Status_ID NUMBER,
+    FOREIGN KEY (Status_ID) REFERENCES FIDE_SAMDESIGN.FIDE_Status_TB(Status_ID)
 );
 
+-- 3
 CREATE TABLE FIDE_SAMDESIGN.FIDE_Employee_TB (
-    PK_Employee_ID NUMBER PRIMARY KEY,
-    Employee_FirstName VARCHAR2(100),
-    Employee_LastName VARCHAR2(100),
+    Employee_ID NUMBER CONSTRAINT FIDE_PK_EMPLOYEE_ID PRIMARY KEY,
+    Employee_Name VARCHAR2(100),
+    Employee_LastName1 VARCHAR2(100),
+    Employee_LastName2 VARCHAR2(100),
+    Employee_eMail VARCHAR2(100),
     Employee_Position VARCHAR2(100),
-    Employee_Salary NUMBER,
+    Employee_Salary FLOAT,
+    Created_By VARCHAR2(50),
+    Created_On TIMESTAMP,
+    Modified_By VARCHAR2(50),
+    Modified_On TIMESTAMP,
+    Status_ID NUMBER,
+    FOREIGN KEY (Status_ID) REFERENCES FIDE_SAMDESIGN.FIDE_Status_TB(Status_ID)
+);
+
+-- 4
+CREATE TABLE FIDE_SAMDESIGN.FIDE_Status_TB (
+    Status_ID NUMBER CONSTRAINT FIDE_PK_STATUS_ID PRIMARY KEY,
+    Description VARCHAR2(255),
     Created_By VARCHAR2(50),
     Created_On TIMESTAMP,
     Modified_By VARCHAR2(50),
     Modified_On TIMESTAMP
 );
 
-CREATE TABLE FIDE_SAMDESIGN.FIDE_Inventory_TB (
-    PK_Inventory_ID NUMBER PRIMARY KEY,
-    FK_Product_ID NUMBER,
-    Quantity_Ordered NUMBER,
-    Quantity_Left NUMBER,
+-- 5
+CREATE TABLE FIDE_SAMDESIGN.FIDE_Special_Order_TB (
+    Order_ID NUMBER CONSTRAINT FIDE_PK_ORDER_ID PRIMARY KEY,
+    Customer_ID NUMBER,
+    Order_Date TIMESTAMP,
+    Order_Qty NUMBER,
+    Comments VARCHAR2(255),
+    Status_ID NUMBER,
+    Created_On TIMESTAMP,
+    Created_By VARCHAR2(50),
+    Modified_On TIMESTAMP,
+    Modified_By VARCHAR2(50),
+    FOREIGN KEY (Customer_ID) REFERENCES FIDE_SAMDESIGN.FIDE_Customer_TB(Customer_ID),
+    FOREIGN KEY (Status_ID) REFERENCES FIDE_SAMDESIGN.FIDE_Status_TB(Status_ID)
+);
+
+-- 6
+CREATE TABLE FIDE_SAMDESIGN.FIDE_Customer_TB (
+    Customer_ID NUMBER CONSTRAINT FIDE_PK_CUSTOMER_ID PRIMARY KEY,
+    Customer_Name VARCHAR2(100),
+    Customer_Email VARCHAR2(100),
+    Customer_Phone_number VARCHAR2(50),
+    Status_ID NUMBER,
+    Created_By VARCHAR2(50),
+    Created_On TIMESTAMP,
+    Modified_On TIMESTAMP,
+    Modified_By VARCHAR2(50),
+    FOREIGN KEY (Status_ID) REFERENCES FIDE_SAMDESIGN.FIDE_Status_TB(Status_ID)
+);
+
+-- 7
+CREATE TABLE FIDE_SAMDESIGN.FIDE_Category_Type_TB (
+    Category_ID NUMBER CONSTRAINT FIDE_PK_CATEGORY_ID PRIMARY KEY,
+    Description VARCHAR2(255),
+    Comments VARCHAR2(255),
+    Status_ID NUMBER,
     Created_By VARCHAR2(50),
     Created_On TIMESTAMP,
     Modified_By VARCHAR2(50),
     Modified_On TIMESTAMP,
-    FOREIGN KEY (FK_Product_ID) REFERENCES FIDE_SAMDESIGN.FIDE_Product_TB(PK_Product_ID)
+    FOREIGN KEY (Status_ID) REFERENCES FIDE_SAMDESIGN.FIDE_Status_TB(Status_ID)
 );
 
+-- 8
+CREATE TABLE FIDE_SAMDESIGN.FIDE_Inventory_TB (
+    Inventory_ID NUMBER CONSTRAINT FIDE_PK_INVENTORY_ID PRIMARY KEY,
+    Product_ID NUMBER,
+    Comments VARCHAR2(255),
+    Quantity_Stock NUMBER,
+    Quantity_Reserved NUMBER,
+    Quantity_Threshold NUMBER,
+    Status_ID NUMBER,
+    Last_Restock TIMESTAMP,
+    Created_By VARCHAR2(50),
+    Created_On TIMESTAMP,
+    Modified_By VARCHAR2(50),
+    Modified_On TIMESTAMP,
+    FOREIGN KEY (Status_ID) REFERENCES FIDE_SAMDESIGN.FIDE_Status_TB(Status_ID),
+    FOREIGN KEY (Product_ID) REFERENCES FIDE_SAMDESIGN.FIDE_Product_TB(Product_ID)
+);
 
+-- 9
+CREATE TABLE FIDE_SAMDESIGN.FIDE_Billing_TB (
+    Billing_ID NUMBER CONSTRAINT FIDE_PK_BILLING_ID PRIMARY KEY,
+    Order_ID NUMBER,
+    Customer_ID NUMBER,
+    Invoiced_Address_ID NUMBER,
+    Billing_Date TIMESTAMP,
+    Total_Amount NUMBER,
+    Comments VARCHAR2(255),
+    Status_ID NUMBER,
+    Payment_Method_ID NUMBER,
+    Created_On TIMESTAMP,
+    Created_By VARCHAR2(50),
+    Modified_On TIMESTAMP,
+    Modified_By VARCHAR2(50),
+    FOREIGN KEY (Order_ID) REFERENCES FIDE_SAMDESIGN.FIDE_Order_TB(Order_ID),
+    FOREIGN KEY (Customer_ID) REFERENCES FIDE_SAMDESIGN.FIDE_Customer_TB(Customer_ID),
+    FOREIGN KEY (Status_ID) REFERENCES FIDE_SAMDESIGN.FIDE_Status_TB(Status_ID),
+    FOREIGN KEY (Payment_Method_ID) REFERENCES FIDE_SAMDESIGN.FIDE_Payment_Method_TB(Payment_Method_ID)
+);
 
-BEGIN
-    EXECUTE IMMEDIATE 'DROP TABLE FIDE_SAMDESIGN.FIDE_Users_TB CASCADE CONSTRAINTS';
-    EXECUTE IMMEDIATE 'DROP TABLE FIDE_SAMDESIGN.FIDE_Status_TB CASCADE CONSTRAINTS';
-    EXECUTE IMMEDIATE 'DROP TABLE FIDE_SAMDESIGN.FIDE_Category_TB CASCADE CONSTRAINTS';
-    EXECUTE IMMEDIATE 'DROP TABLE FIDE_SAMDESIGN.FIDE_Payment_Method_TB CASCADE CONSTRAINTS';
-    EXECUTE IMMEDIATE 'DROP TABLE FIDE_SAMDESIGN.FIDE_Address_TB CASCADE CONSTRAINTS';
-    EXECUTE IMMEDIATE 'DROP TABLE FIDE_SAMDESIGN.FIDE_Customer_TB CASCADE CONSTRAINTS';
-    EXECUTE IMMEDIATE 'DROP TABLE FIDE_SAMDESIGN.FIDE_Product_TB CASCADE CONSTRAINTS';
-    EXECUTE IMMEDIATE 'DROP TABLE FIDE_SAMDESIGN.FIDE_Order_TB CASCADE CONSTRAINTS';
-    EXECUTE IMMEDIATE 'DROP TABLE FIDE_SAMDESIGN.FIDE_Cart_TB CASCADE CONSTRAINTS';
-    EXECUTE IMMEDIATE 'DROP TABLE FIDE_SAMDESIGN.FIDE_Cart_Items_TB CASCADE CONSTRAINTS';
-    EXECUTE IMMEDIATE 'DROP TABLE FIDE_SAMDESIGN.FIDE_Billing_TB CASCADE CONSTRAINTS';
-    EXECUTE IMMEDIATE 'DROP TABLE FIDE_SAMDESIGN.FIDE_Vendor_TB CASCADE CONSTRAINTS';
-    EXECUTE IMMEDIATE 'DROP TABLE FIDE_SAMDESIGN.FIDE_Employee_TB CASCADE CONSTRAINTS';
-    EXECUTE IMMEDIATE 'DROP TABLE FIDE_SAMDESIGN.FIDE_Inventory_TB CASCADE CONSTRAINTS';
-END;
+-- 10
+CREATE TABLE FIDE_SAMDESIGN.FIDE_Product_TB (
+    Product_ID NUMBER CONSTRAINT FIDE_PK_PRODUCT_ID PRIMARY KEY,
+    Description VARCHAR2(255),
+    Category_Type_ID NUMBER,
+    Comments VARCHAR2(255),
+    Unit_price NUMBER,
+    Quantity_OnHand NUMBER,
+    Quantity_Lend NUMBER,
+    Total_Qty NUMBER,
+    Status_ID NUMBER,
+    Created_By VARCHAR2(50),
+    Created_On DATE,
+    Modified_By VARCHAR2(50),
+    Modified_On DATE,
+    FOREIGN KEY (Category_Type_ID) REFERENCES FIDE_SAMDESIGN.FIDE_Category_Type_TB(Category_ID),
+    FOREIGN KEY (Status_ID) REFERENCES FIDE_SAMDESIGN.FIDE_Status_TB(Status_ID)
+);
+
+-- 11
+CREATE TABLE FIDE_SAMDESIGN.FIDE_Payment_Method_TB (
+    Payment_Method_ID NUMBER CONSTRAINT FIDE_PK_PAYMENT_METHOD_ID PRIMARY KEY,
+    Payment_Method_Name VARCHAR2(255),
+    Description VARCHAR2(255),
+    Status_ID NUMBER,
+    Created_By VARCHAR2(50),
+    Created_On TIMESTAMP,
+    Modified_By VARCHAR2(50),
+    Modified_On TIMESTAMP,
+    FOREIGN KEY (Status_ID) REFERENCES FIDE_SAMDESIGN.FIDE_Status_TB(Status_ID)
+);
+
+-- 12
+CREATE TABLE FIDE_SAMDESIGN.FIDE_Cart_TB (
+    Cart_ID NUMBER CONSTRAINT FIDE_PK_CART_ID PRIMARY KEY,
+    Customer_ID NUMBER,
+    Address_ID NUMBER,
+    Order_Date TIMESTAMP,
+    Comments VARCHAR2(255),
+    Status_ID NUMBER,
+    Payment_Method_ID NUMBER,
+    Created_On TIMESTAMP,
+    Created_By VARCHAR2(50),
+    Modified_On TIMESTAMP,
+    Modified_By VARCHAR2(50),
+    FOREIGN KEY (Customer_ID) REFERENCES FIDE_SAMDESIGN.FIDE_Customer_TB(Customer_ID),
+    FOREIGN KEY (Address_ID) REFERENCES FIDE_SAMDESIGN.FIDE_Address_TB(Address_ID),
+    FOREIGN KEY (Status_ID) REFERENCES FIDE_SAMDESIGN.FIDE_Status_TB(Status_ID),
+    FOREIGN KEY (Payment_Method_ID) REFERENCES FIDE_SAMDESIGN.FIDE_Payment_Method_TB(Payment_Method_ID)
+);
+
+-- 13
+CREATE TABLE FIDE_SAMDESIGN.FIDE_Cart_Lines_TB (
+    Cart_Line_ID NUMBER CONSTRAINT FIDE_PK_CART_LINE_ID PRIMARY KEY,
+    Cart_ID NUMBER,
+    Product_ID NUMBER,
+    Qty_Item NUMBER,
+    Comments VARCHAR2(255),
+    Status_ID NUMBER,
+    Total_Price NUMBER,
+    Created_On TIMESTAMP,
+    Created_By VARCHAR2(50),
+    Modified_On TIMESTAMP,
+    Modified_By VARCHAR2(50),
+    FOREIGN KEY (Cart_ID) REFERENCES FIDE_SAMDESIGN.FIDE_Cart_TB(Cart_ID),
+    FOREIGN KEY (Product_ID) REFERENCES FIDE_SAMDESIGN.FIDE_Product_TB(Product_ID),
+    FOREIGN KEY (Status_ID) REFERENCES FIDE_SAMDESIGN.FIDE_Status_TB(Status_ID)
+);
+
+-- 14
+CREATE TABLE FIDE_SAMDESIGN.FIDE_Order_TB (
+    Order_ID NUMBER CONSTRAINT FIDE_PK_ORDER_ID PRIMARY KEY,
+    Customer_ID NUMBER,
+    Order_Date TIMESTAMP,
+    Order_Amount NUMBER,
+    Order_Tax NUMBER,
+    Comments VARCHAR2(255),
+    Dispatch BOOLEAN,
+    Fullfield BOOLEAN,
+    Status_ID NUMBER,
+    Payment_Method_ID NUMBER,
+    Created_On TIMESTAMP,
+    Created_By VARCHAR2(50),
+    Modified_On TIMESTAMP,
+    Modified_By VARCHAR2(50),
+    FOREIGN KEY (Customer_ID) REFERENCES FIDE_SAMDESIGN.FIDE_Customer_TB(Customer_ID),
+    FOREIGN KEY (Status_ID) REFERENCES FIDE_SAMDESIGN.FIDE_Status_TB(Status_ID),
+    FOREIGN KEY (Payment_Method_ID) REFERENCES FIDE_SAMDESIGN.FIDE_Payment_Method_TB(Payment_Method_ID)
+);
+
+-- 15
+CREATE TABLE FIDE_SAMDESIGN.FIDE_Order_Lines_TB (
+    Order_Line_ID NUMBER CONSTRAINT FIDE_PK_ORDER_LINE_ID PRIMARY KEY,
+    Order_ID NUMBER,
+    Product_ID NUMBER,
+    Qty_Item NUMBER,
+    Comments VARCHAR2(255),
+    Status_ID NUMBER,
+    Total_Price NUMBER,
+    Created_On TIMESTAMP,
+    Created_By VARCHAR2(50),
+    Modified_On TIMESTAMP,
+    Modified_By VARCHAR2(50),
+    FOREIGN KEY (Order_ID) REFERENCES FIDE_SAMDESIGN.FIDE_Order_TB(Order_ID),
+    FOREIGN KEY (Product_ID) REFERENCES FIDE_SAMDESIGN.FIDE_Product_TB(Product_ID),
+    FOREIGN KEY (Status_ID) REFERENCES FIDE_SAMDESIGN.FIDE_Status_TB(Status_ID)
+);
+
+-- 16
+CREATE TABLE FIDE_SAMDESIGN.FIDE_City_Address_TB (
+    City_ID NUMBER CONSTRAINT FIDE_PK_CITY_ID PRIMARY KEY,
+    Name VARCHAR2(255),
+    Status_ID NUMBER,
+    Created_By VARCHAR2(50),
+    Created_On TIMESTAMP,
+    Modified_By VARCHAR2(50),
+    Modified_On TIMESTAMP,
+    FOREIGN KEY (Status_ID) REFERENCES FIDE_SAMDESIGN.FIDE_Status_TB(Status_ID)
+);
+
+-- 17
+CREATE TABLE FIDE_SAMDESIGN.FIDE_Countries_TB (
+    Country_ID NUMBER CONSTRAINT FIDE_PK_COUNTRY_ID PRIMARY KEY,
+    Name VARCHAR2(255),
+    Status_ID NUMBER,
+    Created_By VARCHAR2(50),
+    Created_On TIMESTAMP,
+    Modified_By VARCHAR2(50),
+    Modified_On TIMESTAMP,
+    FOREIGN KEY (Status_ID) REFERENCES FIDE_SAMDESIGN.FIDE_Status_TB(Status_ID)
+);
+
+-- 18
+CREATE TABLE FIDE_SAMDESIGN.FIDE_State_Address_TB (
+    State_ID NUMBER CONSTRAINT FIDE_PK_STATE_ID PRIMARY KEY,
+    Name VARCHAR2(255),
+    Status_ID NUMBER,
+    Created_By VARCHAR2(50),
+    Created_On TIMESTAMP,
+    Modified_By VARCHAR2(50),
+    Modified_On TIMESTAMP,
+    FOREIGN KEY (Status_ID) REFERENCES FIDE_SAMDESIGN.FIDE_Status_TB(Status_ID)
+);
+
+-- 19
+CREATE TABLE FIDE_SAMDESIGN.FIDE_Billing_TB (
+    Billing_ID NUMBER CONSTRAINT FIDE_PK_BILLING_ID PRIMARY KEY,
+    Order_ID NUMBER,
+    Customer_ID NUMBER,
+    Invoiced_Address_ID NUMBER,
+    Billing_Date TIMESTAMP,
+    Total_Amount NUMBER,
+    Comments VARCHAR2(255),
+    Status_ID NUMBER,
+    Payment_Method_ID NUMBER,
+    Created_On TIMESTAMP,
+    Created_By VARCHAR2(50),
+    Modified_On TIMESTAMP,
+    Modified_By VARCHAR2(50),
+    FOREIGN KEY (Order_ID) REFERENCES FIDE_SAMDESIGN.FIDE_Order_TB(Order_ID),
+    FOREIGN KEY (Customer_ID) REFERENCES FIDE_SAMDESIGN.FIDE_Customer_TB(Customer_ID),
+    FOREIGN KEY (Status_ID) REFERENCES FIDE_SAMDESIGN.FIDE_Status_TB(Status_ID),
+    FOREIGN KEY (Payment_Method_ID) REFERENCES FIDE_SAMDESIGN.FIDE_Payment_Method_TB(Payment_Method_ID)
+);
