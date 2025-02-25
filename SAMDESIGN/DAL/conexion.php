@@ -2,7 +2,7 @@
 
 function conectar() {
 
-    $user = "FIDE_SAM_DESIGN";
+    $user = "FIDE_SAMDESIGN";
     $password = "SAMDESIGN";
     $host = "localhost/XE";
     // para conectar a la base de datos de oracle usamos el protocolo oci de php
