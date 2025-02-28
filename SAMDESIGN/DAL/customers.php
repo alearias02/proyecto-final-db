@@ -164,7 +164,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"])) {
         }
     
         // Ejecuta la actualización
-        $actualizado = actualizarInventario(
+        $actualizado = actualizarCliente(
             $customer_id,
             $_POST["CUSTOMER_NAME"],
             $_POST["CUSTOMER_EMAIL"],
