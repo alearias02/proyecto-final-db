@@ -8,9 +8,11 @@ function obtenerDetallesUsuario($user_name) {
     $oConexion = conectar();
     $sql = "SELECT 
                 user_id,
-                user_name, 
+                user_name,
+                user_email, 
                 password, 
                 status_id,
+                role_id,
                 created_by,
                 created_on,
                 modified_on,
@@ -31,18 +33,19 @@ function obtenerDetallesUsuario($user_name) {
 }
 
 // Insertar una habitación
-function IngresarUsuario($user_name, $password) {
+function IngresarUsuario($user_name, $user_email, $password) {
     $retorno = false;
 
     try {
         $oConexion = conectar();
-        $sql = "INSERT INTO FIDE_SAMDESIGN.fide_users_tb (user_name, password, status_id)
-                VALUES (:user_name, password, 1)";
+        $sql = "INSERT INTO FIDE_SAMDESIGN.fide_users_tb (user_name, user_email, password, status_id, role_id)
+                VALUES (:user_name, :user_email, password, 1,  1)";
 
         $stmt = oci_parse($oConexion, $sql);
 
         // Vincular parámetros
         oci_bind_by_name($stmt, ":user_name", $user_name);
+        oci_bind_by_name($stmt, ":user_email", $user_email);
         oci_bind_by_name($stmt, ":password", $password);
         // Ejecutar la consulta
         if (oci_execute($stmt)) {
@@ -89,14 +92,16 @@ function eliminarUsuario($user_name) {
 }
 
 // Actualizar un producto
-function actualizarUsuario($user_name, $password) {
+function actualizarUsuario($user_name, $user_email, $password, $role_id) {
     $retorno = false;
 
     try {
         $oConexion = conectar();
         $sql = "UPDATE FIDE_SAMDESIGN.fide_users_tb 
                 SET user_name  = :user_name,
+                    user_email = :user_email,
                     password = :password,
+                    role_id = :role_id,
                     modified_on = SYSDATE,
                 WHERE user_name = :user_name";
 
@@ -104,7 +109,9 @@ function actualizarUsuario($user_name, $password) {
 
         // Vincular parámetros
         oci_bind_by_name($stmt, ":user_name", $user_name);
+        oci_bind_by_name($stmt, ":user_email", $user_email);
         oci_bind_by_name($stmt, ":password", $password);
+        oci_bind_by_name($stmt, ":role_id", $role_id);
         
         // Ejecutar la consulta
         if (oci_execute($stmt)) {
@@ -147,7 +154,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"])) {
         error_log("Datos recibidos para actualizar: " . json_encode($_POST));
     
         // Verifica parámetros requeridos
-        $required_fields = ["USER_NAME", "PASSWORD"];
+        $required_fields = ["USER_NAME", "USER_EMAIL", "PASSWORD"];
         foreach ($required_fields as $field) {
             if (!isset($_POST[$field])) {
                 http_response_code(400); // Código de error 400: Solicitud Incorrecta
@@ -159,7 +166,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"])) {
         // Ejecuta la actualización
         $actualizado = actualizarUsuario(
             $user_name,
-            $_POST["PASSWORD"]
+            $_POST["USER_EMAIL"],
+            $_POST["PASSWORD"],
+            $_POST["ROLE_ID"]
         );
     
         // Envía la respuesta adecuada
@@ -174,6 +183,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"])) {
 
         $insertado = IngresarUsuario(
             $_POST["USER_NAME"],
+            $_POST["USER_EMAIL"],
             $_POST["PASSWORD"]
         );
         echo $insertado ? "Usuario insertado correctamente" : "Error al insertar el Usuario";
