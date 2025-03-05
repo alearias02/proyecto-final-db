@@ -2,6 +2,101 @@
 
 require_once "conexion.php"; // Archivo que maneja la conexión a Oracle
 
+function IngresarUsuarioCliente($customer_id, $user_name, $user_email, $password, $name, $customer_phone) {
+    $retorno = false;
+    $oConexion = conectar(); // Connect to Oracle
+
+    try {
+        oci_execute(oci_parse($oConexion, "ALTER SESSION SET NLS_DATE_FORMAT = 'YYYY-MM-DD HH24:MI:SS'"), OCI_DEFAULT);
+
+        // Encrypt the password before storing
+        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+
+        // Insert into USERS table
+        $sqlUser = "INSERT INTO FIDE_SAMDESIGN.FIDE_USERS_TB (USER_NAME, USER_EMAIL, PASSWORD, STATUS_ID, ROLE_ID)
+                    VALUES (:user_name, :user_email, :password, 1, 3)";
+
+        $stmtUser = oci_parse($oConexion, $sqlUser);
+        oci_bind_by_name($stmtUser, ":user_name", $user_name);
+        oci_bind_by_name($stmtUser, ":user_email", $user_email);
+        oci_bind_by_name($stmtUser, ":password", $hashedPassword);
+
+        if (!oci_execute($stmtUser, OCI_NO_AUTO_COMMIT)) {
+            throw new Exception("Error inserting into USERS table");
+        }
+
+        // Insert into CUSTOMERS table using full name
+        $sqlCustomer = "INSERT INTO FIDE_SAMDESIGN.FIDE_CUSTOMER_TB (CUSTOMER_ID, CUSTOMER_NAME, CUSTOMER_EMAIL, CUSTOMER_PHONE_NUMBER, STATUS_ID)
+                        VALUES (:customer_id, :full_name, :customer_email, :customer_phone, 1)";
+
+        $stmtCustomer = oci_parse($oConexion, $sqlCustomer);
+        oci_bind_by_name($stmtCustomer, ":customer_id", $customer_id);
+        oci_bind_by_name($stmtCustomer, ":name", $name); // Concatenated name
+        oci_bind_by_name($stmtCustomer, ":customer_email", $user_email);
+        oci_bind_by_name($stmtCustomer, ":customer_phone", $customer_phone);
+
+        if (!oci_execute($stmtCustomer, OCI_NO_AUTO_COMMIT)) {
+            throw new Exception("Error inserting into CUSTOMERS table");
+        }
+
+        // Commit the transaction if everything is successful
+        oci_commit($oConexion);
+        $retorno = true;
+
+    } catch (Exception $e) {
+        // Rollback the transaction if an error occurs
+        oci_rollback($oConexion);
+        echo "Error: " . $e->getMessage();
+    } finally {
+        oci_free_statement($stmtUser);
+        oci_free_statement($stmtCustomer);
+        oci_close($oConexion);
+    }
+
+    return $retorno;
+}
+function correoExiste($pCorreo) {
+    $oConexion = conectar();
+
+    $sql = "SELECT COUNT(*) AS TOTAL 
+            FROM FIDE_SAMDESIGN.FIDE_USERS_TB 
+            WHERE USER_EMAIL = :user_email";
+
+    $stmt = oci_parse($oConexion, $sql);
+    oci_bind_by_name($stmt, ":user_email", $pCorreo);
+    oci_execute($stmt);
+
+    $row = oci_fetch_assoc($stmt);
+    
+    oci_free_statement($stmt);
+    oci_close($oConexion);
+
+    // si total mayor a 0 entonces existe correo
+    return ($row['TOTAL'] > 0);
+}
+
+
+function usuarioExiste($pUser_Name) {
+    $oConexion = conectar();
+
+    $sql = "SELECT COUNT(*) AS TOTAL 
+            FROM FIDE_SAMDESIGN.FIDE_USERS_TB 
+            WHERE USER_NAME = :user_name";
+
+    $stmt = oci_parse($oConexion, $sql);
+    oci_bind_by_name($stmt, ":user_name", $pUser_Name);
+    oci_execute($stmt);
+
+    $row = oci_fetch_assoc($stmt);
+    
+    oci_free_statement($stmt);
+    oci_close($oConexion);
+
+    // si total mayor a 0 entonces existe usuario
+    return ($row['TOTAL'] > 0);
+}
+
+
 
 // Función para obtener los detalles de una habitación
 function obtenerDetallesUsuario($user_name) {

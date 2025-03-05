@@ -35,6 +35,25 @@ INSERT INTO FIDE_SAMDESIGN.FIDE_ROL_TB (rol_id, rol_name, Created_By, status_id)
 INSERT INTO FIDE_SAMDESIGN.FIDE_ROL_TB (rol_id, rol_name, Created_By, status_id) VALUES (2, 'ROLE_VENDEDOR', 'Admin', 1);
 INSERT INTO FIDE_SAMDESIGN.FIDE_ROL_TB (rol_id, rol_name, Created_By, status_id) VALUES (3, 'ROLE_USER', 'Admin', 1);
 
+--USERS
+INSERT INTO FIDE_SAMDESIGN.FIDE_USERS_TB 
+(User_ID, User_Name, User_Email, Password, Rol_ID, Status_ID, Created_By, Created_On, Modified_By, Modified_On) 
+VALUES 
+(1, 'admin', 'jorge@example.com', 'jorgeSAM', 1, 1, 'admin', SYSTIMESTAMP, NULL, NULL);
+
+INSERT INTO FIDE_SAMDESIGN.FIDE_USERS_TB 
+(User_ID, User_Name, User_Email, Password, Rol_ID, Status_ID, Created_By, Created_On, Modified_By, Modified_On) 
+VALUES 
+(2, 'admin2', 'ale@example.com', 'aleSAM', 1, 1, 'admin', SYSTIMESTAMP, NULL, NULL);
+
+INSERT INTO FIDE_SAMDESIGN.FIDE_USERS_TB 
+(User_ID, User_Name, User_Email, Password, Rol_ID, Status_ID, Created_By, Created_On, Modified_By, Modified_On) 
+VALUES 
+(3, 'vendedor', 'carlos@example.com', 'carlosSAM', 3, 1, 'admin', SYSTIMESTAMP, NULL, NULL);
+
+
+
+
 
 -- INSERT INTO sam_design.categoria (id_categoria,descripcion,activo) VALUES 
 -- ('1','Respuestos del Motor',true), 
