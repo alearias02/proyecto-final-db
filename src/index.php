@@ -8,11 +8,7 @@ require_once "../include/templates/header.php";
     ?>
 
     <?php
-    require_once "../include/templates/carruselCamisas.php";
-    ?>
-
-    <?php
-    require_once "../include/templates/gridVarios.php";
+    require_once "../include/templates/GRIDnCARRUSEL.php";
     ?>
 
     <?php

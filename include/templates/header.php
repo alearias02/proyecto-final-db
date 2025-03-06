@@ -94,7 +94,7 @@ if (isset($_SESSION['usuario'])) {
                     </li>
                     <?php
                     if (isset($_SESSION['usuario']) && $_SESSION['usuario']['rol'] === 'ROLE_ADMIN') {
-                        echo '
+                        echo ' 
                         <li class="nav-item px-3 py-4">
                             <div class="dropdown">
                                 <a class="nav-link text-white dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown">
@@ -118,7 +118,7 @@ if (isset($_SESSION['usuario'])) {
                 <?php if (isset($_SESSION['usuario'])) : ?>
                     <div class="dropdown">
                         <button class="btn btn-secondary dropdown-toggle " type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-user"></i> <?php echo isset($_SESSION['usuario']['nombre']) ? $_SESSION['usuario']['nombre'] : 'Invitado'; ?>
+                            <i class="fas fa-user"></i> <?php echo isset($_SESSION['usuario']['user_name']) ? $_SESSION['usuario']['user_name'] : 'Invitado'; ?>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                             <li><a class="dropdown-item" href="../userSrc/logout.php">Cerrar sesión</a></li>
