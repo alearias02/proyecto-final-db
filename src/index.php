@@ -12,7 +12,7 @@ require_once "../include/templates/header.php";
     ?>
 
     <?php
-    require_once "../include/templates/carruselSuetas.php";
+    require_once "../include/templates/formulario.php";
     ?>  
 </body>
 <?php

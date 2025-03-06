@@ -59,13 +59,6 @@ $page = "about";
 </section>
 
 <section>
-    <h2 class="text-center justify-content-center">¿Donde encontrarnos?</h2>
-    <div class="maps">
-        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3929.980528090942!2d-84.03832782423785!3d9.935577874138497!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8fa0e3aa66fa362b%3A0xf134cee2340078e2!2sStem%20Center%20Fid%C3%A9litas!5e0!3m2!1ses!2scr!4v1685677424865!5m2!1ses!2scr" width="600" height="450" style="border:0;" allowfullscreen="" referrerpolicy="no-referrer-when-downgrade"></iframe>
-    </div>
-</section>
-
-<section>
     <div>
         <h2 class='text-center justify-content-center text-white'>Quieres algo personalizado?</h2>
         <form class="formulario_camisas rounded" method="post" action="procesar-formulario.php">
