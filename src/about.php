@@ -1,6 +1,7 @@
 <?php
 require_once "../include/templates/header.php";
 $page = "about";
+//testing 
 ?>
 
 <h2 class='text-center justify-content-center '>SAM DESING</h2>
