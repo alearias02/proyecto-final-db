@@ -14,8 +14,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $password = recogePost('password');
     $confirm_password = recogePost('Cpassword');
     $customer_name = recogePost('name');
-    $customer_lastname = recogePost('last_name');
-    $full_name = trim($first_name . " " . $last_name); // Concatenate name + last name
+    $customer_lastname = recogePost('lastname');
+    $full_name = trim($customer_name . " " . $customer_lastname); // Concatenate name + last name
     $customer_phone = recogePost('tel');
     $user_email = recogePost('email');
 
@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // Si no hay errores, registrar el usuario
     if (empty($mensajeError) && empty($mensajeErrorU) && empty($mensajeErrorE)) {
-        $resultado = IngresarUsuarioCliente($customer_id, $user_name, $user_email, $password, $name, $customer_phone);
+        $resultado = IngresarUsuarioCliente($customer_id, $full_name, $user_name, $user_email, $password,  $customer_phone);
 
         if ($resultado) {
             header("Location: ../userSrc/login.php");

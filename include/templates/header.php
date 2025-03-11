@@ -71,16 +71,29 @@ if (isset($_SESSION['usuario'])) {
                     <li class="nav-item px-3 py-4">
                         <div class=" dropdown">
                             <a class="nav-link text-white dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown">
-                                ACCESORIOS
+                                PRODUCTOS
                             </a>
                             <div class="dropdown-menu shadow" style="border-radius: 0; border: none; background-color: #eee/#475a68" aria-labelledby="dropdownMenuLink">
-                                <a class="dropdown-item nav-link text-black " href="../../src/camisasMain.php">CAMISAS</a>
-                                <a class="dropdown-item nav-link text-black " href="../../src/impermeableMain.php">IMPERMEABLES</a>
+                                <a class="dropdown-item nav-link text-black " href="../../src/camisasMain.php">ACCESORIOS</a>
+                                <a class="dropdown-item nav-link text-black " href="../../src/impermeableMain.php">REPUESTOS</a>
+                                <a class="dropdown-item nav-link text-black " href="../../src/impermeableMain.php">LLANTAS</a>
                             </div>
                         </div>
                     </li>
 
-                    <li class="nav-item px-3 py-4"><a class="nav-link text-white" href="../../src/repuestosMain.php">REPUESTOS</a></li>
+                    <li class="nav-item px-3 py-4">
+                    <div class=" dropdown">
+                            <a class="nav-link text-white dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown">
+                                TEXTILES
+                            </a>
+                            <div class="dropdown-menu shadow" style="border-radius: 0; border: none; background-color: #eee/#475a68" aria-labelledby="dropdownMenuLink">
+                                <a class="dropdown-item nav-link text-black " href="../../src/camisasMain.php">SUETAS</a>
+                                <a class="dropdown-item nav-link text-black " href="../../src/camisasMain.php">CAMISAS</a>
+                                <a class="dropdown-item nav-link text-black " href="../../src/impermeableMain.php">GUANTES</a>
+                                <a class="dropdown-item nav-link text-black " href="../../src/impermeableMain.php">UNIFORMES</a>
+                            </div>
+                        </div>
+                    </li>
                     <li class="nav-item px-3 py-4">
                         <div class=" dropdown">
                             <a class="nav-link text-white dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown">

@@ -2,7 +2,7 @@
 
 require_once "conexion.php"; // Archivo que maneja la conexión a Oracle
 
-function IngresarUsuarioCliente($customer_id, $user_name, $user_email, $password, $name, $customer_phone) {
+function IngresarUsuarioCliente($customer_id, $name, $user_name, $user_email, $password, $customer_phone) {
     $retorno = false;
     $oConexion = conectar(); // Connect to Oracle
 
@@ -13,8 +13,8 @@ function IngresarUsuarioCliente($customer_id, $user_name, $user_email, $password
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
         // Insert into USERS table
-        $sqlUser = "INSERT INTO FIDE_SAMDESIGN.FIDE_USERS_TB (USER_NAME, USER_EMAIL, PASSWORD, STATUS_ID, ROLE_ID)
-                    VALUES (:user_name, :user_email, :password, 1, 3)";
+        $sqlUser = "INSERT INTO FIDE_SAMDESIGN.FIDE_USERS_TB (USER_NAME, USER_EMAIL, PASSWORD, STATUS_ID, ROL_ID, CREATED_BY, CREATED_ON)
+                    VALUES (:user_name, :user_email, :password, 1, 3, 'SELF-USER', CURRENT_TIMESTAMP)";
 
         $stmtUser = oci_parse($oConexion, $sqlUser);
         oci_bind_by_name($stmtUser, ":user_name", $user_name);
@@ -26,12 +26,12 @@ function IngresarUsuarioCliente($customer_id, $user_name, $user_email, $password
         }
 
         // Insert into CUSTOMERS table using full name
-        $sqlCustomer = "INSERT INTO FIDE_SAMDESIGN.FIDE_CUSTOMER_TB (CUSTOMER_ID, CUSTOMER_NAME, CUSTOMER_EMAIL, CUSTOMER_PHONE_NUMBER, STATUS_ID)
-                        VALUES (:customer_id, :full_name, :customer_email, :customer_phone, 1)";
+        $sqlCustomer = "INSERT INTO FIDE_SAMDESIGN.FIDE_CUSTOMER_TB (CUSTOMER_ID, CUSTOMER_NAME, CUSTOMER_EMAIL, CUSTOMER_PHONE_NUMBER, STATUS_ID, CREATED_BY, CREATED_ON)
+                        VALUES (:customer_id, :full_name, :customer_email, :customer_phone, 1, 'SELF-USER', CURRENT_TIMESTAMP)";
 
         $stmtCustomer = oci_parse($oConexion, $sqlCustomer);
         oci_bind_by_name($stmtCustomer, ":customer_id", $customer_id);
-        oci_bind_by_name($stmtCustomer, ":name", $name); // Concatenated name
+        oci_bind_by_name($stmtCustomer, ":full_name", $name); // Concatenated name
         oci_bind_by_name($stmtCustomer, ":customer_email", $user_email);
         oci_bind_by_name($stmtCustomer, ":customer_phone", $customer_phone);
 

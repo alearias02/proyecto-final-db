@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if (!$mySession) {
             $errores[] = "Usuario no encontrado.";
-        } else if ($password !== $mySession['PASSWORD']) {
+        } elseif (!password_verify($password, $mySession['PASSWORD'])) {
             $errores[] = "Contraseña incorrecta.";
         } else {
             $_SESSION['usuario'] = array(
