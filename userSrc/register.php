@@ -85,6 +85,115 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <div class="input-form-login">
                     <input type="tel" class="input-login" name="tel" id="tel" placeholder="Ingrese su teléfono" required>
                 </div>
+                <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
+                Agregar su dirección:
+                </button>
+
+                <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+                <div class="offcanvas-header">
+                    <h5 id="offcanvasRightLabel">Agregue su dirección</h5>
+                    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
+                </div>
+                <div class="offcanvas-body">
+                <form id="addReservationForm" class="was-validated" enctype="multipart/form-data">
+                    <input type="hidden" name="action" value="insertar">
+                    <div class="modal-body text-center" style="background-color: #eee;">
+
+                        <!-- Fecha de inicio -->
+                        <div class="mb-3">
+                            <label for="startDate">Fecha de inicio</label>
+                            <input class="form-control" type="date" name="start_date" id="startDate" required />
+                        </div>
+
+                        <!-- Fecha de fin -->
+                        <div class="mb-3">
+                            <label for="endDate">Fecha final</label>
+                            <input class="form-control" type="date" name="end_date" id="endDate" required />
+                        </div>
+
+                        <!-- Cantidad de noches -->
+                        <div class="mb-3">
+                            <label for="qty_nights">Cantidad de noches</label>
+                            <input class="form-control mt-2" type="number" name="qty_nights" id="qty_nights" required>
+                        </div>
+
+                        <!-- Comentarios -->
+                        <div class="mb-3">
+                            <label for="comments">Comentarios</label>
+                            <textarea class="form-control mt-2" name="comments" id="comments" rows="3" required></textarea>
+                        </div>
+
+                        <!-- CLIENTE -->
+                        <div class="mb-3">
+                            <label for="reservation_customer_id">Cliente de la reserva</label>
+                            <select class="form-control mt-2" name="reservation_customer_id" id="reservation_customer_id" required>
+                                <option value="" disabled selected>Seleccione un cliente</option>
+                                <?php foreach ($customers as $customer): ?>
+                                    <option value="<?= $customer['CUSTOMER_ID']; ?>"><?= htmlspecialchars($customer['CUSTOMER_NAME']); ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+
+                        <!-- Habitación -->
+                        <div class="mb-3">
+                            <label for="room_id">Habitación</label>
+                            <select class="form-control mt-2" name="room_id" id="room_id" required>
+                                <option value="" disabled selected>Seleccione una habitación</option>
+                                <?php foreach ($rooms as $room): ?>
+                                    <option value="<?= $room['ROOM_ID']; ?>"><?= htmlspecialchars($room['ROOM']); ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+
+                        <!-- HOTEL -->
+                        <div class="mb-3">
+                            <label for="hotel_id">Hotel donde vacacionar</label>
+                            <select class="form-control mt-2" name="hotel_id" id="hotel_id" required>
+                                <option value="" disabled selected>Seleccione un hotel</option>
+                                <?php foreach ($hotels as $hotel): ?>
+                                    <option value="<?= $hotel['HOTEL_ID']; ?>"><?= htmlspecialchars($hotel['FULL_HOTELNAME']); ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+
+                        <!-- Estado de LA RESERVA -->
+                        <div class="mb-3">
+                            <label for="status_id">Estado de la reserva</label>
+                            <select class="form-control mt-2" name="status_id" id="status_id" required>
+                                <option value="" disabled selected>Seleccione un estado</option>
+                                <?php foreach ($statuses as $status): ?>
+                                    <option value="<?= $status['STATUS_ID']; ?>"><?= htmlspecialchars($status['STATUS_DESCRIPTION']); ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+
+                        <!-- tipo de pago -->
+                        <div class="mb-3">
+                            <label for="payment_method_id">Metodo de pago</label>
+                            <select class="form-control mt-2" name="payment_method_id" id="payment_method_id" required>
+                                <option value="" disabled selected>Seleccione un tipo de pago</option>
+                                <?php foreach ($payMethods as $payMethod): ?>
+                                    <option value="<?= $payMethod['PAYMENT_METHOD_ID']; ?>"><?= htmlspecialchars($payMethod['PAYMENT_METHOD_NAME']); ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+
+                        <!-- Creado por -->
+                        <div class="mb-3">
+                            <label for="created_by">Creado por</label>
+                            <input type="text" class="form-control mt-2" name="created_by" id="created_by" placeholder="Ingrese su nombre" required />
+                        </div>
+
+                    </div>
+                    <div class="modal-footer justify-content-center">
+                        <button type="submit" class="btn btn-primary">Crear</button>
+                    </div>
+                </form>
+
+                </div>
+                </div>
+
+                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
                 <label for="password" class="label-login required-label">Contraseña</label>
                 <div class="input-form-login">

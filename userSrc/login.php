@@ -66,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </div>
 
                 <button type="submit" class="button-submit">Iniciar Sesión</button>
-                <p class="p">¿No tienes cuenta? <span class="span"><a href="register.php">Regístrate aquí</a></span></p>
+                <p class="p">¿No tienes cuenta? <span class="span"><a href="register.php">Regístrate aquí</a></span></p><p class="p">¿Olvidaste tu contraseña? <span class="span"><a href="register.php">Restaura tu contraseña aquí</a></span></p>
                 
                 <?php if (!empty($errores)): ?>
                     <div class="errores">

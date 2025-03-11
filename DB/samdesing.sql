@@ -64,7 +64,7 @@ VALUES
 -- ('6','Camisa',true),
 -- ('7','Impermeable',true);
 
-
+--PRODUCTOS
 -- INSERT INTO sam_design.camisa (id_camisa,id_categoria,descripcion,detalle,talla,precio,existencias,ruta_imagen,activo) VALUES 
 -- ('1',6,'Vue JS','Camisa con logo de VueJS', 'L','12000','5','https://firebasestorage.googleapis.com/v0/b/sam-design-a951a.appspot.com/o/SAM%20DESIGN%2FCamisa%2F1.jpg?alt=media&token=0b6f8618-b8d1-4312-b624-a2039cca0874',true),
 -- ('2',6,'Angular','Camisa con logo de Angular', 'M','12000','10','https://firebasestorage.googleapis.com/v0/b/sam-design-a951a.appspot.com/o/SAM%20DESIGN%2FCamisa%2F2.jpg?alt=media&token=485172d4-b682-4058-9c05-97d2df0d359f',true),

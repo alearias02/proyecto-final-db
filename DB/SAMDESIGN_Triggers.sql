@@ -4,7 +4,20 @@ BEFORE INSERT ON FIDE_USERS_TB
 FOR EACH ROW
 BEGIN
     IF :NEW.user_id IS NULL THEN
-        SELECT NVL(MAX(user_id), 0) + 1 INTO :NEW.user_id FROM users_tb;
+        SELECT NVL(MAX(user_id), 0) + 1 INTO :NEW.user_id FROM FIDE_USERS_TB;
     END IF;
 END;
 /
+
+-- Trigger para la tabla address_tb
+CREATE OR REPLACE TRIGGER FIDE_ADDRESS_TB_ID_TRG
+BEFORE INSERT ON FIDE_ADDRESS_TB
+FOR EACH ROW
+BEGIN
+    IF :NEW.address_id IS NULL THEN
+        SELECT NVL(MAX(address_id), 0) + 1 INTO :NEW.address_id FROM FIDE_ADDRESS_TB;
+    END IF;
+END;
+/
+
+commit;

@@ -35,18 +35,17 @@ function obtenerDetallesDireccion($address_id) {
 }
 
 // Insertar un direccion
-function IngresarDireccion($address_id, $address, $id_state, $id_city, $id_country, $id_customer, $zip_code ) {
+function IngresarDireccion( $address, $id_state, $id_city, $id_country, $id_customer, $zip_code ) {
     $retorno = false;
 
     try {
         $oConexion = conectar();
-        $sql = "INSERT INTO FIDE_SAMDESIGN.fide_address_tb (address_id, address, id_state, id_city, id_country, id_customer, zip_code)
-                VALUES (:address_id, :address, :id_state, :id_city, :id_country, :id_customer, :zip_code)";
+        $sql = "INSERT INTO FIDE_SAMDESIGN.fide_address_tb ( address, id_state, id_city, id_country, id_customer, zip_code, created_by, created_on)
+                VALUES ( :address, :id_state, :id_city, :id_country, :id_customer, :zip_code, 'SELF-USER', CURRENT_TIMESTAMP)";
 
         $stmt = oci_parse($oConexion, $sql);
 
         // Vincular parámetros
-        oci_bind_by_name($stmt, ":address_id", $address_id);
         oci_bind_by_name($stmt, ":address", $address);
         oci_bind_by_name($stmt, ":id_state", $id_state);
         oci_bind_by_name($stmt, ":id_city", $id_city);
@@ -76,7 +75,7 @@ function eliminarDireccion($address_id) {
         $oConexion = conectar();
         $sql = "UPDATE FIDE_SAMDESIGN.fide_address_tb
                 SET status_id = 0,
-                    modified_on = SYSDATE
+                    modified_on = CURRENT_TIMESTAMP
                 WHERE address_id = :address_id";
         $stmt = oci_parse($oConexion, $sql);
 
