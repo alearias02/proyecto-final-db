@@ -1,4 +1,5 @@
 <?php 
+require_once "../DAL/database.php";
 require_once "../include/templates/headerUser.php";
 require_once "../include/functions/recoge.php";
 require_once "../DAL/users.php";
@@ -44,6 +45,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
 }
+// Conectar a la base de datos
+$connection = conectar();
+
+
+// Consultas
+$countries = fetchAll($connection, "SELECT COUNTRY_ID, NAME FROM FIDE_SAMDESIGN.FIDE_COUNTRIES_TB");
+$provincias = fetchAll($connection, "SELECT STATE_ID, NAME FROM FIDE_SAMDESIGN.FIDE_STATE_ADDRESS_TB");
+
+
 ?>
 
 <!DOCTYPE html>
@@ -95,52 +105,34 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
                 </div>
                 <div class="offcanvas-body">
-                <form id="addReservationForm" class="was-validated" enctype="multipart/form-data">
+                <form id="addAddressForm" class="was-validated" enctype="multipart/form-data">
                     <input type="hidden" name="action" value="insertar">
                     <div class="modal-body text-center" style="background-color: #eee;">
 
-                        <!-- Fecha de inicio -->
-                        <div class="mb-3">
-                            <label for="startDate">Fecha de inicio</label>
-                            <input class="form-control" type="date" name="start_date" id="startDate" required />
-                        </div>
-
-                        <!-- Fecha de fin -->
-                        <div class="mb-3">
-                            <label for="endDate">Fecha final</label>
-                            <input class="form-control" type="date" name="end_date" id="endDate" required />
-                        </div>
-
-                        <!-- Cantidad de noches -->
-                        <div class="mb-3">
-                            <label for="qty_nights">Cantidad de noches</label>
-                            <input class="form-control mt-2" type="number" name="qty_nights" id="qty_nights" required>
-                        </div>
-
                         <!-- Comentarios -->
                         <div class="mb-3">
-                            <label for="comments">Comentarios</label>
-                            <textarea class="form-control mt-2" name="comments" id="comments" rows="3" required></textarea>
+                            <label for="address">Direccion Especifica:</label>
+                            <textarea class="form-control mt-2" name="address" id="address" rows="3" required></textarea>
                         </div>
 
-                        <!-- CLIENTE -->
+                        <!-- Country -->
                         <div class="mb-3">
-                            <label for="reservation_customer_id">Cliente de la reserva</label>
-                            <select class="form-control mt-2" name="reservation_customer_id" id="reservation_customer_id" required>
-                                <option value="" disabled selected>Seleccione un cliente</option>
-                                <?php foreach ($customers as $customer): ?>
-                                    <option value="<?= $customer['CUSTOMER_ID']; ?>"><?= htmlspecialchars($customer['CUSTOMER_NAME']); ?></option>
+                            <label for="id_country">Pais:</label>
+                            <select class="form-control mt-2" name="id_country" id="id_country" required>
+                                <option value="" disabled selected>Seleccione un pais</option>
+                                <?php foreach ($countries as $country): ?>
+                                    <option value="<?= $country['COUNTRY_ID']; ?>"><?= htmlspecialchars($country['NAME']); ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
 
-                        <!-- Habitación -->
+                        <!-- Provincias -->
                         <div class="mb-3">
-                            <label for="room_id">Habitación</label>
-                            <select class="form-control mt-2" name="room_id" id="room_id" required>
-                                <option value="" disabled selected>Seleccione una habitación</option>
-                                <?php foreach ($rooms as $room): ?>
-                                    <option value="<?= $room['ROOM_ID']; ?>"><?= htmlspecialchars($room['ROOM']); ?></option>
+                            <label for="state_id">Provincia:</label>
+                            <select class="form-control mt-2" name="state_id" id="state_id" required>
+                                <option value="" disabled selected>Seleccione una provincia</option>
+                                <?php foreach ($provincias as $provincia): ?>
+                                    <option value="<?= $provincia['STATE_ID']; ?>"><?= htmlspecialchars($provincia['NAME']); ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
