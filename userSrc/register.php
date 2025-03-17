@@ -52,6 +52,7 @@ $connection = conectar();
 // Consultas
 $countries = fetchAll($connection, "SELECT COUNTRY_ID, NAME FROM FIDE_SAMDESIGN.FIDE_COUNTRIES_TB");
 $provincias = fetchAll($connection, "SELECT STATE_ID, NAME FROM FIDE_SAMDESIGN.FIDE_STATE_ADDRESS_TB");
+$cantones = fetchAll($connection, "SELECT CITY_ID, NAME FROM FIDE_SAMDESIGN.FIDE_CITY_ADDRESS_TB");
 
 
 ?>
@@ -107,12 +108,13 @@ $provincias = fetchAll($connection, "SELECT STATE_ID, NAME FROM FIDE_SAMDESIGN.F
                 <div class="offcanvas-body">
                 <form id="addAddressForm" class="was-validated" enctype="multipart/form-data">
                     <input type="hidden" name="action" value="insertar">
+                    <input type="hidden" name="customer_id" id="address_customer_id" value=""> <!-- Nuevo campo oculto -->
                     <div class="modal-body text-center" style="background-color: #eee;">
 
                         <!-- Comentarios -->
                         <div class="mb-3">
                             <label for="address">Direccion Especifica:</label>
-                            <textarea class="form-control mt-2" name="address" id="address" rows="3" required></textarea>
+                            <textarea class="form-control mt-2" name="address" id="address" rows="3" required placeholder="Señas adicionales"></textarea>
                         </div>
 
                         <!-- Country -->
@@ -137,45 +139,22 @@ $provincias = fetchAll($connection, "SELECT STATE_ID, NAME FROM FIDE_SAMDESIGN.F
                             </select>
                         </div>
 
-                        <!-- HOTEL -->
+                        <!-- CANTON -->
                         <div class="mb-3">
-                            <label for="hotel_id">Hotel donde vacacionar</label>
-                            <select class="form-control mt-2" name="hotel_id" id="hotel_id" required>
-                                <option value="" disabled selected>Seleccione un hotel</option>
-                                <?php foreach ($hotels as $hotel): ?>
-                                    <option value="<?= $hotel['HOTEL_ID']; ?>"><?= htmlspecialchars($hotel['FULL_HOTELNAME']); ?></option>
+                            <label for="city_id">Canton:</label>
+                            <select class="form-control mt-2" name="city_id" id="city_id" required>
+                                <option value="" disabled selected>Seleccione un canton</option>
+                                <?php foreach ($cantones as $canton): ?>
+                                    <option value="<?= $canton['CITY_ID']; ?>"><?= htmlspecialchars($canton['NAME']); ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
 
-                        <!-- Estado de LA RESERVA -->
+                        <!-- ZIPCODE -->
                         <div class="mb-3">
-                            <label for="status_id">Estado de la reserva</label>
-                            <select class="form-control mt-2" name="status_id" id="status_id" required>
-                                <option value="" disabled selected>Seleccione un estado</option>
-                                <?php foreach ($statuses as $status): ?>
-                                    <option value="<?= $status['STATUS_ID']; ?>"><?= htmlspecialchars($status['STATUS_DESCRIPTION']); ?></option>
-                                <?php endforeach; ?>
-                            </select>
+                            <label for="zip_code">Codigo Postal:</label>
+                            <input class="form-control mt-2" name="zip_code" id="zip_code" rows="1" required placeholder="Su codigo postal"></input>
                         </div>
-
-                        <!-- tipo de pago -->
-                        <div class="mb-3">
-                            <label for="payment_method_id">Metodo de pago</label>
-                            <select class="form-control mt-2" name="payment_method_id" id="payment_method_id" required>
-                                <option value="" disabled selected>Seleccione un tipo de pago</option>
-                                <?php foreach ($payMethods as $payMethod): ?>
-                                    <option value="<?= $payMethod['PAYMENT_METHOD_ID']; ?>"><?= htmlspecialchars($payMethod['PAYMENT_METHOD_NAME']); ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-
-                        <!-- Creado por -->
-                        <div class="mb-3">
-                            <label for="created_by">Creado por</label>
-                            <input type="text" class="form-control mt-2" name="created_by" id="created_by" placeholder="Ingrese su nombre" required />
-                        </div>
-
                     </div>
                     <div class="modal-footer justify-content-center">
                         <button type="submit" class="btn btn-primary">Crear</button>
@@ -205,3 +184,13 @@ $provincias = fetchAll($connection, "SELECT STATE_ID, NAME FROM FIDE_SAMDESIGN.F
     </main>
 </body>
 </html>
+
+<script>
+    //para asignarle el valor del customer_id en el address
+    document.getElementById('customer_id').addEventListener('input', function(){
+        document.getElementById('address_customer_id').value = this.value;
+    });
+
+    
+</script>
+
