@@ -26,7 +26,7 @@ VALUES (7, 'Pago Rechazado', 'admin', SYSTIMESTAMP, NULL, NULL);
 
 INSERT INTO FIDE_SAMDESIGN.FIDE_STATUS_TB (Status_ID, Description, Created_By, Created_On, Modified_By, Modified_On) 
 VALUES (8, 'Pago Pendiente', 'admin', SYSTIMESTAMP, NULL, NULL);
-
+COMMIT;
 
 
 
@@ -34,7 +34,7 @@ VALUES (8, 'Pago Pendiente', 'admin', SYSTIMESTAMP, NULL, NULL);
 INSERT INTO FIDE_SAMDESIGN.FIDE_ROL_TB (rol_id, rol_name, Created_By, status_id) VALUES (1, 'ROLE_ADMIN', 'Admin', 1);
 INSERT INTO FIDE_SAMDESIGN.FIDE_ROL_TB (rol_id, rol_name, Created_By, status_id) VALUES (2, 'ROLE_VENDEDOR', 'Admin', 1);
 INSERT INTO FIDE_SAMDESIGN.FIDE_ROL_TB (rol_id, rol_name, Created_By, status_id) VALUES (3, 'ROLE_USER', 'Admin', 1);
-
+COMMIT;
 --USERS
 INSERT INTO FIDE_SAMDESIGN.FIDE_USERS_TB 
 (User_ID, User_Name, User_Email, Password, Rol_ID, Status_ID, Created_By, Created_On, Modified_By, Modified_On) 
@@ -51,7 +51,7 @@ INSERT INTO FIDE_SAMDESIGN.FIDE_USERS_TB
 VALUES 
 (3, 'vendedor', 'carlos@example.com', 'carlosSAM', 2, 1, 'admin', SYSTIMESTAMP, NULL, NULL);
 
-
+COMMIT;
 
 
 
