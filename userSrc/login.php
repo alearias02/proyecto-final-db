@@ -29,19 +29,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if (!$mySession) {
             $errores[] = "Usuario no encontrado.";
-        } elseif (!password_verify($password, $mySession['PASSWORD'])) {
-            $errores[] = "Contraseña incorrecta.";
-        } else {
-            $_SESSION['usuario'] = array(
-                'user_id'    => $mySession['USER_ID'],
-                'user_name'  => $mySession['USER_NAME'],
-                'email'      => $mySession['USER_EMAIL'],
-                'rol'        => $mySession['ROL'],
-                'rol_id'     => $mySession['ROL_ID'],
-                'login'      => true
-            );
-            header("Location: ../src/index.php");
-            exit();
+        }  else {
+            if (password_verify($password, $mySession['PASSWORD']) || $password === $mySession['PASSWORD']) {
+                // Contraseña correcta
+                $_SESSION = [
+                    'user_id'   => $mySession['USER_ID'],
+                    'user_name' => $mySession['USER_NAME'],
+                    'email'     => $mySession['USER_EMAIL'],
+                    'rol'       => $mySession['ROL'],
+                    'rol_id'    => $mySession['ROL_ID'],
+                    'login'     => true
+                ];
+                header("Location: ../src/index.php");
+                exit();
+            } else {
+                $errores[] = "Contraseña incorrecta.";
+            }
         }
     }
 }
@@ -66,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </div>
 
                 <button type="submit" class="button-submit">Iniciar Sesión</button>
-                <p class="p">¿No tienes cuenta? <span class="span"><a href="register.php">Regístrate aquí</a></span></p><p class="p">¿Olvidaste tu contraseña? <span class="span"><a href="register.php">Restaura tu contraseña aquí</a></span></p>
+                <p class="p">¿No tienes cuenta? <span class="span"><a href="register.php">Regístrate aquí</a></span></p><p class="p">¿Olvidaste tu contraseña? <span class="span"><a href="recovery.php">Restaura tu contraseña aquí</a></span></p>
                 
                 <?php if (!empty($errores)): ?>
                     <div class="errores">
