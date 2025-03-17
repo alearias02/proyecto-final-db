@@ -285,9 +285,7 @@ CREATE OR REPLACE PROCEDURE INSERTAR_FIDE_CUSTOMER_TB_SP
     P_CUSTOMER_PHONE_NUMBER IN VARCHAR2,
     P_STATUS_ID             IN NUMBER,
     P_CREATED_BY            IN VARCHAR2,
-    P_CREATED_ON            IN TIMESTAMP,
-    P_MODIFIED_BY           IN VARCHAR2,
-    P_MODIFIED_ON           IN TIMESTAMP
+    P_CREATED_ON            IN TIMESTAMP
 )
 IS
 BEGIN
@@ -299,9 +297,7 @@ BEGIN
         Customer_Phone_number,
         Status_ID,
         Created_By,
-        Created_On,
-        Modified_By,
-        Modified_On
+        Created_On
     )
     VALUES
     (
@@ -311,9 +307,7 @@ BEGIN
         P_CUSTOMER_PHONE_NUMBER,
         P_STATUS_ID,
         P_CREATED_BY,
-        P_CREATED_ON,
-        P_MODIFIED_BY,
-        P_MODIFIED_ON
+        P_CREATED_ON
     );
     COMMIT;
 END INSERTAR_FIDE_CUSTOMER_TB_SP;
@@ -331,8 +325,6 @@ CREATE OR REPLACE PROCEDURE INSERTAR_FIDE_ADDRESS_TB_SP
     P_STATUS_ID    IN NUMBER,
     P_CREATED_BY   IN VARCHAR2,
     P_CREATED_ON   IN TIMESTAMP,
-    P_MODIFIED_BY  IN VARCHAR2,
-    P_MODIFIED_ON  IN TIMESTAMP,
     P_ID_CUSTOMER  IN NUMBER
 )
 IS
@@ -348,8 +340,6 @@ BEGIN
         Status_ID,
         Created_By,
         Created_On,
-        Modified_By,
-        Modified_On,
         ID_Customer
     )
     VALUES
@@ -363,8 +353,6 @@ BEGIN
         P_STATUS_ID,
         P_CREATED_BY,
         P_CREATED_ON,
-        P_MODIFIED_BY,
-        P_MODIFIED_ON,
         P_ID_CUSTOMER
     );
     COMMIT;
@@ -384,9 +372,7 @@ CREATE OR REPLACE PROCEDURE INSERTAR_FIDE_PRODUCT_TB_SP
     P_TOTAL_QTY        IN NUMBER,
     P_STATUS_ID        IN NUMBER,
     P_CREATED_BY       IN VARCHAR2,
-    P_CREATED_ON       IN DATE,
-    P_MODIFIED_BY      IN VARCHAR2,
-    P_MODIFIED_ON      IN DATE
+    P_CREATED_ON       IN DATE
 )
 IS
 BEGIN
@@ -402,9 +388,7 @@ BEGIN
         Total_Qty,
         Status_ID,
         Created_By,
-        Created_On,
-        Modified_By,
-        Modified_On
+        Created_On
     )
     VALUES
     (
@@ -418,9 +402,7 @@ BEGIN
         P_TOTAL_QTY,
         P_STATUS_ID,
         P_CREATED_BY,
-        P_CREATED_ON,
-        P_MODIFIED_BY,
-        P_MODIFIED_ON
+        P_CREATED_ON
     );
     COMMIT;
 END INSERTAR_FIDE_PRODUCT_TB_SP;
@@ -438,9 +420,7 @@ CREATE OR REPLACE PROCEDURE INSERTAR_FIDE_INVENTORY_TB_SP
     P_STATUS_ID          IN NUMBER,
     P_LAST_RESTOCK       IN TIMESTAMP,
     P_CREATED_BY         IN VARCHAR2,
-    P_CREATED_ON         IN TIMESTAMP,
-    P_MODIFIED_BY        IN VARCHAR2,
-    P_MODIFIED_ON        IN TIMESTAMP
+    P_CREATED_ON         IN TIMESTAMP
 )
 IS
 BEGIN
@@ -455,9 +435,7 @@ BEGIN
         Status_ID,
         Last_Restock,
         Created_By,
-        Created_On,
-        Modified_By,
-        Modified_On
+        Created_On
     )
     VALUES
     (
@@ -470,9 +448,7 @@ BEGIN
         P_STATUS_ID,
         P_LAST_RESTOCK,
         P_CREATED_BY,
-        P_CREATED_ON,
-        P_MODIFIED_BY,
-        P_MODIFIED_ON
+        P_CREATED_ON
     );
     COMMIT;
 END INSERTAR_FIDE_INVENTORY_TB_SP;
@@ -491,9 +467,7 @@ CREATE OR REPLACE PROCEDURE INSERTAR_FIDE_INVENTORY_LINES_TB_SP
     P_STATUS_ID          IN NUMBER,
     P_LAST_RESORT        IN TIMESTAMP,
     P_CREATED_BY         IN VARCHAR2,
-    P_CREATED_ON         IN TIMESTAMP,
-    P_MODIFIED_BY        IN VARCHAR2,
-    P_MODIFIED_ON        IN TIMESTAMP
+    P_CREATED_ON         IN TIMESTAMP
 )
 IS
 BEGIN
@@ -509,9 +483,7 @@ BEGIN
         Status_ID,
         Last_Resort,
         Created_By,
-        Created_On,
-        Modified_By,
-        Modified_On
+        Created_On
     )
     VALUES
     (
@@ -525,9 +497,7 @@ BEGIN
         P_STATUS_ID,
         P_LAST_RESORT,
         P_CREATED_BY,
-        P_CREATED_ON,
-        P_MODIFIED_BY,
-        P_MODIFIED_ON
+        P_CREATED_ON
     );
     COMMIT;
 END INSERTAR_FIDE_INVENTORY_LINES_TB_SP;
@@ -547,9 +517,7 @@ CREATE OR REPLACE PROCEDURE INSERTAR_FIDE_ORDER_TB_SP
     P_STATUS_ID         IN NUMBER,
     P_PAYMENT_METHOD_ID IN NUMBER,
     P_CREATED_ON        IN TIMESTAMP,
-    P_CREATED_BY        IN VARCHAR2,
-    P_MODIFIED_ON       IN TIMESTAMP,
-    P_MODIFIED_BY       IN VARCHAR2
+    P_CREATED_BY        IN VARCHAR2
 )
 IS
 BEGIN
@@ -566,9 +534,7 @@ BEGIN
         Status_ID,
         Payment_Method_ID,
         Created_On,
-        Created_By,
-        Modified_On,
-        Modified_By
+        Created_By
     )
     VALUES
     (
@@ -583,9 +549,7 @@ BEGIN
         P_STATUS_ID,
         P_PAYMENT_METHOD_ID,
         P_CREATED_ON,
-        P_CREATED_BY,
-        P_MODIFIED_ON,
-        P_MODIFIED_BY
+        P_CREATED_BY
     );
     COMMIT;
 END INSERTAR_FIDE_ORDER_TB_SP;
@@ -602,9 +566,7 @@ CREATE OR REPLACE PROCEDURE INSERTAR_FIDE_ORDER_LINES_TB_SP
     P_STATUS_ID     IN NUMBER,
     P_TOTAL_PRICE   IN NUMBER,
     P_CREATED_ON    IN TIMESTAMP,
-    P_CREATED_BY    IN VARCHAR2,
-    P_MODIFIED_ON   IN TIMESTAMP,
-    P_MODIFIED_BY   IN VARCHAR2
+    P_CREATED_BY    IN VARCHAR2
 )
 IS
 BEGIN
@@ -618,9 +580,7 @@ BEGIN
         Status_ID,
         Total_Price,
         Created_On,
-        Created_By,
-        Modified_On,
-        Modified_By
+        Created_By
     )
     VALUES
     (
@@ -632,9 +592,7 @@ BEGIN
         P_STATUS_ID,
         P_TOTAL_PRICE,
         P_CREATED_ON,
-        P_CREATED_BY,
-        P_MODIFIED_ON,
-        P_MODIFIED_BY
+        P_CREATED_BY
     );
     COMMIT;
 END INSERTAR_FIDE_ORDER_LINES_TB_SP;
@@ -653,9 +611,7 @@ CREATE OR REPLACE PROCEDURE INSERTAR_FIDE_BILLING_TB_SP
     P_STATUS_ID          IN NUMBER,
     P_PAYMENT_METHOD_ID  IN NUMBER,
     P_CREATED_ON         IN TIMESTAMP,
-    P_CREATED_BY         IN VARCHAR2,
-    P_MODIFIED_ON        IN TIMESTAMP,
-    P_MODIFIED_BY        IN VARCHAR2
+    P_CREATED_BY         IN VARCHAR2
 )
 IS
 BEGIN
@@ -671,9 +627,7 @@ BEGIN
         Status_ID,
         Payment_Method_ID,
         Created_On,
-        Created_By,
-        Modified_On,
-        Modified_By
+        Created_By
     )
     VALUES
     (
@@ -687,9 +641,7 @@ BEGIN
         P_STATUS_ID,
         P_PAYMENT_METHOD_ID,
         P_CREATED_ON,
-        P_CREATED_BY,
-        P_MODIFIED_ON,
-        P_MODIFIED_BY
+        P_CREATED_BY
     );
     COMMIT;
 END INSERTAR_FIDE_BILLING_TB_SP;
@@ -706,9 +658,7 @@ CREATE OR REPLACE PROCEDURE INSERTAR_FIDE_CART_TB_SP
     P_STATUS_ID         IN NUMBER,
     P_PAYMENT_METHOD_ID IN NUMBER,
     P_CREATED_ON        IN TIMESTAMP,
-    P_CREATED_BY        IN VARCHAR2,
-    P_MODIFIED_ON       IN TIMESTAMP,
-    P_MODIFIED_BY       IN VARCHAR2
+    P_CREATED_BY        IN VARCHAR2
 )
 IS
 BEGIN
@@ -722,9 +672,7 @@ BEGIN
         Status_ID,
         Payment_Method_ID,
         Created_On,
-        Created_By,
-        Modified_On,
-        Modified_By
+        Created_By
     )
     VALUES
     (
@@ -736,9 +684,7 @@ BEGIN
         P_STATUS_ID,
         P_PAYMENT_METHOD_ID,
         P_CREATED_ON,
-        P_CREATED_BY,
-        P_MODIFIED_ON,
-        P_MODIFIED_BY
+        P_CREATED_BY
     );
     COMMIT;
 END INSERTAR_FIDE_CART_TB_SP;
@@ -755,9 +701,7 @@ CREATE OR REPLACE PROCEDURE INSERTAR_FIDE_CART_LINES_TB_SP
     P_STATUS_ID    IN NUMBER,
     P_TOTAL_PRICE  IN NUMBER,
     P_CREATED_ON   IN TIMESTAMP,
-    P_CREATED_BY   IN VARCHAR2,
-    P_MODIFIED_ON  IN TIMESTAMP,
-    P_MODIFIED_BY  IN VARCHAR2
+    P_CREATED_BY   IN VARCHAR2
 )
 IS
 BEGIN
@@ -771,9 +715,7 @@ BEGIN
         Status_ID,
         Total_Price,
         Created_On,
-        Created_By,
-        Modified_On,
-        Modified_By
+        Created_By
     )
     VALUES
     (
@@ -785,9 +727,7 @@ BEGIN
         P_STATUS_ID,
         P_TOTAL_PRICE,
         P_CREATED_ON,
-        P_CREATED_BY,
-        P_MODIFIED_ON,
-        P_MODIFIED_BY
+        P_CREATED_BY
     );
     COMMIT;
 END INSERTAR_FIDE_CART_LINES_TB_SP;
@@ -803,9 +743,7 @@ CREATE OR REPLACE PROCEDURE INSERTAR_FIDE_SPECIAL_ORDER_TB_SP
     P_COMMENTS    IN VARCHAR2,
     P_STATUS_ID   IN NUMBER,
     P_CREATED_ON  IN TIMESTAMP,
-    P_CREATED_BY  IN VARCHAR2,
-    P_MODIFIED_ON IN TIMESTAMP,
-    P_MODIFIED_BY IN VARCHAR2
+    P_CREATED_BY  IN VARCHAR2
 )
 IS
 BEGIN
@@ -818,9 +756,7 @@ BEGIN
         Comments,
         Status_ID,
         Created_On,
-        Created_By,
-        Modified_On,
-        Modified_By
+        Created_By
     )
     VALUES
     (
@@ -831,9 +767,7 @@ BEGIN
         P_COMMENTS,
         P_STATUS_ID,
         P_CREATED_ON,
-        P_CREATED_BY,
-        P_MODIFIED_ON,
-        P_MODIFIED_BY
+        P_CREATED_BY
     );
     COMMIT;
 END INSERTAR_FIDE_SPECIAL_ORDER_TB_SP;
