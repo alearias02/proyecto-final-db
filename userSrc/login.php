@@ -32,14 +32,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }  else {
             if (password_verify($password, $mySession['PASSWORD']) || $password === $mySession['PASSWORD']) {
                 // Contraseña correcta
-                $_SESSION = [
+                $_SESSION['usuario'] = [
                     'user_id'   => $mySession['USER_ID'],
                     'user_name' => $mySession['USER_NAME'],
                     'email'     => $mySession['USER_EMAIL'],
                     'rol'       => $mySession['ROL'],
                     'rol_id'    => $mySession['ROL_ID'],
                     'login'     => true
-                ];
+                ];                
                 header("Location: ../src/index.php");
                 exit();
             } else {
