@@ -35,13 +35,13 @@ function obtenerDetallesDireccion($address_id) {
 }
 
 // Insertar un direccion
-function IngresarDireccion( $address, $id_state, $id_city, $id_country, $id_customer, $zip_code ) {
+function IngresarDireccion( $address, $id_state, $id_city, $id_country, $zip_code, $id_customer ) {
     $retorno = false;
 
     try {
         $oConexion = conectar();
-        $sql = "INSERT INTO FIDE_SAMDESIGN.fide_address_tb ( address, id_state, id_city, id_country, id_customer, zip_code, created_by, created_on)
-                VALUES ( :address, :id_state, :id_city, :id_country, :id_customer, :zip_code, 'SELF-USER', CURRENT_TIMESTAMP)";
+        $sql = "INSERT INTO FIDE_SAMDESIGN.fide_address_tb ( address, id_state, id_city, id_country, zip_code, created_by, created_on, id_customer)
+                VALUES ( :address, :id_state, :id_city, :id_country, :zip_code, 'SELF-USER', CURRENT_TIMESTAMP, :id_customer)";
 
         $stmt = oci_parse($oConexion, $sql);
 
@@ -50,8 +50,8 @@ function IngresarDireccion( $address, $id_state, $id_city, $id_country, $id_cust
         oci_bind_by_name($stmt, ":id_state", $id_state);
         oci_bind_by_name($stmt, ":id_city", $id_city);
         oci_bind_by_name($stmt, ":id_country", $id_country);
+        oci_bind_by_name($stmt, ":zip_code", $zip_code);        
         oci_bind_by_name($stmt, ":id_customer", $id_customer);
-        oci_bind_by_name($stmt, ":zip_code", $zip_code);
 
         // Ejecutar la consulta
         if (oci_execute($stmt)) {
@@ -181,8 +181,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"])) {
             $_POST["ID_STATE"],
             $_POST["ID_CITY"],
             $_POST["ID_COUNTRY"],
-            $_POST["ID_CUSTOMER"],
-            $_POST["ZIP_CODE"]
+            $_POST["ZIP_CODE"],
+            $_POST["ID_CUSTOMER"]
             );
     
         // Envía la respuesta adecuada
@@ -194,17 +194,41 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"])) {
         }
         exit;
     } elseif ($action == "insertar") {
-
+        error_log("Datos recibidos en insertar: " . json_encode($_POST));
+    
+        // Verificar si customer_id es válido
+        if (!isset($_POST["ID_CUSTOMER"]) || empty($_POST["ID_CUSTOMER"])) {
+            http_response_code(400);
+            echo "Error: El ID del usuario es obligatorio.";
+            exit;
+        }
+    
+        // Verificar los otros campos
+        $required_fields = ["ADDRESS", "ID_STATE", "ID_CITY", "ID_COUNTRY", "ZIP_CODE"];
+        foreach ($required_fields as $field) {
+            if (!isset($_POST[$field]) || empty(trim($_POST[$field]))) {
+                http_response_code(400);
+                echo "Error: El campo $field es obligatorio.";
+                exit;
+            }
+        }
+    
+        // Insertar dirección en la BD
         $insertado = IngresarDireccion(
-            $_POST["ADDRESS_ID"],
             $_POST["ADDRESS"],
             $_POST["ID_STATE"],
             $_POST["ID_CITY"],
             $_POST["ID_COUNTRY"],
-            $_POST["ID_CUSTOMER"],
-            $_POST["ZIP_CODE"]
-            );
-        echo $insertado ? "Direccion insertada correctamente" : "Error al insertar direccion";
+            $_POST["ZIP_CODE"],
+            $_POST["ID_CUSTOMER"]
+        );
+    
+        if ($insertado) {
+            echo "Direccion insertada correctamente";
+        } else {
+            http_response_code(500);
+            echo "Error al insertar direccion";
+        }
     } else {
         echo "Acción no válida";
     }
