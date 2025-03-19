@@ -117,7 +117,7 @@ if (isset($_SESSION['usuario'])) {
                                 <div class="dropdown-menu shadow" style="border-radius: 0; border: none; background-color: #eee/#475a68" aria-labelledby="dropdownMenuLink">
                                     <a class="dropdown-item nav-link text-black" href="../../src/adminRepuestos.php">REPUESTOS</a>
                                     <a class="dropdown-item nav-link text-black" href="../../src/adminCamisas.php">CAMISAS</a>
-                                    <a class="dropdown-item nav-link text-black" href="../../src/adminImpermeables.php">IMPERMEABLES</a>
+                                    <a class="dropdown-item nav-link text-black" href="../../src/Inventario.php">INVENTARIO</a>
                                     <a class="dropdown-item nav-link text-black" href="../../src/adminVentas.php">REPORTE VENTAS</a>
                                     <a class="dropdown-item nav-link text-black" href="../../src/adminFacturas.php">REPORTE FACTURAS</a>
                                 </div>
