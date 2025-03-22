@@ -98,7 +98,7 @@ if (!is_array($oInventories) || empty($oInventories)) {
                                 <thead class="table-dark">
                                     <tr>
                                         <th>#</th>
-                                        <a href=""><th>Nombre</th></a>
+                                        <a href="../src/inventoryLines.php"><th>Nombre</th></a>
                                         <th>Ultimo restock</th>
                                         <th>Acciones</th>
                                     </tr>
@@ -111,9 +111,18 @@ if (!is_array($oInventories) || empty($oInventories)) {
                                                 <td><?= !empty($value['COMMENTS']) ? $value['COMMENTS'] : 'N/A'; ?></td>
                                                 <td><?= !empty($value['LAST_RESTOCK']) ? $value['LAST_RESTOCK'] : 'N/A'; ?></td>
                                                 <td>
+                                                    <!-- Botón para Ver Detalles -->
+                                                    <a href="inventoryLines.php?inventory_id=<?= urlencode($value['INVENTORY_ID']); ?>" 
+                                                    class="btn btn-info text-white">
+                                                        <i class="fas fa-box-open"></i> Ver Detalles
+                                                    </a>
+
+                                                    <!-- Botón para eliminar -->
                                                     <button id="eliminar" class="btn btn-danger" onclick="eliminarInventario(<?= $value['INVENTORY_ID']; ?>)">
                                                         <i class="fas fa-trash"></i> Eliminar
                                                     </button>
+
+                                                    <!-- Botón para actualizar -->
                                                     <a href="#" class="btn btn-success actualizarInventario" data-bs-toggle="modal" 
                                                     data-inventory-id="<?= $value['INVENTORY_ID']; ?>" 
                                                     data-bs-target="#modalUpdate3">
