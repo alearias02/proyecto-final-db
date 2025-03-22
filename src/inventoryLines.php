@@ -29,7 +29,7 @@ if (!$connection) {
 // Consulta paginada
 $inventoryQuery = "SELECT * FROM (
               SELECT a.*, ROWNUM rnum FROM (
-                  SELECT inventory_id, quantity_stock, last_restock, comments, 
+                  SELECT inventory_id, description, status_id,
                          created_by, created_on, modified_on, modified_by
                   FROM FIDE_SAMDESIGN.FIDE_INVENTORY_TB 
               ) a WHERE ROWNUM <= :max_row
@@ -108,15 +108,13 @@ if (!is_array($oInventories) || empty($oInventories)) {
                                         <?php foreach ($oInventories as $value): ?>
                                             <tr>
                                                 <td><?= !empty($value['INVENTORY_ID']) ? $value['INVENTORY_ID'] : 'N/A'; ?></td>
-                                                <td><?= !empty($value['COMMENTS']) ? $value['COMMENTS'] : 'N/A'; ?></td>
+                                                <td><?= !empty($value['DESCRIPTION']) ? $value['DESCRIPTION'] : 'N/A'; ?></td>
                                                 <td><?= !empty($value['LAST_RESTOCK']) ? $value['LAST_RESTOCK'] : 'N/A'; ?></td>
                                                 <td>
-                                                    <!-- Botón para Ver Detalles -->
-                                                    <a href="inventoryLines.php?inventory_id=<?= urlencode($value['INVENTORY_ID']); ?>" 
-                                                    class="btn btn-info text-white">
+                                                     <!-- Botón para Ver Detalles -->
+                                                    <a href="inventoryLines.php?inventory_id=<?= urlencode($value['INVENTORY_ID']); ?>" class="btn btn-info" style="display: inline-block;">
                                                         <i class="fas fa-box-open"></i> Ver Detalles
                                                     </a>
-
                                                     <!-- Botón para eliminar -->
                                                     <button id="eliminar" class="btn btn-danger" onclick="eliminarInventario(<?= $value['INVENTORY_ID']; ?>)">
                                                         <i class="fas fa-trash"></i> Eliminar
@@ -205,8 +203,8 @@ oci_close($connection);
                     <input type="hidden" name="created_by" value="<?= htmlspecialchars($user_name); ?>">
                     <!-- Comentarios -->
                     <div class="mb-3">
-                        <label for="comments">Nombre del inventario</label>
-                        <textarea class="form-control mt-2" name="comments" id="comments" rows="3" required></textarea>
+                        <label for="description">Nombre del inventario</label>
+                        <textarea class="form-control mt-2" name="description" id="description" rows="1" required></textarea>
                     </div>
 
                 </div>

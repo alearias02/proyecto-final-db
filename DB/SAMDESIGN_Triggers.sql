@@ -35,3 +35,16 @@ END;
 /
 
 commit;
+
+-- Trigger para la tabla inventory_LINES_tb
+CREATE OR REPLACE TRIGGER FIDE_INVENTORY_LINES_TB_ID_TRG
+BEFORE INSERT ON FIDE_INVENTORY_LINES_TB
+FOR EACH ROW
+BEGIN
+    IF :NEW.inventory_lines_id IS NULL THEN
+        SELECT NVL(MAX(inventory_lines_id), 0) + 1 INTO :NEW.inventory_lines_id FROM FIDE_INVENTORY_LINES_TB;
+    END IF;
+END;
+/
+
+commit;

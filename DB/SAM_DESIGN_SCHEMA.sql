@@ -199,6 +199,7 @@ CREATE TABLE FIDE_SAMDESIGN.FIDE_PRODUCT_TB (
     Quantity_OnHand  NUMBER,
     Quantity_Lend    NUMBER,
     Total_Qty        NUMBER,
+    Image_path       VARCHAR2(4000),
     Status_ID        NUMBER,
     Created_By       VARCHAR2(50),
     Created_On       DATE,
@@ -213,19 +214,12 @@ CREATE TABLE FIDE_SAMDESIGN.FIDE_PRODUCT_TB (
 -- 14
 CREATE TABLE FIDE_SAMDESIGN.FIDE_INVENTORY_TB (
     Inventory_ID       NUMBER CONSTRAINT FIDE_PK_INVENTORY_ID PRIMARY KEY,
-    Product_ID         NUMBER,
-    Comments           VARCHAR2(255),
-    Quantity_Stock     NUMBER,
-    Quantity_Reserved  NUMBER,
-    Quantity_Threshold NUMBER,
+    Description        VARCHAR2(255),
     Status_ID          NUMBER,
-    Last_Restock       TIMESTAMP,
     Created_By         VARCHAR2(50),
     Created_On         TIMESTAMP,
     Modified_By        VARCHAR2(50),
     Modified_On        TIMESTAMP,
-    CONSTRAINT FIDE_FK_INVENTORY_PRODUCT FOREIGN KEY (Product_ID) 
-        REFERENCES FIDE_SAMDESIGN.FIDE_PRODUCT_TB(Product_ID),
     CONSTRAINT FIDE_FK_INVENTORY_STATUS FOREIGN KEY (Status_ID) 
         REFERENCES FIDE_SAMDESIGN.FIDE_STATUS_TB(Status_ID)
 );

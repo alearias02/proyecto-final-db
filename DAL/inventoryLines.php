@@ -4,9 +4,10 @@ require_once "conexion.php"; // Archivo que maneja la conexión a Oracle
 
 
 // Función para obtener los detalles de una habitación
-function obtenerDetallesInventario($inventory_id) {
+function obtenerDetallesLineasInventario($inventory_id) {
     $oConexion = conectar();
     $sql = "SELECT 
+                inven
                 inventory_id,
                 description, 
                 status_id, 
@@ -30,18 +31,18 @@ function obtenerDetallesInventario($inventory_id) {
 }
 
 // Insertar una habitación
-function IngresarInventario($description, $created_by) {
+function IngresarInventario($comments, $created_by) {
     $retorno = false;
 
     try {
         $oConexion = conectar();
-        $sql = "INSERT INTO FIDE_SAMDESIGN.fide_inventory_tb (description, status_id, created_by)
-                VALUES (:description, 1, :created_by)";
+        $sql = "INSERT INTO FIDE_SAMDESIGN.fide_inventory_tb (comments, status_id, created_by)
+                VALUES (:comments, 1, :created_by)";
 
         $stmt = oci_parse($oConexion, $sql);
 
         // Vincular parámetros
-        oci_bind_by_name($stmt, ":description", $description);
+        oci_bind_by_name($stmt, ":comments", $comments);
         oci_bind_by_name($stmt, ":created_by", $created_by);
 
         // Ejecutar la consulta
@@ -178,7 +179,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"])) {
     } elseif ($action == "insertar") {
 
         $insertado = IngresarInventario(
-            $_POST["description"],
+            $_POST["comments"],
             $_POST["created_by"]
         );
         echo $insertado ? "Inventario insertado correctamente" : "Error al insertar el inventario";
