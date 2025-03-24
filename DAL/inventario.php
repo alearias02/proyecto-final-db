@@ -59,7 +59,7 @@ function IngresarInventario($description, $created_by) {
     return $retorno;
 }
 // Eliminar un producto
-function eliminarInventario($inventory_id) {
+function eliminarInventario($inventory_id, $modified_by) {
     $retorno = false;
 
     try {
@@ -73,6 +73,7 @@ function eliminarInventario($inventory_id) {
 
         // Vincular el parámetro
         oci_bind_by_name($stmt, ":inventory_id", $inventory_id);
+        oci_bind_by_name($stmt, ":modified_by", $modified_by);
 
         // Ejecutar la consulta
         if (oci_execute($stmt)) {
@@ -129,11 +130,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"])) {
     $action = $_POST["action"];
 
     if ($action == "eliminar" && isset($_POST["inventory_id"])) {
-        $room_id = $_POST["inventory_id"];
-        $eliminado = eliminarInventario($inventory_id);
+        $inventory_id = $_POST["inventory_id"];
+        $modified_by = $_POST['modified_by'];
+        $eliminado = eliminarInventario($inventory_id, $modified_by);
         echo $eliminado ? "El inventario ha sido eliminado exitosamente" : "Error al intentar eliminar el inventario";
     } elseif ($action == "obtenerDetalles" && isset($_POST["inventory_id"])) {
-        $room_id = $_POST["inventory_id"];
+        $inventory_id = $_POST["inventory_id"];
         error_log("Obteniendo detalles para ID: " . $inventory_id); // Depuración
 
         $detalles = obtenerDetallesInventario($inventory_id);

@@ -82,7 +82,7 @@ if (!is_array($oInventories) || empty($oInventories)) {
             <div class="col-md-3 text-center">
                 <h3>📦 Inventario de Productos</h3>
                 <span><strong>Bienvenido,</strong> <?= htmlspecialchars($user_name); ?></span>
-                <p>INVENTARIO DE SAM DESIGN A LA FECHA: <strong><?= date("d/m/Y"); ?></strong>.</p>
+                <p>INVENTARIO A LA FECHA: <strong><?= date("d/m/Y"); ?></strong>.</p>
             </div>
 
             <!-- Sección derecha -->

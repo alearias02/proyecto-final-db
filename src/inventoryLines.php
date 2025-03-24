@@ -11,14 +11,7 @@
 <?php
 require_once "../include/templates/header.php";
 require_once "../DAL/database.php";
-require_once "../DAL/inventario.php";
-
-$user_name = $_SESSION['usuario']['user_name']; 
-
-// Lógica de paginación
-$inventoryPage = isset($_GET['inventoryPage']) ? (int)$_GET['inventoryPage'] : 1; // Página actual (por defecto 1)
-$items_per_page = 10; // Número de filas por página
-$inventoryOffset = ($inventoryPage - 1) * $items_per_page;
+require_once "../DAL/inventoryLines.php";
 
 // Conexión
 $connection = conectar();
@@ -26,22 +19,44 @@ if (!$connection) {
     die("Error de conexión: " . oci_error());
 }
 
+$user_name = $_SESSION['usuario']['user_name']; 
+// Validar inventory_id
+$inventory_id = isset($_GET['inventory_id']) ? intval($_GET['inventory_id']) : 0;
+if ($inventory_id <= 0) {
+    die("ID de inventario no válido.");
+}
+
+$sqlName = "SELECT DESCRIPTION FROM FIDE_SAMDESIGN.FIDE_INVENTORY_TB WHERE inventory_id = $inventory_id";
+
+$resultados = fetchAll($connection, $sqlName);
+$inventory_name = (!empty($resultados))
+    ? htmlspecialchars($resultados[0]['DESCRIPTION'])
+    : 'GENERAL';
+
+// Lógica de paginación
+$inventoryLinesPage = isset($_GET['inventoryLinesPage']) ? (int)$_GET['inventoryLinesPage'] : 1; // Página actual (por defecto 1)
+$items_per_page = 10; // Número de filas por página
+$inventoryLinesOffset = ($inventoryLinesPage - 1) * $items_per_page;
+
+
 // Consulta paginada
-$inventoryQuery = "SELECT * FROM (
+$inventoryLinesQuery = "SELECT * FROM (
               SELECT a.*, ROWNUM rnum FROM (
-                  SELECT inventory_id, description, status_id,
-                         created_by, created_on, modified_on, modified_by
-                  FROM FIDE_SAMDESIGN.FIDE_INVENTORY_TB 
+                  SELECT inventory_lines_id, inventory_id, product_id, comments, quantity_stocked, quantity_reserved, quantity_threshold,
+                   status_id, created_by, created_on, modified_on, modified_by
+                  FROM FIDE_SAMDESIGN.FIDE_INVENTORY_LINES_TB
+                  WHERE inventory_id = :inventory_id
               ) a WHERE ROWNUM <= :max_row
           ) WHERE rnum > :min_row";
 
-$statement = oci_parse($connection, $inventoryQuery);
+$statement = oci_parse($connection, $inventoryLinesQuery);
 if (!$statement) {
     die("Error en la preparación de la consulta: " . oci_error($connection));
 }
 
-$max_row = $inventoryOffset + $items_per_page;
-$min_row = $inventoryOffset;
+$max_row = $inventoryLinesOffset + $items_per_page;
+$min_row = $inventoryLinesOffset;
+oci_bind_by_name($statement, ':inventory_id', $inventory_id);
 oci_bind_by_name($statement, ':max_row', $max_row);
 oci_bind_by_name($statement, ':min_row', $min_row);
 oci_execute($statement);
@@ -53,26 +68,19 @@ while ($row = oci_fetch_assoc($statement)) {
 }
 
 // Consulta total para la paginación
-$total_count_query = "SELECT COUNT(*) AS total FROM FIDE_SAMDESIGN.FIDE_INVENTORY_TB";
+$total_count_query = "SELECT COUNT(*) AS total FROM FIDE_SAMDESIGN.FIDE_INVENTORY_LINES_TB";
 $total_stmt = oci_parse($connection, $total_count_query);
 oci_execute($total_stmt);
 $total_row = oci_fetch_assoc($total_stmt);
 $total_items = $total_row['TOTAL'];
-$inventory_total_pages = ceil($total_items / $items_per_page);
+$inventoryLines_total_pages = ceil($total_items / $items_per_page);
+
 
 // Liberar recursos
 oci_free_statement($statement);
 oci_free_statement($total_stmt);
 oci_close($connection);
 
-// Mostrar advertencia si no hay datos
-if (!is_array($oInventories) || empty($oInventories)) {
-    // echo "<div class='container mt-4'>
-    //         <div class='alert alert-warning' role='alert'>
-    //             No hay registros disponibles.
-    //         </div>
-    //       </div>";
-}
 ?>
 
 <div class="d-flex justify-content-center mt-5 vh-100">
@@ -82,7 +90,7 @@ if (!is_array($oInventories) || empty($oInventories)) {
             <div class="col-md-3 text-center">
                 <h3>📦 Inventario de Productos</h3>
                 <span><strong>Bienvenido,</strong> <?= htmlspecialchars($user_name); ?></span>
-                <p>INVENTARIO DE SAM DESIGN A LA FECHA: <strong><?= date("d/m/Y"); ?></strong>.</p>
+                <p>INVENTARIO DE <?= $inventory_name; ?> A LA FECHA: <strong><?= date("d/m/Y"); ?></strong>.</p>
             </div>
 
             <!-- Sección derecha -->
@@ -94,11 +102,16 @@ if (!is_array($oInventories) || empty($oInventories)) {
                     </div>
                     <div class="card-body cardAdmin">
                         <div class="table-responsive">
-                            <table class="table table-striped" id="inventoryTable">
+                            <table class="table table-striped" id="inventoryLinesTable">
                                 <thead class="table-dark">
                                     <tr>
                                         <th>#</th>
-                                        <a href="../src/inventoryLines.php"><th>Nombre</th></a>
+                                        <th>Inventario</th>
+                                        <th>Producto</th>
+                                        <th>Comentarios</th>
+                                        <th>Stock</th>
+                                        <th>Stock Reservado</th>
+                                        <th>Limite para pedido</th>
                                         <th>Ultimo restock</th>
                                         <th>Acciones</th>
                                     </tr>
@@ -107,22 +120,26 @@ if (!is_array($oInventories) || empty($oInventories)) {
                                     <?php if (!empty($oInventories)): ?>
                                         <?php foreach ($oInventories as $value): ?>
                                             <tr>
+                                                <td><?= !empty($value['INVENTORY_LINES_ID']) ? $value['INVENTORY_LINES_ID'] : 'N/A'; ?></td>
                                                 <td><?= !empty($value['INVENTORY_ID']) ? $value['INVENTORY_ID'] : 'N/A'; ?></td>
-                                                <td><?= !empty($value['DESCRIPTION']) ? $value['DESCRIPTION'] : 'N/A'; ?></td>
+                                                <td><?= !empty($value['COMMENTS']) ? $value['COMMENTS'] : 'N/A'; ?></td>
+                                                <td><?= !empty($value['QUANTITY_STOCKED']) ? $value['QUANTITY_STOCKED'] : 'N/A'; ?></td>
+                                                <td><?= !empty($value['QUANTITY_RESERVED']) ? $value['QUANTITY_RESERVED'] : 'N/A'; ?></td>
+                                                <td><?= !empty($value['QUANTITY_THRESHOLD']) ? $value['QUANTITY_THRESHOLD'] : 'N/A'; ?></td>
                                                 <td><?= !empty($value['LAST_RESTOCK']) ? $value['LAST_RESTOCK'] : 'N/A'; ?></td>
                                                 <td>
                                                      <!-- Botón para Ver Detalles -->
-                                                    <a href="inventoryLines.php?inventory_id=<?= urlencode($value['INVENTORY_ID']); ?>" class="btn btn-info" style="display: inline-block;">
+                                                    <a href="inventoryLines.php?inventory_id=<?= urlencode($value['INVENTORY_LINES_ID']); ?>" class="btn btn-info" style="display: inline-block;">
                                                         <i class="fas fa-box-open"></i> Ver Detalles
                                                     </a>
                                                     <!-- Botón para eliminar -->
-                                                    <button id="eliminar" class="btn btn-danger" onclick="eliminarInventario(<?= $value['INVENTORY_ID']; ?>)">
+                                                    <button id="eliminar" class="btn btn-danger" onclick="eliminarInventario(<?= $value['INVENTORY_LINES_ID']; ?>)">
                                                         <i class="fas fa-trash"></i> Eliminar
                                                     </button>
 
                                                     <!-- Botón para actualizar -->
                                                     <a href="#" class="btn btn-success actualizarInventario" data-bs-toggle="modal" 
-                                                    data-inventory-id="<?= $value['INVENTORY_ID']; ?>" 
+                                                    data-inventory-id="<?= $value['INVENTORY_LINES_ID']; ?>" 
                                                     data-bs-target="#modalUpdate3">
                                                         <i class="fas fa-pencil"></i> Actualizar
                                                     </a>
@@ -131,7 +148,7 @@ if (!is_array($oInventories) || empty($oInventories)) {
                                         <?php endforeach; ?>
                                     <?php else: ?>
                                         <tr>
-                                            <td colspan="4" class="text-center">No hay registros en el inventario.</td>
+                                            <td colspan="9" class="text-center">No hay registros en el inventario.</td>
                                         </tr>
                                     <?php endif; ?>
                                 </tbody>
@@ -141,9 +158,9 @@ if (!is_array($oInventories) || empty($oInventories)) {
                         <!-- Paginación -->
                         <nav aria-label="Page navigation" class="mt-3">
                             <ul class="pagination justify-content-center">
-                                <?php for ($i = 1; $i <= $inventory_total_pages; $i++): ?>
-                                    <li class="page-item <?= ($i == $inventoryPage) ? 'active' : ''; ?>">
-                                        <a class="page-link" href="?inventoryPage=<?= $i; ?>"><?= $i; ?></a>
+                                <?php for ($i = 1; $i <= $inventoryLines_total_pages; $i++): ?>
+                                    <li class="page-item <?= ($i == $inventoryLinesPage) ? 'active' : ''; ?>">
+                                        <a class="page-link" href="?inventoryLinesPage=<?= $i; ?>"><?= $i; ?></a>
                                     </li>
                                 <?php endfor; ?>
                             </ul>
@@ -188,12 +205,35 @@ $connection = conectar();
 oci_close($connection);
 ?>
 
-<!-- Modal para agregar una reservación -->
+
+<?php
+require_once "../DAL/database.php"; // Incluye la conexión a la base de datos
+
+// Conectar a la base de datos
+$connection = conectar();
+
+// Función reutilizable para ejecutar consultas y obtener resultados
+
+// Consultas
+$products = fetchAll($connection, "SELECT product_id, description FROM fide_samdesign.fide_product_tb");
+$hotels = fetchAll($connection, "SELECT hotel_id, hotel_name || ' - ' || hotel_branch_id as full_hotelName FROM hotel_tb");
+$rooms = fetchAll($connection, "SELECT hr.room_id, hr.room_number || ' - ' || h.hotel_name AS room FROM hotel_rooms_tb hr LEFT JOIN hotel_tb h ON hr.hotel_id = h.hotel_id ORDER BY ROOM_ID ASC");
+$customers = fetchAll($connection, "SELECT customer_id, customer_name FROM customer_tb where status_id = 1");
+$payMethods = fetchAll($connection, "SELECT payment_method_id, payment_method_name FROM payment_method_tb");
+
+
+// Cierra la conexión después de obtener los datos
+oci_close($connection);
+?>
+
+
+
+<!-- Modal para agregar un producto al inventario -->
 <div id="modalAdd3" class="modal fade" tabindex="-1" aria-labelledby="modalAddLabel3" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header text-white" style="background-color: #475A68;">
-                <h5 class="modal-title" id="modalAddLabel3">Agregar un inventario</h5>
+                <h5 class="modal-title" id="modalAddLabel3">Agregar un Producto al Inventario <?= $inventory_name; ?></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form id="addInventoryForm" class="was-validated" enctype="multipart/form-data">
@@ -301,7 +341,7 @@ oci_close($connection);
 
             // Make the AJAX request
             $.ajax({
-                url: '../DAL/inventario.php', 
+                url: '../DAL/inventoryLines.php', 
                 type: 'POST',
                 data: formData,
                 success: function (response) {
@@ -310,12 +350,12 @@ oci_close($connection);
 
                     // Check if the response indicates success
                     if (response.includes("success")) {
-                        alert("Inventario agregado correctamente."); // Notify the user
+                        alert("Linea de inventario agregada correctamente."); // Notify the user
                         $('#modalAdd3').modal('hide'); // Close the modal
                         location.reload(); // Reload the page to reflect the new data
                     } else {
                         // Display an error message from the server
-                        alert("Error al agregar el inventario " + response);
+                        alert("Error al agregar la linea de inventario " + response);
                     }
                 },
                 error: function (xhr, status, error) {
@@ -398,7 +438,7 @@ oci_close($connection);
                     var updatedData = JSON.parse(response);
 
                     // Actualiza la fila específica en la tabla
-                    const row = $(`#inventoryTable tr`).filter(function () {
+                    const row = $(`#inventoryLinesTable tr`).filter(function () {
                         return $(this).find('td:first').text() === updatedData.RESERVATION_ID;
                     });
 

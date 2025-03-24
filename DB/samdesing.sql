@@ -181,6 +181,51 @@ INSERT INTO FIDE_SAMDESIGN.FIDE_CITY_ADDRESS_TB VALUES (703, 'Siquirres', 1, 'Ad
 INSERT INTO FIDE_SAMDESIGN.FIDE_CITY_ADDRESS_TB VALUES (704, 'Talamanca', 1, 'Admin', CURRENT_TIMESTAMP, NULL, NULL);
 INSERT INTO FIDE_SAMDESIGN.FIDE_CITY_ADDRESS_TB VALUES (705, 'Matina', 1, 'Admin', CURRENT_TIMESTAMP, NULL, NULL);
 INSERT INTO FIDE_SAMDESIGN.FIDE_CITY_ADDRESS_TB VALUES (706, 'Guácimo', 1, 'Admin', CURRENT_TIMESTAMP, NULL, NULL);
+commit;
+
+--inserts category
+INSERT INTO FIDE_SAMDESIGN.FIDE_CATEGORY_TYPE_TB 
+    (Category_ID, Description, Comments, Status_ID, Created_By, Created_On, Modified_By, Modified_On)
+VALUES
+    (1, 'Suetas', 'Categoría para suetas', 1, 'admin', SYSTIMESTAMP, NULL, NULL);
+
+INSERT INTO FIDE_SAMDESIGN.FIDE_CATEGORY_TYPE_TB 
+    (Category_ID, Description, Comments, Status_ID, Created_By, Created_On, Modified_By, Modified_On)
+VALUES
+    (2, 'Guantes', 'Categoría para guantes', 1, 'admin', SYSTIMESTAMP, NULL, NULL);
+
+INSERT INTO FIDE_SAMDESIGN.FIDE_CATEGORY_TYPE_TB 
+    (Category_ID, Description, Comments, Status_ID, Created_By, Created_On, Modified_By, Modified_On)
+VALUES
+    (3, 'Camisas Sublimadas', 'Categoría para camisas sublimadas', 1, 'admin', SYSTIMESTAMP, NULL, NULL);
+
+INSERT INTO FIDE_SAMDESIGN.FIDE_CATEGORY_TYPE_TB 
+    (Category_ID, Description, Comments, Status_ID, Created_By, Created_On, Modified_By, Modified_On)
+VALUES
+    (4, 'Camisa Sublimada Trabajo', 'Categoría para camisa sublimada de trabajo', 1, 'admin', SYSTIMESTAMP, NULL, NULL);
+
+INSERT INTO FIDE_SAMDESIGN.FIDE_CATEGORY_TYPE_TB 
+    (Category_ID, Description, Comments, Status_ID, Created_By, Created_On, Modified_By, Modified_On)
+VALUES
+    (5, 'Capas Impermeables', 'Categoría para capas impermeables', 1, 'admin', SYSTIMESTAMP, NULL, NULL);
+
+INSERT INTO FIDE_SAMDESIGN.FIDE_CATEGORY_TYPE_TB 
+    (Category_ID, Description, Comments, Status_ID, Created_By, Created_On, Modified_By, Modified_On)
+VALUES
+    (6, 'Repuestos', 'Categoría para repuestos', 1, 'admin', SYSTIMESTAMP, NULL, NULL);
+
+INSERT INTO FIDE_SAMDESIGN.FIDE_CATEGORY_TYPE_TB 
+    (Category_ID, Description, Comments, Status_ID, Created_By, Created_On, Modified_By, Modified_On)
+VALUES
+    (7, 'Chalecos', 'Categoría para chalecos', 1, 'admin', SYSTIMESTAMP, NULL, NULL);
+
+INSERT INTO FIDE_SAMDESIGN.FIDE_CATEGORY_TYPE_TB 
+    (Category_ID, Description, Comments, Status_ID, Created_By, Created_On, Modified_By, Modified_On)
+VALUES
+    (8, 'Jacket Protectiva', 'Categoría para jacket protectiva', 1, 'admin', SYSTIMESTAMP, NULL, NULL);
+
+COMMIT;
+
 
 
 -- INSERT INTO sam_design.categoria (id_categoria,descripcion,activo) VALUES 
