@@ -14,7 +14,8 @@ function obtenerDetallesProducto($product_id) {
                 unit_price,
                 quantity_on_hand,
                 quantity_lend,
-                total_qty, 
+                total_qty,
+                image_path, 
                 status_id, 
                 created_by,
                 created_on,
@@ -36,12 +37,12 @@ function obtenerDetallesProducto($product_id) {
 }
 
 // Insertar una habitación
-function IngresarProducto($description, $category_type_id, $comments, $unit_price, $total_qty, $created_by) {
+function IngresarProducto($description, $category_type_id, $comments, $unit_price, $total_qty, $image_path, $created_by) {
     $retorno = false;
 
     try {
         $oConexion = conectar();
-        $sql = "INSERT INTO FIDE_SAMDESIGN.fide_product_tb (description, category_type_id, comments, unit_price, total_qty, status_id, created_by)
+        $sql = "INSERT INTO FIDE_SAMDESIGN.fide_product_tb (description, category_type_id, comments, unit_price, total_qty, image_path, status_id, created_by)
                 VALUES (:description, :category_type_id, :comments, :unit_price, :total_qty, 1, :created_by)";
 
         $stmt = oci_parse($oConexion, $sql);
@@ -52,6 +53,7 @@ function IngresarProducto($description, $category_type_id, $comments, $unit_pric
         oci_bind_by_name($stmt, ":comments", $comments);
         oci_bind_by_name($stmt, ":unit_price", $unit_price);
         oci_bind_by_name($stmt, ":total_qty", $total_qty);
+        oci_bind_by_name($stmt, ":image_path", $image_path);
         oci_bind_by_name($stmt, ":created_by", $created_by);
 
         // Ejecutar la consulta
@@ -95,7 +97,7 @@ function eliminarProducto($product_id) {
 }
 
 // Actualizar un producto
-function actualizarProducto($product_id, $description, $category_type_id, $comments, $unit_price, $total_qty, $status_id, $modified_by) {
+function actualizarProducto($product_id, $description, $category_type_id, $comments, $unit_price, $total_qty, $image_path, $status_id, $modified_by) {
     $retorno = false;
 
     try {
@@ -105,7 +107,8 @@ function actualizarProducto($product_id, $description, $category_type_id, $comme
                     category_type_id = :category_type_id, 
                     comments = :comments,
                     unit_price = :unit_price, 
-                    total_qty = :total_qty, 
+                    total_qty = :total_qty,
+                    image_path = :image_path, 
                     modified_on = SYSDATE,
                     status_id = :status_id,
                     modified_by = :modified_by 
@@ -119,6 +122,7 @@ function actualizarProducto($product_id, $description, $category_type_id, $comme
         oci_bind_by_name($stmt, ":comments", $comments);
         oci_bind_by_name($stmt, ":unit_price", $unit_price);
         oci_bind_by_name($stmt, ":total_qty", $total_qty);
+        oci_bind_by_name($stmt, ":image_path", $image_path);
         oci_bind_by_name($stmt, ":status_id", $status_id);
         oci_bind_by_name($stmt, ":modified_by", $modified_by);
         oci_bind_by_name($stmt, ":product_id", $product_id);
@@ -181,6 +185,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"])) {
             $_POST["COMMENTS"],
             $_POST["UNIT_PRICE"],
             $_POST["TOTAL_QTY"],
+            $_POST["IMAGE_PATH"],
             $_POST["STATUS_ID"],
             $_POST["MODIFIED_BY"]
         );
@@ -196,14 +201,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"])) {
     } elseif ($action == "insertar") {
 
         $insertado = IngresarProducto(
-            $_POST["DESCRIPTION"],
-            $_POST["CATEGORY_TYPE_ID"],
-            $_POST["COMMENTS"],
-            $_POST["UNIT_PRICE"],
-            $_POST["TOTAL_QTY"],
-            $_POST["STATUS_ID"],
-            $_POST["CREATED_BY"],
-            $_POST["CREATED_ON"]
+            $_POST["Description"],
+            $_POST["category_id"],
+            $_POST["Comments"],
+            $_POST["Unit_price"],
+            $_POST["Total_Qty"],
+            $_POST["Image_path"],
+            $_POST["created_by"],
         );
         echo $insertado ? "Habitación insertada correctamente" : "Error al insertar la habitación";
     } else {

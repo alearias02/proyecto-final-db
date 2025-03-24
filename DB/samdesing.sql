@@ -224,6 +224,21 @@ INSERT INTO FIDE_SAMDESIGN.FIDE_CATEGORY_TYPE_TB
 VALUES
     (8, 'Jacket Protectiva', 'Categoría para jacket protectiva', 1, 'admin', SYSTIMESTAMP, NULL, NULL);
 
+INSERT INTO FIDE_SAMDESIGN.FIDE_CATEGORY_TYPE_TB 
+    (Category_ID, Description, Comments, Status_ID, Created_By, Created_On, Modified_By, Modified_On)
+VALUES
+    (9, 'Accesorios', 'Categoría para accesorios', 1, 'admin', SYSTIMESTAMP, NULL, NULL);
+
+INSERT INTO FIDE_SAMDESIGN.FIDE_CATEGORY_TYPE_TB 
+    (Category_ID, Description, Comments, Status_ID, Created_By, Created_On, Modified_By, Modified_On)
+VALUES
+    (10, 'Llantas', 'Categoría para llantas', 1, 'admin', SYSTIMESTAMP, NULL, NULL);
+
+INSERT INTO FIDE_SAMDESIGN.FIDE_CATEGORY_TYPE_TB 
+    (Category_ID, Description, Comments, Status_ID, Created_By, Created_On, Modified_By, Modified_On)
+VALUES
+    (11, 'Uniformes Cross', 'Categoría para uniformes cross', 1, 'admin', SYSTIMESTAMP, NULL, NULL);
+
 COMMIT;
 
 

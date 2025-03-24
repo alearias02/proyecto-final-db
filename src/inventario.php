@@ -175,17 +175,6 @@ if (!is_array($oInventories) || empty($oInventories)) {
 
 </html>
 
-<?php
-require_once "../DAL/database.php"; // Incluye la conexión a la base de datos
-
-// Conectar a la base de datos
-$connection = conectar();
-
-
-// Cierra la conexión después de obtener los datos
-oci_close($connection);
-?>
-
 <!-- Modal para agregar una reservación -->
 <div id="modalAdd3" class="modal fade" tabindex="-1" aria-labelledby="modalAddLabel3" aria-hidden="true">
     <div class="modal-dialog modal-lg">

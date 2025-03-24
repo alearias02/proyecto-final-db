@@ -23,6 +23,19 @@ END;
 commit;
 
 
+-- Trigger para la tabla product_tb
+CREATE OR REPLACE TRIGGER FIDE_PRODUCT_TB_ID_TRG
+BEFORE INSERT ON FIDE_PRODUCT_TB
+FOR EACH ROW
+BEGIN
+    IF :NEW.product_id IS NULL THEN
+        SELECT NVL(MAX(product_id), 0) + 1 INTO :NEW.product_id FROM FIDE_PRODUCT_TB;
+    END IF;
+END;
+/
+
+commit;
+
 -- Trigger para la tabla inventory_tb
 CREATE OR REPLACE TRIGGER FIDE_INVENTORY_TB_ID_TRG
 BEFORE INSERT ON FIDE_INVENTORY_TB
