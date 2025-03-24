@@ -162,25 +162,6 @@ $categories = fetchAll($connection, "SELECT category_id, description FROM fide_s
 // Cierra la conexión después de obtener los datos
 oci_close($connection);
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['Image_path']) && $_FILES['Image_path']['error'] === UPLOAD_ERR_OK) {
-
-    $folderIMG = "../img/";
-    $img = $folderIMG . basename($_FILES["Image_path"]["name"]);
-    $imageFileType = strtolower(pathinfo($img, PATHINFO_EXTENSION));
-
-    // Verifica que sea una imagen real
-    $check = getimagesize($_FILES["Image_path"]["tmp_name"]);
-    if ($check !== false) {
-        if (move_uploaded_file($_FILES["Image_path"]["tmp_name"], $img)) {
-            echo "La imagen ha sido subida correctamente.";
-        } else {
-            echo "Ocurrió un error al cargar la imagen.";
-        }
-    } else {
-        echo "El archivo no es una imagen válida.";
-    }
-}
-
 ?>
 
 <div id="modalAddProduct" class="modal fade" tabindex="-1" aria-labelledby="modalAddProductLabel" aria-hidden="true">
@@ -377,7 +358,7 @@ function readURL(input) {
             e.preventDefault(); // Prevent default form submission
 
             // Serialize the form data
-            var formData = $(this).serialize();
+            var formData =  new FormData(this);
             console.log("Data enviada desde el formulario:", formData); 
             var submitButton = $(this).find('button[type="submit"]'); 
 
@@ -392,6 +373,8 @@ function readURL(input) {
                 url: '../DAL/productos.php', 
                 type: 'POST',
                 data: formData,
+                processData: false,  
+                contentType: false, 
                 success: function (response) {
                     // Log the server response for debugging
                     console.log("Response from server:", response);

@@ -36,14 +36,14 @@ function obtenerDetallesProducto($product_id) {
     return $row;
 }
 
-// Insertar una habitación
+// Insertar un producto
 function IngresarProducto($description, $category_type_id, $comments, $unit_price, $total_qty, $image_path, $created_by) {
     $retorno = false;
 
     try {
         $oConexion = conectar();
         $sql = "INSERT INTO FIDE_SAMDESIGN.fide_product_tb (description, category_type_id, comments, unit_price, total_qty, image_path, status_id, created_by)
-                VALUES (:description, :category_type_id, :comments, :unit_price, :total_qty, 1, :created_by)";
+                VALUES (:description, :category_type_id, :comments, :unit_price, :total_qty, :image_path, 1, :created_by)";
 
         $stmt = oci_parse($oConexion, $sql);
 
@@ -200,16 +200,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"])) {
         exit;
     } elseif ($action == "insertar") {
 
+        // Manejo correcto de la subida de imagen
+        $image_path = "../img/";
+        if (isset($_FILES['Image_path']) && $_FILES['Image_path']['error'] === UPLOAD_ERR_OK) {
+            $folderIMG = "../img/";
+            $image_path = $folderIMG . basename($_FILES["Image_path"]["name"]);
+            if (!move_uploaded_file($_FILES["Image_path"]["tmp_name"], $image_path)) {
+                echo "Error al cargar la imagen.";
+                exit;
+            }
+        } else {
+            echo "Imagen no proporcionada o error al subir.";
+            exit;
+        }
+
+        // Luego usas $image_path en tu función de inserción:
         $insertado = IngresarProducto(
             $_POST["Description"],
             $_POST["category_id"],
             $_POST["Comments"],
             $_POST["Unit_price"],
             $_POST["Total_Qty"],
-            $_POST["Image_path"],
-            $_POST["created_by"],
+            $image_path,
+            $_POST["created_by"]
         );
-        echo $insertado ? "Habitación insertada correctamente" : "Error al insertar la habitación";
+        echo $insertado ? "Producto insertado correctamente" : "Error al insertar el producto";
     } else {
         echo "Acción no válida";
     }
