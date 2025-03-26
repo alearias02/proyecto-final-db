@@ -228,7 +228,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"])) {
             $_POST["Description"], $_POST["category_id"], $_POST["Comments"],
             $_POST["Unit_price"], $_POST["Total_Qty"], $image_path, $_POST["created_by"]
         );
-        echo $insertado ? "Producto insertado correctamente" : "Error al insertar el producto";
+        if ($insertado) {
+            echo "success";
+        } else {
+            http_response_code(500);
+            echo "Error al insertar el producto";
+        }        
     } else {
         echo "Acción no válida";
     }

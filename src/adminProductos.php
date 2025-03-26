@@ -457,47 +457,37 @@ function showToast(title, message, type) {
 
   // Handle form submission for adding a new service
   $('#addProductForm').on('submit', function (e) {
-            e.preventDefault(); // Prevent default form submission
+    e.preventDefault();
 
-            // Serialize the form data
-            var formData =  new FormData(this);
-            console.log("Data enviada desde el formulario:", formData); 
-            var submitButton = $(this).find('button[type="submit"]'); 
+    var formData = new FormData(this);
+    var submitButton = $(this).find('button[type="submit"]'); 
+    submitButton.prop('disabled', true);
 
-            // Deshabilitar el botón para evitar múltiples clics
-            submitButton.prop('disabled', true);
+    $.ajax({
+        url: '../DAL/productos.php', 
+        type: 'POST',
+        data: formData,
+        processData: false,  
+        contentType: false, 
+        success: function (response) {
+            console.log("Respuesta del servidor:", response);
 
-            // Log the form data for debugging
-            console.log("Data en el form:", formData);
-
-            // Make the AJAX request
-            $.ajax({
-                url: '../DAL/productos.php', 
-                type: 'POST',
-                data: formData,
-                processData: false,  
-                contentType: false, 
-                success: function (response) {
-                    // Log the server response for debugging
-                    console.log("Response from server:", response);
-
-                    // Check if the response indicates success
-                    if (response.includes("success")) {
-                        alert("Producto agregado correctamente."); // Notify the user
-                        $('#modalAddProduct').modal('hide'); // Close the modal
-                        location.reload(); // Reload the page to reflect the new data
-                    } else {
-                        // Display an error message from the server
-                        alert("Error al agregar el producto " + response);
-                    }
-                },
-                error: function (xhr, status, error) {
-                    // Log AJAX errors for debugging
-                    console.error("Error al enviar el formulario:", error);
-                    alert("Hubo un problema al enviar el formulario. Por favor, inténtelo de nuevo.");
-                }
-            });
-        });
+            if (response.trim() === "success") {
+                alert("Producto agregado correctamente.");
+                $('#modalAddProduct').modal('hide'); 
+                location.reload();
+            } else {
+                alert("Error al agregar el producto: " + response);
+                submitButton.prop('disabled', false);
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error AJAX:", error);
+            alert("Hubo un problema al enviar el formulario. Inténtalo de nuevo.");
+            submitButton.prop('disabled', false);
+        }
+    });
+});
 
 
 // Función para eliminar una habitacion
