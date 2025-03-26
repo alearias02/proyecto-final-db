@@ -3,8 +3,8 @@
 require_once "conexion.php"; // Archivo que maneja la conexión a Oracle
 
 
-// Función para obtener los detalles de una habitación
-function obtenerDetallesLineasInventario($inventory_id) {
+// Función para obtener los detalles de la linea de inventario
+function obtenerDetallesLineasInventario($inventory_lines_id) {
     $oConexion = conectar();
     $sql = "SELECT 
                 inventory_lines_id,
@@ -21,9 +21,9 @@ function obtenerDetallesLineasInventario($inventory_id) {
                 modified_on,
                 modified_by 
             FROM FIDE_SAMDESIGN.fide_inventory_lines_tb 
-            WHERE inventory_id = :inventory_id";
+            WHERE inventory_lines_id = :inventory_lines_id";
     $stmt = oci_parse($oConexion, $sql);
-    oci_bind_by_name($stmt, ":inventory_id", $inventory_id);
+    oci_bind_by_name($stmt, ":inventory_lines_id", $inventory_lines_id);
     oci_execute($stmt);
     $row = oci_fetch_assoc($stmt);
     oci_free_statement($stmt);
@@ -35,14 +35,14 @@ function obtenerDetallesLineasInventario($inventory_id) {
     return $row;
 }
 
-// Insertar una habitación
+// Insertar una linea
 function IngresarLineasInventario($inventory_id, $product_id, $comments, $quantity_stocked, $created_by) {
     $retorno = false;
 
     try {
         $oConexion = conectar();
-        $sql = "INSERT INTO FIDE_SAMDESIGN.fide_inventory_lines_tb ( inventory_id, product_id, comments, quantity_stocked, status_id, created_by)
-                VALUES (:inventory_id, :product_id, :comments, :quantity_stocked, 1, :created_by)";
+        $sql = "INSERT INTO FIDE_SAMDESIGN.fide_inventory_lines_tb ( inventory_id, product_id, comments, quantity_stocked, status_id, created_by, created_on)
+                VALUES (:inventory_id, :product_id, :comments, :quantity_stocked, 1, :created_by, SYSDATE)";
 
         $stmt = oci_parse($oConexion, $sql);
 
@@ -151,11 +151,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"])) {
         $modified_by = $_POST['modified_by'];
         $eliminado = eliminarInventario($inventory_lines_id, $modified_by);
         echo $eliminado ? "La linea de inventario ha sido eliminado exitosamente" : "Error al intentar eliminar la linea de inventario";
-    } elseif ($action == "obtenerDetalles" && isset($_POST["inventory_id"])) {
-        $room_id = $_POST["inventory_id"];
+    } elseif ($action == "obtenerDetalles" && isset($_POST["inventory_lines_id"])) {
+        $room_id = $_POST["inventory_lines_id"];
         error_log("Obteniendo detalles para ID: " . $inventory_id); // Depuración
 
-        $detalles = obtenerDetallesLineasInventario($inventory_id);
+        $detalles = obtenerDetallesLineasInventario($inventory_lines_id);
 
         if (isset($detalles['error'])) {
             http_response_code(404); // Devuelve error si no se encuentra el servicio

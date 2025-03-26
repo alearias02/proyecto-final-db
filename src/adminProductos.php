@@ -25,7 +25,7 @@ $offset = ($productosPage - 1) * $items_per_page;
 // Consulta paginada
 $productosQuery = "SELECT * FROM (
               SELECT a.*, ROWNUM rnum FROM (
-                  SELECT Product_ID, Description, Comments, Unit_price, Quantity_OnHand, Quantity_Lend, Total_Qty, Image_path, Status_ID
+                  SELECT Product_ID, Description, Comments, Unit_price, Image_path, Status_ID
                   FROM FIDE_SAMDESIGN.FIDE_PRODUCT_TB
                   WHERE Status_ID = 1
                   ORDER BY Product_ID asc
@@ -78,9 +78,6 @@ oci_close($connection);
                                         <th>Descripción</th>
                                         <th>Comentarios</th>
                                         <th>Precio Unitario</th>
-                                        <th>Stock</th>
-                                        <th>Prestado</th>
-                                        <th>Stock Total</th>
                                         <th>Imagen</th>
                                         <th>Acciones</th>
                                     </tr>
@@ -92,10 +89,7 @@ oci_close($connection);
                                             <td><?= htmlspecialchars($producto['PRODUCT_ID']); ?></td>
                                             <td><?= htmlspecialchars($producto['DESCRIPTION']); ?></td>
                                             <td><?= htmlspecialchars($producto['COMMENTS']); ?></td>
-                                            <td class='text-end'><?= number_format($producto['UNIT_PRICE'], 2); ?></td>
-                                            <td class='text-center'><?= htmlspecialchars($producto['QUANTITY_ONHAND']); ?></td>
-                                            <td class='text-center'><?= htmlspecialchars($producto['QUANTITY_LEND']); ?></td>
-                                            <td class='text-center'><?= htmlspecialchars($producto['TOTAL_QTY']); ?></td>
+                                            <td class='text-end'>$<?= number_format($producto['UNIT_PRICE'], 2); ?></td>
                                             <td class='text-center'><img src='<?= htmlspecialchars($producto['IMAGE_PATH']); ?>' style='width:40px; height:40px' alt='Imagen Producto'></td>
                                             <td>
                                             <button class='btn btn-danger' onclick='eliminarProducto(<?= $producto['PRODUCT_ID']; ?>, "<?= htmlspecialchars($user_name); ?>" )'>
@@ -109,7 +103,7 @@ oci_close($connection);
                                     <?php endforeach; ?>
                                 <?php else: ?>
                                     <tr>
-                                        <td colspan='9' class='text-center'>No hay productos disponibles</td>
+                                        <td colspan='6' class='text-center'>No hay productos disponibles</td>
                                     </tr>
                                 <?php endif; ?>
                                 </tbody>
@@ -189,13 +183,6 @@ oci_close($connection);
                         <input type="number" step="0.01" class="form-control mt-2" name="Unit_price" required />
                     </div>
 
-
-                    <div class="mb-3">
-                        <label for="Total_Qty">Cantidad Total</label>
-                        <input type="number" class="form-control mt-2" name="Total_Qty" required />
-                    </div>
-
-
                     <div class="mb-3">
                         <label for="category_id">Categoria del producto</label>
                         <select class="form-control mt-2" name="category_id" id="category_id" required>
@@ -265,21 +252,6 @@ oci_close($connection);
                     <div class="mb-3">
                         <label for="Unit_price">Precio Unitario</label>
                         <input type="number" step="0.01" class="form-control mt-2" name="Unit_price" id="Unit_price" required />
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="Quantity_OnHand">Cantidad Existente</label>
-                        <input type="number" class="form-control mt-2" name="Quantity_OnHand" id="Quantity_OnHand" />
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="Quantity_Lend">Cantidad Prestada</label>
-                        <input type="number" class="form-control mt-2" name="Quantity_Lend" id="Quantity_Lend" />
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="Total_Qty">Cantidad Total</label>
-                        <input type="number" class="form-control mt-2" name="Total_Qty" id="Total_Qty" required />
                     </div>
 
                     <div class="mb-3">
@@ -418,7 +390,6 @@ function showToast(title, message, type) {
     if (!formData.get('Product_ID') || 
         !formData.get('Description') || 
         !formData.get('Unit_price') || 
-        !formData.get('Total_Qty') ||
         !formData.get('category_type_id') ||
         !formData.get('STATUS_ID')) {
         console.error("Formulario incompleto. Datos enviados:", formData);

@@ -7,8 +7,7 @@ require_once "conexion.php"; // Archivo que maneja la conexión a Oracle
 function obtenerDetallesProducto($product_id) {
     $oConexion = conectar();
     $sql = "SELECT 
-                PRODUCT_ID, DESCRIPTION, CATEGORY_TYPE_ID, COMMENTS, UNIT_PRICE, 
-                QUANTITY_ONHAND, QUANTITY_LEND, TOTAL_QTY, IMAGE_PATH, STATUS_ID
+                PRODUCT_ID, DESCRIPTION, CATEGORY_TYPE_ID, COMMENTS, UNIT_PRICE, IMAGE_PATH, STATUS_ID
             FROM FIDE_SAMDESIGN.FIDE_PRODUCT_TB 
             WHERE PRODUCT_ID = :product_id";
     $stmt = oci_parse($oConexion, $sql);
@@ -27,9 +26,6 @@ function obtenerDetallesProducto($product_id) {
         "Description" => $row["DESCRIPTION"],
         "Comments" => $row["COMMENTS"],
         "Unit_price" => $row["UNIT_PRICE"],
-        "Quantity_OnHand" => $row["QUANTITY_ONHAND"],
-        "Quantity_Lend" => $row["QUANTITY_LEND"],
-        "Total_Qty" => $row["TOTAL_QTY"],
         "Category_Type_ID" => $row["CATEGORY_TYPE_ID"],
         "Status_ID" => $row["STATUS_ID"],
         "Image_path" => $row["IMAGE_PATH"],
@@ -37,13 +33,13 @@ function obtenerDetallesProducto($product_id) {
 }
 
 // Insertar un producto
-function IngresarProducto($description, $category_type_id, $comments, $unit_price, $total_qty, $image_path, $created_by) {
+function IngresarProducto($description, $category_type_id, $comments, $unit_price, $image_path, $created_by) {
     $retorno = false;
 
     try {
         $oConexion = conectar();
-        $sql = "INSERT INTO FIDE_SAMDESIGN.fide_product_tb (description, category_type_id, comments, unit_price, total_qty, image_path, status_id, created_by, created_on)
-                VALUES (:description, :category_type_id, :comments, :unit_price, :total_qty, :image_path, 1, :created_by, SYSDATE)";
+        $sql = "INSERT INTO FIDE_SAMDESIGN.fide_product_tb (description, category_type_id, comments, unit_price, image_path, status_id, created_by, created_on)
+                VALUES (:description, :category_type_id, :comments, :unit_price, :image_path, 1, :created_by, SYSDATE)";
 
         $stmt = oci_parse($oConexion, $sql);
 
@@ -52,7 +48,6 @@ function IngresarProducto($description, $category_type_id, $comments, $unit_pric
         oci_bind_by_name($stmt, ":category_type_id", $category_type_id);
         oci_bind_by_name($stmt, ":comments", $comments);
         oci_bind_by_name($stmt, ":unit_price", $unit_price);
-        oci_bind_by_name($stmt, ":total_qty", $total_qty);
         oci_bind_by_name($stmt, ":image_path", $image_path);
         oci_bind_by_name($stmt, ":created_by", $created_by);
 
@@ -102,7 +97,7 @@ function eliminarProducto($product_id, $modified_by) {
 }
 
 // Actualizar un producto
-function actualizarProducto($product_id, $description, $category_type_id, $comments, $unit_price, $total_qty, $image_path, $status_id, $modified_by) {
+function actualizarProducto($product_id, $description, $category_type_id, $comments, $unit_price, $image_path, $status_id, $modified_by) {
     $retorno = false;
 
     try {
@@ -112,7 +107,6 @@ function actualizarProducto($product_id, $description, $category_type_id, $comme
                     category_type_id = :category_type_id, 
                     comments = :comments,
                     unit_price = :unit_price, 
-                    total_qty = :total_qty,
                     image_path = :image_path, 
                     modified_on = SYSDATE,
                     status_id = :status_id,
@@ -126,7 +120,6 @@ function actualizarProducto($product_id, $description, $category_type_id, $comme
         oci_bind_by_name($stmt, ":category_type_id", $category_type_id);
         oci_bind_by_name($stmt, ":comments", $comments);
         oci_bind_by_name($stmt, ":unit_price", $unit_price);
-        oci_bind_by_name($stmt, ":total_qty", $total_qty);
         oci_bind_by_name($stmt, ":image_path", $image_path);
         oci_bind_by_name($stmt, ":status_id", $status_id);
         oci_bind_by_name($stmt, ":modified_by", $modified_by);
@@ -176,7 +169,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"])) {
         // Verifica parámetros requeridos 
         $required_fields = [
             "Product_ID", "Description", "category_type_id", 
-            "Comments", "Unit_price", "Total_Qty", "STATUS_ID", "modified_by"
+            "Comments", "Unit_price", "STATUS_ID", "modified_by"
         ];
         foreach ($required_fields as $field) {
             if (!isset($_POST[$field])) {
@@ -205,9 +198,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"])) {
             $_POST["Product_ID"],
             $_POST["Description"],
             $_POST["category_type_id"], 
-            $_POST["Comments"],  // corregido aquí claramente
+            $_POST["Comments"], 
             $_POST["Unit_price"], 
-            $_POST["Total_Qty"], 
             $image_path, 
             $_POST["STATUS_ID"], 
             $_POST["modified_by"]
@@ -236,7 +228,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"])) {
 
         $insertado = IngresarProducto(
             $_POST["Description"], $_POST["category_id"], $_POST["Comments"],
-            $_POST["Unit_price"], $_POST["Total_Qty"], $image_path, $_POST["created_by"]
+            $_POST["Unit_price"], $image_path, $_POST["created_by"]
         );
         if ($insertado) {
             echo "success";
