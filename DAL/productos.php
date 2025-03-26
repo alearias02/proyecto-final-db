@@ -3,37 +3,37 @@
 require_once "conexion.php"; // Archivo que maneja la conexión a Oracle
 
 
-// Función para obtener los detalles de una habitación
+// Obtener detalles de un producto
 function obtenerDetallesProducto($product_id) {
     $oConexion = conectar();
     $sql = "SELECT 
-                product_id,  
-                description, 
-                category_type_id, 
-                comments, 
-                unit_price,
-                quantity_on_hand,
-                quantity_lend,
-                total_qty,
-                image_path, 
-                status_id, 
-                created_by,
-                created_on,
-                modified_on,
-                modified_by 
-            FROM FIDE_SAMDESIGN.fide_product_tb 
-            WHERE product_id = :product_id";
+                PRODUCT_ID, DESCRIPTION, CATEGORY_TYPE_ID, COMMENTS, UNIT_PRICE, 
+                QUANTITY_ONHAND, QUANTITY_LEND, TOTAL_QTY, IMAGE_PATH, STATUS_ID
+            FROM FIDE_SAMDESIGN.FIDE_PRODUCT_TB 
+            WHERE PRODUCT_ID = :product_id";
     $stmt = oci_parse($oConexion, $sql);
     oci_bind_by_name($stmt, ":product_id", $product_id);
     oci_execute($stmt);
     $row = oci_fetch_assoc($stmt);
     oci_free_statement($stmt);
     oci_close($oConexion);
+
     if ($row === false) {
         return ['error' => 'No se encontró el producto con el ID proporcionado.'];
     }
 
-    return $row;
+    return [
+        "Product_ID" => $row["PRODUCT_ID"],
+        "Description" => $row["DESCRIPTION"],
+        "Comments" => $row["COMMENTS"],
+        "Unit_price" => $row["UNIT_PRICE"],
+        "Quantity_OnHand" => $row["QUANTITY_ONHAND"],
+        "Quantity_Lend" => $row["QUANTITY_LEND"],
+        "Total_Qty" => $row["TOTAL_QTY"],
+        "Category_Type_ID" => $row["CATEGORY_TYPE_ID"],
+        "Status_ID" => $row["STATUS_ID"],
+        "Image_path" => $row["IMAGE_PATH"],
+    ];
 }
 
 // Insertar un producto
@@ -142,33 +142,32 @@ function actualizarProducto($product_id, $description, $category_type_id, $comme
     return $retorno;
 }
 
-// Manejar acciones desde solicitudes POST
+// Acciones POST
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"])) {
     $action = $_POST["action"];
 
     if ($action == "eliminar" && isset($_POST["product_id"])) {
-        $room_id = $_POST["product_id"];
+        $product_id = $_POST["product_id"];
         $eliminado = eliminarProducto($product_id);
-        echo $eliminado ? "El producto ha sido eliminado exitosamente" : "Error al intentar eliminar la habitación";
+        echo $eliminado ? "Producto eliminado exitosamente" : "Error al eliminar producto";
     } elseif ($action == "obtenerDetalles" && isset($_POST["product_id"])) {
-        $room_id = $_POST["product_id"];
-        error_log("Obteniendo detalles para ID: " . $product_id); // Depuración
-
+        $product_id = $_POST["product_id"];
         $detalles = obtenerDetallesProducto($product_id);
-
         if (isset($detalles['error'])) {
-            http_response_code(404); // Devuelve error si no se encuentra el servicio
+            http_response_code(404);
         }
-        
         echo json_encode($detalles);
-    } elseif ($action == "actualizar" && isset($_POST["PRODUCT_ID"])) {
-        $room_id = $_POST["PRODUCT_ID"];
+    } elseif ($action == "actualizar" && isset($_POST["Product_ID"])) {
+        $product_id = $_POST["PRODUCT_ID"];
     
         // Registrar todos los datos recibidos para depuración
         error_log("Datos recibidos para actualizar: " . json_encode($_POST));
     
-        // Verifica parámetros requeridos
-        $required_fields = ["PRODUCT_ID", "DESCRIPTION", "TOTAL_QTY", "UNIT_PRICE", "STATUS_ID", "MODIFIED_BY"];
+        // Verifica parámetros requeridos 
+        $required_fields = [
+            "Product_ID", "Description", "category_type_id", 
+            "Comments", "Unit_price", "Total_Qty", "STATUS_ID", "modified_by"
+        ];
         foreach ($required_fields as $field) {
             if (!isset($_POST[$field])) {
                 http_response_code(400); // Código de error 400: Solicitud Incorrecta
@@ -176,18 +175,32 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"])) {
                 exit;
             }
         }
+       
+        $image_path = null; // valor por defecto si no se carga imagen
+        if (isset($_FILES['Image_path']) && $_FILES['Image_path']['error'] === UPLOAD_ERR_OK) {
+            $folderIMG = "../img/";
+            $image_path = $folderIMG . basename($_FILES["Image_path"]["name"]);
+            if (!move_uploaded_file($_FILES["Image_path"]["tmp_name"], $image_path)) {
+                echo "Error al cargar la imagen.";
+                exit;
+            }
+        } else {
+            // Si no hay imagen nueva, mantener la actual (Opcional pero recomendado)
+            $detallesActuales = obtenerDetallesProducto($_POST["Product_ID"]);
+            $image_path = $detallesActuales["Image_path"];
+        }
     
         // Ejecuta la actualización
         $actualizado = actualizarProducto(
-            $product_id,
-            $_POST["DESCRIPTION"],
-            $_POST["CATEGORY_TYPE_ID"],
-            $_POST["COMMENTS"],
-            $_POST["UNIT_PRICE"],
-            $_POST["TOTAL_QTY"],
-            $_POST["IMAGE_PATH"],
-            $_POST["STATUS_ID"],
-            $_POST["MODIFIED_BY"]
+            $_POST["Product_ID"],
+            $_POST["Description"],
+            $_POST["category_type_id"], 
+            $_POST["Comments"],  // corregido aquí claramente
+            $_POST["Unit_price"], 
+            $_POST["Total_Qty"], 
+            $image_path, 
+            $_POST["STATUS_ID"], 
+            $_POST["modified_by"]
         );
     
         // Envía la respuesta adecuada
@@ -199,9 +212,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"])) {
         }
         exit;
     } elseif ($action == "insertar") {
-
-        // Manejo correcto de la subida de imagen
-        $image_path = "../img/";
         if (isset($_FILES['Image_path']) && $_FILES['Image_path']['error'] === UPLOAD_ERR_OK) {
             $folderIMG = "../img/";
             $image_path = $folderIMG . basename($_FILES["Image_path"]["name"]);
@@ -214,15 +224,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"])) {
             exit;
         }
 
-        // Luego usas $image_path en tu función de inserción:
         $insertado = IngresarProducto(
-            $_POST["Description"],
-            $_POST["category_id"],
-            $_POST["Comments"],
-            $_POST["Unit_price"],
-            $_POST["Total_Qty"],
-            $image_path,
-            $_POST["created_by"]
+            $_POST["Description"], $_POST["category_id"], $_POST["Comments"],
+            $_POST["Unit_price"], $_POST["Total_Qty"], $image_path, $_POST["created_by"]
         );
         echo $insertado ? "Producto insertado correctamente" : "Error al insertar el producto";
     } else {

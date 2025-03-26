@@ -202,9 +202,9 @@ CREATE TABLE FIDE_SAMDESIGN.FIDE_PRODUCT_TB (
     Image_path       VARCHAR2(4000),
     Status_ID        NUMBER,
     Created_By       VARCHAR2(50),
-    Created_On       DATE,
+    Created_On       TIMESTAMP,
     Modified_By      VARCHAR2(50),
-    Modified_On      DATE,
+    Modified_On      TIMESTAMP,
     CONSTRAINT FIDE_FK_PRODUCT_CATEGORY FOREIGN KEY (Category_Type_ID) 
         REFERENCES FIDE_SAMDESIGN.FIDE_CATEGORY_TYPE_TB(Category_ID),
     CONSTRAINT FIDE_FK_PRODUCT_STATUS FOREIGN KEY (Status_ID) 

@@ -27,6 +27,7 @@ $productosQuery = "SELECT * FROM (
               SELECT a.*, ROWNUM rnum FROM (
                   SELECT Product_ID, Description, Comments, Unit_price, Quantity_OnHand, Quantity_Lend, Total_Qty, Image_path, Status_ID
                   FROM FIDE_SAMDESIGN.FIDE_PRODUCT_TB
+                  ORDER BY Product_ID asc
               ) a WHERE ROWNUM <= :max_row
           ) WHERE rnum > :min_row";
 
@@ -99,8 +100,8 @@ oci_close($connection);
                                                 <button class='btn btn-danger' onclick='eliminarProducto(<?= $producto['PRODUCT_ID']; ?>)'>
                                                     <i class='fas fa-trash'></i> Eliminar
                                                 </button>
-                                                <a href='#' class='btn btn-success' onclick='cargarFormularioActualizacion(<?= $producto['PRODUCT_ID']; ?>)' data-bs-toggle='modal' data-bs-target='#modalUpdate'>
-                                                    <i class='fas fa-pencil'></i> Actualizar
+                                                <a href="#" class="btn btn-success modalUpdate" data-bs-toggle="modal" data-product_id="<?= $producto['PRODUCT_ID']; ?>" data-bs-target="#modalUpdate">
+                                                    <i class="fas fa-pencil"></i> Actualizar
                                                 </a>
                                             </td>
                                         </tr>
@@ -145,10 +146,6 @@ oci_close($connection);
 <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script> -->
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script src="../js/carrito.js"></script>
-<script src="../js/camisas.js"></script>
-<script src="../js/impermeable.js"></script>
-<script src="../js/repuestos.js"></script>
 </body>
 
 <?php
@@ -159,6 +156,7 @@ require_once "../DAL/database.php"; // Incluye la conexión a la base de datos
 $connection = conectar();
 // Consultas
 $categories = fetchAll($connection, "SELECT category_id, description FROM fide_samdesign.fide_category_type_tb");
+$statuses = fetchAll($connection, "SELECT STATUS_ID, DESCRIPTION FROM FIDE_SAMDESIGN.FIDE_STATUS_TB");
 // Cierra la conexión después de obtener los datos
 oci_close($connection);
 
@@ -240,46 +238,73 @@ oci_close($connection);
     </div>
 </div>
 
-<!-- <div id="modalUpdate" class="modal fade" tabindex="-1" aria-labelledby="modalUpdateLabel" aria-hidden="true">
+<div id="modalUpdate" class="modal fade" tabindex="-1" aria-labelledby="modalUpdateLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header text-white" style="background-color: #475A68;">
-                <h5 style="margin-left: 300px">Actualizar repuesto</h5>
+                <h5 class="modal-title mx-auto">Actualizar Producto</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form id="formUpdate" method="POST" class="was-validated" enctype="multipart/form-data">
+            <form id="formUpdateProduct" method="POST" class="was-validated" enctype="multipart/form-data">
                 <div class="modal-body text-center" style="background-color: #eee;">
-                    <input type="hidden" name="id_repuesto" id="id_repuesto" value='" .  intval($repuesto[' id_repuesto']) . "'> 
-                    <div class='mb-3'>
-                        <label for='descripcion'>Descripción</label>
-                        <input type='text' class='form-control mt-2' style='border: none; box-shadow: 5px 5px 2px 2px rgba(0, 0, 0,.2);' name='descripcion' required='true' value='" . htmlspecialchars($repuesto[' descripcion']) . "' />
-                    </div>
-                    <div class='mb-3'>
-                        <label for='detalle'>Detalle</label>
-                        <input type='text' class='form-control mt-2' style='border: none; box-shadow: 5px 5px 2px 2px rgba(0, 0, 0,.2);' name='detalle' required='true' value='" . htmlspecialchars($repuesto['detalle']) . "' />
-                    </div>
-                    <div class=" mb-3">
-                        <label for="precio">Precio</label>
-                        <input type="text" class="form-control mt-2 " style="border: none; box-shadow: 5px 5px 2px 2px rgba(0, 0, 0,.2);" name="precio" required="true" value='" . floatval($repuesto[' precio']) . "' />
-                    </div>
-                    <div class=" mb-3">
-                        <label for="existencias">Existencias</label>
-                        <input type="text" class="form-control mt-2 " style="border: none; box-shadow: 5px 5px 2px 2px rgba(0, 0, 0,.2);" name="existencias" required="true" value='" . intval($repuesto[' existencias']) . "' />
-                    </div>
+                    <input type="hidden" name="action" value="actualizar">
+                    <input type="hidden" name="modified_by" value="<?= htmlspecialchars($user_name); ?>">
+                    <input type="hidden" name="Product_ID" id="Product_ID">
+
                     <div class="mb-3">
-                        <label for="activo">Activo</label>
-                        <input class="form-check-input" type="checkbox" style="margin-top: 0.5rem;" name="activo" id="activoCheckbox" 
-                            <?php echo (isset($repuesto) && $repuesto['activo'] == 1) ? 'checked' : ''; ?> />
+                        <label for="Description">Descripción</label>
+                        <input type="text" class="form-control mt-2" name="Description" id="Description" required />
                     </div>
+
                     <div class="mb-3">
-                        <label for="categoria">Categoria</label>
-                        <input type="text" class="form-control mt-2 " style="border: none; box-shadow: 5px 5px 2px 2px rgba(0, 0, 0,.2);" name="categoria" id="categoria" value='" . intval($repuesto[' existencias']) . "' />
+                        <label for="Comments">Comentarios</label>
+                        <input type="text" class="form-control mt-2" name="Comments" id="Comments" required />
                     </div>
+
                     <div class="mb-3">
-                        <label for="imagen">Imagen del item</label>
-                        <input class="form-control mb-3" id="imagenInput" style="border: none; box-shadow: 5px 5px 2px 2px rgba(0, 0, 0,.2);" type="file" name="imagen" onchange="readURL(this);">
-                        <img id="imagenDisplay" src="#" alt="Imagen del Repuesto" style="height: 200px;" />
+                        <label for="Unit_price">Precio Unitario</label>
+                        <input type="number" step="0.01" class="form-control mt-2" name="Unit_price" id="Unit_price" required />
                     </div>
+
+                    <div class="mb-3">
+                        <label for="Quantity_OnHand">Cantidad Existente</label>
+                        <input type="number" class="form-control mt-2" name="Quantity_OnHand" id="Quantity_OnHand" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="Quantity_Lend">Cantidad Prestada</label>
+                        <input type="number" class="form-control mt-2" name="Quantity_Lend" id="Quantity_Lend" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="Total_Qty">Cantidad Total</label>
+                        <input type="number" class="form-control mt-2" name="Total_Qty" id="Total_Qty" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="category_type_id">Categoria del producto</label>
+                        <select class="form-control mt-2" name="category_type_id" id="category_type_id" required>
+                            <option value="" disabled selected>Seleccione una categoria</option>
+                            <?php foreach ($categories as $category): ?>
+                                <option value="<?= $category['CATEGORY_ID']; ?>"><?= htmlspecialchars($category['DESCRIPTION']); ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <label for="STATUS_ID">Estado:</label>
+                    <select class="form-control mt-2" name="STATUS_ID" id="STATUS_ID" required>
+                        <option value="" disabled selected>Seleccione un estado</option>
+                        <?php foreach ($statuses as $status): ?>
+                            <option value="<?= $status['STATUS_ID']; ?>" selected><?= htmlspecialchars($status['DESCRIPTION']); ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                    
+                    <div class="mb-3">
+                        <label for="Image_path">Imagen del Producto</label>
+                        <input class="form-control mb-3" type="file" name="Image_path" id="Image_path" onchange="readURL(this);">
+                        <img id="imagenDisplay" src="#" alt="Imagen Producto" height="200" style="display:none;" />
+                    </div>
+
                 </div>
                 <div class="modal-footer justify-content-center">
                     <button class="btn btn-success" type="submit">
@@ -289,7 +314,7 @@ oci_close($connection);
             </form>
         </div>
     </div>
-</div> -->
+</div>
 
 
 <!-- Incluye jQuery desde CDN -->
@@ -307,54 +332,131 @@ function readURL(input) {
     }
 }
 
-
 // Función para cargar datos en el formulario de actualización
-    $(document).ready(function () {
-        $(document).on('click', '.actualizarReservations', function (e) {
-            e.preventDefault(); // Evita que el formulario recargue la página por defecto
+$(document).ready(function () {
+    $(document).on('click', '.modalUpdate', function (e) {
+        e.preventDefault();
+        const product_id = $(this).data('product_id');
 
-            var reservationID = $(this).data('reservation-id'); // Obtiene el ID de la habitacion desde el botón clickeado
-            if (!reservationID) {
-                console.error("No se proporcionó un ID de reservacion.");
-                return;
-            }
+        $.ajax({
+            method: "POST",
+            url: "../DAL/productos.php",
+            data: {
+                action: "obtenerDetalles",
+                product_id: product_id
+            },
+            success: function (response) {
+                try {
+                    const data = JSON.parse(response);
+                    console.log("Datos recibidos:", data);
 
-            // Realiza una solicitud AJAX para obtener los datos de la habitacion seleccionado
-            $.ajax({
-                method: "POST",
-                url: "../DAL/reservationsHotel.php",
-                data: {
-                    action: "obtenerDetalles", // Acción para identificar la solicitud en el backend
-                    reservation_id: reservationID
-                },
-                success: function (response) {
-                    try {
-                        var data = JSON.parse(response); // Convierte la respuesta JSON a un objeto
-                        console.log("Datos recibidos:", data); // Depuración: Muestra los datos recibidos
-
-                        // Llena los campos del modal con los datos recibidos
-                        $.each(data, function (Key, value) {
-                            const field = $(`#modalUpdate3 [name="${Key}"]`);
+                    // Llena inputs normales (excluyendo el input tipo file)
+                    $.each(data, function (key, value) {
+                        if (key !== "Image_path") { // EXCLUYE explícitamente la imagen
+                            const field = $(`#modalUpdate [name="${key}"]`);
                             if (field.length > 0) {
                                 field.val(value);
                             }
-                        });
-                        // Muestra el modal después de llenar los campos
-                        $('#modalUpdate3').modal('show');
-                    } catch (error) {
-                        console.error("Error al analizar la respuesta JSON:", error);
-                        alert("Ocurrió un error al cargar los detalles de la reservacion.");
-                    }
-                },
-                error: function (xhr) {
-                    console.error("Error AJAX:", xhr.responseText);
-                    alert("No se pudieron cargar los detalles de la reservacion.");
-                }
-            });
-        });
+                        }
+                    });
 
-          // Handle form submission for adding a new service
-        $('#addProductForm').on('submit', function (e) {
+                    // Forzar asignación correcta a los selects específicos
+                    $('#STATUS_ID').val(String(data.Status_ID));
+                    $('#modalUpdate select[name="category_type_id"]').val(String(data.Category_Type_ID));
+
+                    // Asignar imagen correctamente (solo al elemento img, no al input file)
+                    if (data.Image_path) {
+                        $('#imagenDisplay').attr('src', data.Image_path).show();
+                    } else {
+                        $('#imagenDisplay').hide();
+                    }
+
+                    $('#modalUpdate').modal('show');
+
+                } catch (error) {
+                    console.error("Error JSON:", error);
+                    alert("Ocurrió un error al cargar detalles del producto.");
+                }
+            },
+            error: function (xhr) {
+                console.error("Error AJAX:", xhr.responseText);
+                alert("No se pudieron cargar los detalles del producto.");
+            }
+        });
+    });
+});
+
+
+
+// Función para mostrar un mensaje tipo toast con estilo
+function showToast(title, message, type) {
+        const toast = document.createElement("div");
+        toast.className = `toast toast-${type}`; // Aplica la clase según el tipo (p. ej., éxito, error)
+        toast.innerHTML = `<strong>${title}</strong><p>${message}</p>`;
+
+        document.body.appendChild(toast);
+
+        setTimeout(() => {
+            toast.classList.add("fade-out");
+            toast.addEventListener("transitionend", () => toast.remove());
+        }, 3000);
+    }
+
+    // Maneja el envío del formulario para actualizar un servicio
+    $('#formUpdateProduct').on('submit', function (e) {
+    e.preventDefault(); // Evita que el formulario recargue la página por defecto
+
+    var formData = new FormData(this);    // Datos del formulario
+    var submitButtonUpdate = $(this).find('button[type="submit"]');
+
+    // Deshabilitar el botón para evitar múltiples clics
+    submitButtonUpdate.prop('disabled', true);
+    console.log("Actualizando reserva en hotel con datos:", formData);
+
+    // Validar que todos los campos requeridos estén presentes
+    if (!formData.get('Product_ID') || 
+        !formData.get('Description') || 
+        !formData.get('Unit_price') || 
+        !formData.get('Total_Qty') ||
+        !formData.get('category_type_id') ||
+        !formData.get('STATUS_ID')) {
+        console.error("Formulario incompleto. Datos enviados:", formData);
+        showToast("Error", "Formulario incompleto. Por favor, revisa los campos.", "error");
+        submitButtonUpdate.prop('disabled', false);
+        return;
+    }
+
+    // Realiza la solicitud AJAX
+    $.ajax({
+        method: "POST",
+        url: "../DAL/productos.php",
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (response) {
+            console.log("Respuesta del servidor (completa):", JSON.stringify(response));//log
+
+            if (response.includes("success")) {
+                showToast("Éxito", response, "success");
+                $('#modalUpdate').modal('hide');
+                location.reload(); // Recargar página
+            } else {
+                showToast("Error", "La actualización falló. Intenta nuevamente.", "error");
+                submitButtonUpdate.prop('disabled', false);
+            }
+        },
+        error: function (xhr) {
+            console.error("Error al actualizar:", xhr.responseText);
+            showToast("Error", "No se pudo actualizar el producto. Intenta de nuevo.", "error");
+            $('#modalUpdate').modal('show');
+            submitButtonUpdate.prop('disabled', false); // Habilitar botón para otro intento
+        }
+    });
+});
+
+
+  // Handle form submission for adding a new service
+  $('#addProductForm').on('submit', function (e) {
             e.preventDefault(); // Prevent default form submission
 
             // Serialize the form data
@@ -397,103 +499,6 @@ function readURL(input) {
             });
         });
 
-    // Maneja el envío del formulario para actualizar un servicio
-    $('#formUpdateReservation').on('submit', function (e) {
-    e.preventDefault(); // Evita que el formulario recargue la página por defecto
-
-    var formData = $(this).serialize(); // Serializa los datos del formulario
-    var submitButtonUpdate = $(this).find('button[type="submit"]');
-
-    // Deshabilitar el botón para evitar múltiples clics
-    submitButtonUpdate.prop('disabled', true);
-    console.log("Actualizando reserva en hotel con datos:", formData);
-
-    // Validar que todos los campos requeridos estén presentes
-    if (!formData.includes('RESERVATION_CUSTOMER_ID') || !formData.includes('ROOM_ID') || !formData.includes('QTY_NIGHTS') || !formData.includes('HOTEL_ID') || !formData.includes('MODIFIED_BY')) {
-        console.error("Formulario incompleto. Datos enviados:", formData);
-        showToast("Error", "Formulario incompleto. Por favor, revisa los campos.", "error");
-        submitButtonUpdate.prop('disabled', false);
-        return;
-    }
-
-    // Realiza la solicitud AJAX
-    $.ajax({
-        method: "POST",
-        url: "../DAL/reservationsHotel.php",
-        data: formData,
-        success: function (response) {
-            console.log("Respuesta del servidor (completa):", JSON.stringify(response));//log
-
-            if (response.includes("success")) {
-                showToast("Éxito", response, "success");
-                $('#modalUpdate3').modal('hide');
-                location.reload(); // Recargar página
-            } else {
-                showToast("Error", "La actualización falló. Intenta nuevamente.", "error");
-                submitButtonUpdate.prop('disabled', false);
-            }
-        },
-        error: function (xhr) {
-            console.error("Error al actualizar:", xhr.responseText);
-            showToast("Error", "No se pudo actualizar la reservacion. Intenta de nuevo.", "error");
-            $('#modalUpdate3').modal('show');
-            submitButtonUpdate.prop('disabled', false); // Habilitar botón para otro intento
-        }
-    });
-});
-    // Función para mostrar un mensaje tipo toast con estilo
-    function showToast(title, message, type) {
-        const toast = document.createElement("div");
-        toast.className = `toast toast-${type}`; // Aplica la clase según el tipo (p. ej., éxito, error)
-        toast.innerHTML = `<strong>${title}</strong><p>${message}</p>`;
-
-        document.body.appendChild(toast);
-
-        setTimeout(() => {
-            toast.classList.add("fade-out");
-            toast.addEventListener("transitionend", () => toast.remove());
-        }, 3000);
-    }
-
-    // Función para actualizar solo la fila modificada en la tabla
-    function loadUpdatedRow(reservationID) {
-        $.ajax({
-            url: '../DAL/reservationsHotel.php',
-            method: 'POST',
-            data: {
-                action: "obtenerDetalles",
-                reservation_id: reservationID
-            },
-            success: function (response) {
-                try {
-                    var updatedData = JSON.parse(response);
-
-                    // Actualiza la fila específica en la tabla
-                    const row = $(`#inventoryTable tr`).filter(function () {
-                        return $(this).find('td:first').text() === updatedData.RESERVATION_ID;
-                    });
-
-                    if (row.length > 0) {
-                        row.find('td').eq(1).text(updatedData.START_DATE);
-                        row.find('td').eq(2).text(updatedData.END_DATE);
-                        row.find('td').eq(3).text(updatedData.QTY_NIGHTS);
-                        row.find('td').eq(4).text(updatedData.COMMENTS);
-                        row.find('td').eq(5).text(updatedData.RESERVATION_CUSTOMER_ID);
-                        row.find('td').eq(6).text(updatedData.ROOM_ID);
-                        row.find('td').eq(7).text(updatedData.HOTEL_ID);
-                        row.find('td').eq(8).text(updatedData.STATUS_ID);
-                        row.find('td').eq(9).text(updatedData.TOTAL_AMOUNT);
-                    }
-                } catch (error) {
-                    console.error("Error al actualizar la fila de la tabla:", error);
-                }
-            },
-            error: function (xhr) {
-                console.error("Error al obtener la fila actualizada:", xhr.responseText);
-            }
-        });
-    }
-});
 
 // Función para eliminar una habitacion
 function eliminarReservacion(id) {
