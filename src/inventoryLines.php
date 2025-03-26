@@ -199,7 +199,7 @@ require_once "../DAL/database.php";
 $connection = conectar();
 
 // Consultas
-$products = fetchAll($connection, "SELECT product_id, description FROM fide_samdesign.fide_product_tb");
+$products = fetchAll($connection, "SELECT product_id, description FROM fide_samdesign.fide_product_tb where status_id = 1");
 
 
 
@@ -216,15 +216,36 @@ oci_close($connection);
                 <h5 class="modal-title" id="modalAddLabel3">Agregar un Producto al Inventario <?= $inventory_name; ?></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form id="addInventoryForm" class="was-validated" enctype="multipart/form-data">
+            <form id="addInventoryLineForm" class="was-validated" enctype="multipart/form-data">
                 <input type="hidden" name="action" value="insertar">
+                <!-- Agregar el inventario que está creando la linea -->
+                <input type="hidden" name="inventory_id" id="inventory_id" value="<?= $inventory_id; ?>">
                 <div class="modal-body text-center" style="background-color: #eee;">
                     <!-- Agregar el usuario que está creando el inventario -->
                     <input type="hidden" name="created_by" value="<?= htmlspecialchars($user_name); ?>">
-                    <!-- Comentarios -->
+                    <!-- Descrition -->
                     <div class="mb-3">
-                        <label for="description">Nombre del inventario</label>
+                        <label for="description">Descripcion:</label>
                         <textarea class="form-control mt-2" name="description" id="description" rows="1" required></textarea>
+                    </div>
+                    <label for="PRODUCT_ID">Producto:</label>
+                    <select class="form-control mt-2" name="PRODUCT_ID" id="PRODUCT_ID" required>
+                        <option value="" disabled selected>Seleccione un producto</option>
+                            <?php foreach ($products as $product): ?>
+                                <option value="<?= $product['PRODUCT_ID']; ?>">
+                                    <?= htmlspecialchars($product['DESCRIPTION']); ?>
+                                </option>
+                            <?php endforeach; ?>
+                    </select>
+                    <!-- Comments -->
+                    <div class="mb-3">
+                        <label for="comments">Comments:</label>
+                        <textarea class="form-control mt-2" name="comments" id="comments" rows="2" required></textarea>
+                    </div>
+                    <!-- Tottal -->
+                    <div class="mb-3">
+                        <label for="quantity_stocked">Stock total</label>
+                        <input type="number" class="form-control mt-2" name="quantity_stocked" id="quantity_stocked" required />
                     </div>
 
                 </div>
