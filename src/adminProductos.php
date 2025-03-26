@@ -27,6 +27,7 @@ $productosQuery = "SELECT * FROM (
               SELECT a.*, ROWNUM rnum FROM (
                   SELECT Product_ID, Description, Comments, Unit_price, Quantity_OnHand, Quantity_Lend, Total_Qty, Image_path, Status_ID
                   FROM FIDE_SAMDESIGN.FIDE_PRODUCT_TB
+                  WHERE Status_ID = 1
                   ORDER BY Product_ID asc
               ) a WHERE ROWNUM <= :max_row
           ) WHERE rnum > :min_row";
@@ -97,9 +98,9 @@ oci_close($connection);
                                             <td class='text-center'><?= htmlspecialchars($producto['TOTAL_QTY']); ?></td>
                                             <td class='text-center'><img src='<?= htmlspecialchars($producto['IMAGE_PATH']); ?>' style='width:40px; height:40px' alt='Imagen Producto'></td>
                                             <td>
-                                                <button class='btn btn-danger' onclick='eliminarProducto(<?= $producto['PRODUCT_ID']; ?>)'>
-                                                    <i class='fas fa-trash'></i> Eliminar
-                                                </button>
+                                            <button class='btn btn-danger' onclick='eliminarProducto(<?= $producto['PRODUCT_ID']; ?>, "<?= htmlspecialchars($user_name); ?>" )'>
+                                                <i class='fas fa-trash'></i> Eliminar
+                                            </button>
                                                 <a href="#" class="btn btn-success modalUpdate" data-bs-toggle="modal" data-product_id="<?= $producto['PRODUCT_ID']; ?>" data-bs-target="#modalUpdate">
                                                     <i class="fas fa-pencil"></i> Actualizar
                                                 </a>
@@ -491,28 +492,29 @@ function showToast(title, message, type) {
 
 
 // Función para eliminar una habitacion
-function eliminarReservacion(id) {
-        console.log("Intentando eliminar habitacion con ID:", id);
-        if (confirm("¿Estás seguro de que deseas eliminar esta reservacion?")) {
+function eliminarProducto(id, user) {
+        console.log("Intentando eliminar producto con ID:", id);
+        if (confirm("¿Estás seguro de que deseas eliminar este producto?")) {
             $.ajax({
                 method: "POST",
-                url: "../DAL/reservationsHotel.php",
+                url: "../DAL/productos.php",
                 data: {
                     action: "eliminar",
-                    reservation_id: id
+                    product_id: id,
+                    modified_by: user
                 },
                 success: function (response) {
                     console.log("Respuesta de eliminación:", response);
-                    if (response.includes("Éxito")) {
-                        alert("Reserva de habitacion eliminada correctamente.");
+                    if (response.includes("success")) {
+                        alert("Producto eliminado correctamente.");
                         location.reload(); // Refresca la página para reflejar los cambios
                     } else {
-                        alert("No se pudo eliminar la reserva: " + response);
+                        alert("No se pudo eliminar el producto: " + response);
                     }
                 },
                 error: function (xhr) {
                     console.error("Error al eliminar:", xhr.responseText);
-                    alert("No se pudo eliminar la habitacion.");
+                    alert("No se pudo eliminar el producto.");
                 }
             });
         }

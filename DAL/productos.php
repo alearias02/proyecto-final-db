@@ -42,8 +42,8 @@ function IngresarProducto($description, $category_type_id, $comments, $unit_pric
 
     try {
         $oConexion = conectar();
-        $sql = "INSERT INTO FIDE_SAMDESIGN.fide_product_tb (description, category_type_id, comments, unit_price, total_qty, image_path, status_id, created_by)
-                VALUES (:description, :category_type_id, :comments, :unit_price, :total_qty, :image_path, 1, :created_by)";
+        $sql = "INSERT INTO FIDE_SAMDESIGN.fide_product_tb (description, category_type_id, comments, unit_price, total_qty, image_path, status_id, created_by, created_on)
+                VALUES (:description, :category_type_id, :comments, :unit_price, :total_qty, :image_path, 1, :created_by, SYSDATE)";
 
         $stmt = oci_parse($oConexion, $sql);
 
@@ -71,16 +71,21 @@ function IngresarProducto($description, $category_type_id, $comments, $unit_pric
     return $retorno;
 }
 // Eliminar un producto
-function eliminarProducto($product_id) {
+function eliminarProducto($product_id, $modified_by) {
     $retorno = false;
 
     try {
         $oConexion = conectar();
-        $sql = "DELETE FROM FIDE_SAMDESIGN.fide_product_tb WHERE product_id = :product_id";
+        $sql = "UPDATE FIDE_SAMDESIGN.fide_product_tb
+                SET status_id = 0,
+                    modified_on = SYSDATE,
+                    modified_by = :modified_by 
+                WHERE product_id = :product_id";
         $stmt = oci_parse($oConexion, $sql);
 
         // Vincular el parámetro
         oci_bind_by_name($stmt, ":product_id", $product_id);
+        oci_bind_by_name($stmt, ":modified_by", $modified_by);
 
         // Ejecutar la consulta
         if (oci_execute($stmt)) {
@@ -148,8 +153,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"])) {
 
     if ($action == "eliminar" && isset($_POST["product_id"])) {
         $product_id = $_POST["product_id"];
-        $eliminado = eliminarProducto($product_id);
-        echo $eliminado ? "Producto eliminado exitosamente" : "Error al eliminar producto";
+        $modified_by = $_POST["modified_by"];
+        $eliminado = eliminarProducto($product_id, $modified_by);
+        if ($eliminado) {
+            echo "success";
+        } else {
+            echo "Error al eliminar el producto";
+        }
     } elseif ($action == "obtenerDetalles" && isset($_POST["product_id"])) {
         $product_id = $_POST["product_id"];
         $detalles = obtenerDetallesProducto($product_id);
