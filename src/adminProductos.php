@@ -412,7 +412,7 @@ function showToast(title, message, type) {
 
     // Deshabilitar el botón para evitar múltiples clics
     submitButtonUpdate.prop('disabled', true);
-    console.log("Actualizando reserva en hotel con datos:", formData);
+    console.log("Actualizando productos con datos:", formData);
 
     // Validar que todos los campos requeridos estén presentes
     if (!formData.get('Product_ID') || 
@@ -491,7 +491,7 @@ function showToast(title, message, type) {
 });
 
 
-// Función para eliminar una habitacion
+// Función para eliminar un PRODUCTO
 function eliminarProducto(id, user) {
         console.log("Intentando eliminar producto con ID:", id);
         if (confirm("¿Estás seguro de que deseas eliminar este producto?")) {

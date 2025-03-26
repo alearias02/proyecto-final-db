@@ -32,6 +32,7 @@ $inventoryQuery = "SELECT * FROM (
                   SELECT inventory_id, description, status_id,
                          created_by, created_on, modified_on, modified_by
                   FROM FIDE_SAMDESIGN.FIDE_INVENTORY_TB 
+                  WHERE status_id = 1
               ) a WHERE ROWNUM <= :max_row
           ) WHERE rnum > :min_row";
 
@@ -90,7 +91,7 @@ if (!is_array($oInventories) || empty($oInventories)) {
                 <div class="card mb-4">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h4 class="text-center">Inventario</h4>
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalAdd3">+</button>
+                        <button type="button" class="btn btn-primary" data-bs-toggle="offcanvas" data-bs-target="#offcanvasAdd">+</button>
                     </div>
                     <div class="card-body cardAdmin">
                         <div class="table-responsive">
@@ -116,13 +117,12 @@ if (!is_array($oInventories) || empty($oInventories)) {
                                                         <i class="fas fa-box-open"></i> Ver Detalles
                                                     </a>
 
-                                                    <button id="eliminar" class="btn btn-danger" onclick="eliminarInventario(<?= $value['INVENTORY_ID']; ?>)">
-                                                        <i class="fas fa-trash"></i> Eliminar
+                                                    <button class='btn btn-danger' onclick='eliminarInventario(<?= $value['INVENTORY_ID']; ?>, "<?= htmlspecialchars($user_name); ?>" )'>
+                                                        <i class='fas fa-trash'></i> Eliminar
                                                     </button>
-                                                    <a href="#" class="btn btn-success actualizarInventario" data-bs-toggle="modal" 
-                                                    data-inventory-id="<?= $value['INVENTORY_ID']; ?>" 
-                                                    data-bs-target="#modalUpdate3">
-                                                        <i class="fas fa-pencil"></i> Actualizar
+                                                    <a href="#" class="btn btn-success actualizarInventario"
+                                                    data-inventory-id="<?= $value['INVENTORY_ID']; ?>">
+                                                    <i class="fas fa-pencil"></i> Actualizar
                                                     </a>
                                                 </td>
                                             </tr>
@@ -167,41 +167,59 @@ if (!is_array($oInventories) || empty($oInventories)) {
 <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script> -->
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script src="../js/carrito.js"></script>
-<script src="../js/camisas.js"></script>
-<script src="../js/impermeable.js"></script>
-<script src="../js/repuestos.js"></script>
+<!-- <script src="../js/carrito.js"></script> -->
 </body>
 
 </html>
 
-<!-- Modal para agregar una reservación -->
-<div id="modalAdd3" class="modal fade" tabindex="-1" aria-labelledby="modalAddLabel3" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header text-white" style="background-color: #475A68;">
-                <h5 class="modal-title" id="modalAddLabel3">Agregar un inventario</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form id="addInventoryForm" class="was-validated" enctype="multipart/form-data">
-                <input type="hidden" name="action" value="insertar">
-                <div class="modal-body text-center" style="background-color: #eee;">
-                    <!-- Agregar el usuario que está creando el inventario -->
-                    <input type="hidden" name="created_by" value="<?= htmlspecialchars($user_name); ?>">
-                    <!-- Comentarios -->
-                    <div class="mb-3">
-                        <label for="description">Nombre del inventario</label>
-                        <textarea class="form-control mt-2" name="description" id="description" rows="3" required></textarea>
-                    </div>
+<?php
+require_once "../DAL/conexion.php";
+require_once "../DAL/database.php"; // Incluye la conexión a la base de datos
 
-                </div>
-                <div class="modal-footer justify-content-center">
-                    <button type="submit" class="btn btn-primary">Crear</button>
-                </div>
-            </form>
+// Conectar a la base de datos
+$connection = conectar();
+// Consultas
+$statuses = fetchAll($connection, "SELECT STATUS_ID, DESCRIPTION FROM FIDE_SAMDESIGN.FIDE_STATUS_TB");
+// Cierra la conexión después de obtener los datos
+oci_close($connection);
 
-        </div>
+?>
+
+<!-- Offcanvas para agregar un inventario -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasAdd" aria-labelledby="offcanvasAddLabel">
+    <div class="offcanvas-header text-white" style="background-color: #475A68;">
+        <h5 id="offcanvasAddLabel3">Agregar un inventario</h5>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
+    <form id="addInventoryForm" class="was-validated h-100 d-flex flex-column" enctype="multipart/form-data">
+        <input type="hidden" name="action" value="insertar">
+        <input type="hidden" name="created_by" value="<?= htmlspecialchars($user_name); ?>">
+
+        <div class="offcanvas-body flex-grow-1 d-flex flex-column justify-content-between" style="background-color: #eee;">
+            <div>
+                <!-- description -->
+                <div class="mb-3">
+                    <label for="description">Nombre del inventario</label>
+                    <textarea class="form-control mt-2" name="description" id="description" rows="1" required></textarea>
+                </div>
+            <label for="STATUS_ID">Estado:</label>
+            <select class="form-control mt-2" name="STATUS_ID" id="STATUS_ID" required>
+                <option value="" disabled selected>Seleccione un estado</option>
+                    <?php foreach ($statuses as $status): ?>
+                        <option value="<?= $status['STATUS_ID']; ?>" 
+                            <?= $status['STATUS_ID'] == 1 ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($status['DESCRIPTION']); ?>
+                        </option>
+                    <?php endforeach; ?>
+            </select>
+            </div>
+
+
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary">Actualizar</button>
+            </div>
+        </div>
+    </form>
 </div>
 
 
@@ -221,221 +239,187 @@ if (!is_array($oInventories) || empty($oInventories)) {
     </div>
 </div>
 
+<!-- Offcanvas para actualizar un inventario -->
+<div class="offcanvas offcanvas-end" id="offcanvasUpdate" aria-labelledby="offcanvasUpdateLabel">
+    <div class="offcanvas-header text-white" style="background-color: #475A68;">
+        <h5 id="offcanvasUpdateLabel">Actualizar el inventario</h5>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <form id="updateInventoryForm" class="was-validated h-100 d-flex flex-column" enctype="multipart/form-data">
+        <input type="hidden" name="INVENTORY_ID" id="INVENTORY_ID">
+        <input type="hidden" name="action" value="actualizar">
+        <input type="hidden" name="modified_by" value="<?= htmlspecialchars($user_name); ?>">
+
+        <div class="offcanvas-body flex-grow-1 d-flex flex-column justify-content-between" style="background-color: #eee;">
+            <div>
+                <div class="mb-3">
+                    <label for="description">Nombre del inventario</label>
+                    <textarea class="form-control mt-2" name="DESCRIPTION" id="update_description" rows="1" required></textarea>
+                </div>
+                <label for="STATUS_ID">Estado:</label>
+                <select class="form-control mt-2" name="STATUS_ID" id="STATUS_ID" required>
+                    <option value="" disabled selected>Seleccione un estado</option>
+                    <?php foreach ($statuses as $status): ?>
+                        <option value="<?= $status['STATUS_ID']; ?>" selected><?= htmlspecialchars($status['DESCRIPTION']); ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>           
+
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary">Actualizar</button>
+            </div>
+        </div>
+    </form>
+</div>
 
 
 <!-- Incluye jQuery desde CDN -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-// Función para cargar datos en el formulario de actualización
-    $(document).ready(function () {
-        $(document).on('click', '.actualizarReservations', function (e) {
-            e.preventDefault(); // Evita que el formulario recargue la página por defecto
+$(document).ready(function () {
 
-            var reservationID = $(this).data('reservation-id'); // Obtiene el ID de la habitacion desde el botón clickeado
-            if (!reservationID) {
-                console.error("No se proporcionó un ID de reservacion.");
-                return;
-            }
+    // Abrir y rellenar el offcanvas de ACTUALIZAR inventario
+    $(document).on('click', '.actualizarInventario', function (e) {
+        e.preventDefault();
 
-            // Realiza una solicitud AJAX para obtener los datos de la habitacion seleccionado
-            $.ajax({
-                method: "POST",
-                url: "../DAL/reservationsHotel.php",
-                data: {
-                    action: "obtenerDetalles", // Acción para identificar la solicitud en el backend
-                    reservation_id: reservationID
-                },
-                success: function (response) {
-                    try {
-                        var data = JSON.parse(response); // Convierte la respuesta JSON a un objeto
-                        console.log("Datos recibidos:", data); // Depuración: Muestra los datos recibidos
+        const inventoryID = $(this).data('inventory-id');
 
-                        // Llena los campos del modal con los datos recibidos
-                        $.each(data, function (Key, value) {
-                            const field = $(`#modalUpdate3 [name="${Key}"]`);
-                            if (field.length > 0) {
-                                field.val(value);
-                            }
-                        });
-                        // Muestra el modal después de llenar los campos
-                        $('#modalUpdate3').modal('show');
-                    } catch (error) {
-                        console.error("Error al analizar la respuesta JSON:", error);
-                        alert("Ocurrió un error al cargar los detalles de la reservacion.");
-                    }
-                },
-                error: function (xhr) {
-                    console.error("Error AJAX:", xhr.responseText);
-                    alert("No se pudieron cargar los detalles de la reservacion.");
-                }
-            });
-        });
-
-          // Handle form submission for adding a new service
-        $('#addInventoryForm').on('submit', function (e) {
-            e.preventDefault(); // Prevent default form submission
-
-            // Serialize the form data
-            var formData = $(this).serialize();
-            console.log("Data enviada desde el formulario:", formData); 
-            var submitButton = $(this).find('button[type="submit"]'); 
-
-            // Deshabilitar el botón para evitar múltiples clics
-            submitButton.prop('disabled', true);
-
-            // Log the form data for debugging
-            console.log("Data en el form:", formData);
-
-            // Make the AJAX request
-            $.ajax({
-                url: '../DAL/inventario.php', 
-                type: 'POST',
-                data: formData,
-                success: function (response) {
-                    // Log the server response for debugging
-                    console.log("Response from server:", response);
-
-                    // Check if the response indicates success
-                    if (response.includes("success")) {
-                        alert("Inventario agregado correctamente."); // Notify the user
-                        $('#modalAdd3').modal('hide'); // Close the modal
-                        location.reload(); // Reload the page to reflect the new data
-                    } else {
-                        // Display an error message from the server
-                        alert("Error al agregar el inventario " + response);
-                    }
-                },
-                error: function (xhr, status, error) {
-                    // Log AJAX errors for debugging
-                    console.error("Error al enviar el formulario:", error);
-                    alert("Hubo un problema al enviar el formulario. Por favor, inténtelo de nuevo.");
-                }
-            });
-        });
-
-    // Maneja el envío del formulario para actualizar un servicio
-    $('#formUpdateReservation').on('submit', function (e) {
-    e.preventDefault(); // Evita que el formulario recargue la página por defecto
-
-    var formData = $(this).serialize(); // Serializa los datos del formulario
-    var submitButtonUpdate = $(this).find('button[type="submit"]');
-
-    // Deshabilitar el botón para evitar múltiples clics
-    submitButtonUpdate.prop('disabled', true);
-    console.log("Actualizando reserva en hotel con datos:", formData);
-
-    // Validar que todos los campos requeridos estén presentes
-    if (!formData.includes('RESERVATION_CUSTOMER_ID') || !formData.includes('ROOM_ID') || !formData.includes('QTY_NIGHTS') || !formData.includes('HOTEL_ID') || !formData.includes('MODIFIED_BY')) {
-        console.error("Formulario incompleto. Datos enviados:", formData);
-        showToast("Error", "Formulario incompleto. Por favor, revisa los campos.", "error");
-        submitButtonUpdate.prop('disabled', false);
-        return;
-    }
-
-    // Realiza la solicitud AJAX
-    $.ajax({
-        method: "POST",
-        url: "../DAL/reservationsHotel.php",
-        data: formData,
-        success: function (response) {
-            console.log("Respuesta del servidor (completa):", JSON.stringify(response));//log
-
-            if (response.includes("success")) {
-                showToast("Éxito", response, "success");
-                $('#modalUpdate3').modal('hide');
-                location.reload(); // Recargar página
-            } else {
-                showToast("Error", "La actualización falló. Intenta nuevamente.", "error");
-                submitButtonUpdate.prop('disabled', false);
-            }
-        },
-        error: function (xhr) {
-            console.error("Error al actualizar:", xhr.responseText);
-            showToast("Error", "No se pudo actualizar la reservacion. Intenta de nuevo.", "error");
-            $('#modalUpdate3').modal('show');
-            submitButtonUpdate.prop('disabled', false); // Habilitar botón para otro intento
+        if (!inventoryID) {
+            console.error("No se proporcionó un ID de inventario.");
+            return;
         }
-    });
-});
-    // Función para mostrar un mensaje tipo toast con estilo
-    function showToast(title, message, type) {
-        const toast = document.createElement("div");
-        toast.className = `toast toast-${type}`; // Aplica la clase según el tipo (p. ej., éxito, error)
-        toast.innerHTML = `<strong>${title}</strong><p>${message}</p>`;
 
-        document.body.appendChild(toast);
-
-        setTimeout(() => {
-            toast.classList.add("fade-out");
-            toast.addEventListener("transitionend", () => toast.remove());
-        }, 3000);
-    }
-
-    // Función para actualizar solo la fila modificada en la tabla
-    function loadUpdatedRow(reservationID) {
         $.ajax({
-            url: '../DAL/reservationsHotel.php',
-            method: 'POST',
+            method: "POST",
+            url: "../DAL/inventario.php",
             data: {
                 action: "obtenerDetalles",
-                reservation_id: reservationID
+                inventory_id: inventoryID
             },
             success: function (response) {
                 try {
-                    var updatedData = JSON.parse(response);
+                    const data = JSON.parse(response);
+                    console.log("Datos recibidos:", data);
 
-                    // Actualiza la fila específica en la tabla
-                    const row = $(`#inventoryTable tr`).filter(function () {
-                        return $(this).find('td:first').text() === updatedData.RESERVATION_ID;
+                    // Llenar campos del formulario de actualización
+                    $.each(data, function (key, value) {
+                        const field = $(`#offcanvasUpdate [name="${key}"]`);
+                        if (field.length > 0) {
+                            field.val(value);
+                        }
                     });
+                    // Forzar asignación correcta a los selects específicos
+                    $('#STATUS_ID').val(String(data.Status_ID));
 
-                    if (row.length > 0) {
-                        row.find('td').eq(1).text(updatedData.START_DATE);
-                        row.find('td').eq(2).text(updatedData.END_DATE);
-                        row.find('td').eq(3).text(updatedData.QTY_NIGHTS);
-                        row.find('td').eq(4).text(updatedData.COMMENTS);
-                        row.find('td').eq(5).text(updatedData.RESERVATION_CUSTOMER_ID);
-                        row.find('td').eq(6).text(updatedData.ROOM_ID);
-                        row.find('td').eq(7).text(updatedData.HOTEL_ID);
-                        row.find('td').eq(8).text(updatedData.STATUS_ID);
-                        row.find('td').eq(9).text(updatedData.TOTAL_AMOUNT);
-                    }
+                    // Mostrar el offcanvas manualmente (por si falla el data-bs-toggle)
+                    const offcanvas = new bootstrap.Offcanvas(document.getElementById('offcanvasUpdate'));
+                    offcanvas.show();
+
                 } catch (error) {
-                    console.error("Error al actualizar la fila de la tabla:", error);
+                    console.error("Error al parsear JSON:", error);
+                    alert("Error al cargar los datos del inventario.");
                 }
             },
             error: function (xhr) {
-                console.error("Error al obtener la fila actualizada:", xhr.responseText);
+                console.error("Error AJAX:", xhr.responseText);
+                alert("No se pudieron cargar los detalles del inventario.");
             }
         });
-    }
+    });
 });
 
-// Función para eliminar una habitacion
-function eliminarReservacion(id) {
-        console.log("Intentando eliminar habitacion con ID:", id);
-        if (confirm("¿Estás seguro de que deseas eliminar esta reservacion?")) {
-            $.ajax({
-                method: "POST",
-                url: "../DAL/reservationsHotel.php",
-                data: {
-                    action: "eliminar",
-                    reservation_id: id
-                },
-                success: function (response) {
-                    console.log("Respuesta de eliminación:", response);
-                    if (response.includes("Éxito")) {
-                        alert("Reserva de habitacion eliminada correctamente.");
-                        location.reload(); // Refresca la página para reflejar los cambios
-                    } else {
-                        alert("No se pudo eliminar la reserva: " + response);
-                    }
-                },
-                error: function (xhr) {
-                    console.error("Error al eliminar:", xhr.responseText);
-                    alert("No se pudo eliminar la habitacion.");
+//AGREGAR inventario
+$('#addInventoryForm').on('submit', function (e) {
+        e.preventDefault();
+
+        const formData = $(this).serialize();
+        const submitButton = $(this).find('button[type="submit"]');
+        submitButton.prop('disabled', true);
+
+        $.ajax({
+            url: '../DAL/inventario.php',
+            type: 'POST',
+            data: formData,
+            success: function (response) {
+                console.log("Response from server:", response);
+
+                if (response.includes("success")) {
+                    alert("Inventario agregado correctamente.");
+                    location.reload();
+                } else {
+                    alert("Error al agregar el inventario: " + response);
                 }
-            });
+            },
+            error: function (xhr, status, error) {
+                console.error("Error al enviar el formulario:", error);
+                alert("Hubo un problema. Intenta de nuevo.");
+            },
+            complete: function () {
+                submitButton.prop('disabled', false);
+            }
+        });
+    });
+
+//Enviar el formulario de ACTUALIZACIÓN
+$('#updateInventoryForm').on('submit', function (e) {
+        e.preventDefault();
+
+        const formData = $(this).serialize();
+        const submitBtn = $(this).find('button[type="submit"]');
+        submitBtn.prop('disabled', true);
+        console.log("Actualizando inventario con datos:", formData);
+
+        $.ajax({
+            url: '../DAL/inventario.php',
+            method: 'POST',
+            data: formData,
+            success: function (response) {
+                console.log("Respuesta del servidor:", response);
+
+                if (response.includes("success")) {
+                    alert("Inventario actualizado correctamente.");
+                    location.reload();
+                } else {
+                    alert("Error al actualizar: " + response);
+                }
+            },
+            error: function (xhr) {
+                console.error("Error al actualizar:", xhr.responseText);
+                alert("Hubo un error al actualizar el inventario.");
+            },
+            complete: function () {
+                submitBtn.prop('disabled', false);
+            }
+        });
+    });
+
+// Función para eliminar un INVENTARIO
+function eliminarInventario(id, user) {
+            console.log("Intentando eliminar inventario con ID:", id);
+            if (confirm("¿Estás seguro de que deseas eliminar este inventario?")) {
+                $.ajax({
+                    method: "POST",
+                    url: "../DAL/inventario.php",
+                    data: {
+                        action: "eliminar",
+                        inventory_id: id,
+                        modified_by: user
+                    },
+                    success: function (response) {
+                        console.log("Respuesta de eliminación:", response);
+                        if (response.includes("success")) {
+                            alert("Inventario eliminado correctamente.");
+                            location.reload(); // Refresca la página para reflejar los cambios
+                        } else {
+                            alert("No se pudo eliminar el Inventario: " + response);
+                        }
+                    },
+                    error: function (xhr) {
+                        console.error("Error al eliminar:", xhr.responseText);
+                        alert("No se pudo eliminar el Inventario.");
+                    }
+                });
+            }
         }
-    }
 </script>
+

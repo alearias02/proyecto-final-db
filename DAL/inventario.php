@@ -35,8 +35,8 @@ function IngresarInventario($description, $created_by) {
 
     try {
         $oConexion = conectar();
-        $sql = "INSERT INTO FIDE_SAMDESIGN.fide_inventory_tb (description, status_id, created_by)
-                VALUES (:description, 1, :created_by)";
+        $sql = "INSERT INTO FIDE_SAMDESIGN.fide_inventory_tb (description, status_id, created_by, created_on)
+                VALUES (:description, 1, :created_by, SYSDATE)";
 
         $stmt = oci_parse($oConexion, $sql);
 
@@ -133,7 +133,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"])) {
         $inventory_id = $_POST["inventory_id"];
         $modified_by = $_POST['modified_by'];
         $eliminado = eliminarInventario($inventory_id, $modified_by);
-        echo $eliminado ? "El inventario ha sido eliminado exitosamente" : "Error al intentar eliminar el inventario";
+        if ($eliminado) {
+            echo "success";
+        } else {
+            echo "Error al eliminar el producto";
+        }
     } elseif ($action == "obtenerDetalles" && isset($_POST["inventory_id"])) {
         $inventory_id = $_POST["inventory_id"];
         error_log("Obteniendo detalles para ID: " . $inventory_id); // Depuración
@@ -152,7 +156,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"])) {
         error_log("Datos recibidos para actualizar: " . json_encode($_POST));
     
         // Verifica parámetros requeridos
-        $required_fields = ["INVENTORY_ID", "DESCRIPTION", "STATUS_ID", "MODIFIED_BY"];
+        $required_fields = ["INVENTORY_ID", "DESCRIPTION", "STATUS_ID", "modified_by"];
         foreach ($required_fields as $field) {
             if (!isset($_POST[$field])) {
                 http_response_code(400); // Código de error 400: Solicitud Incorrecta
@@ -166,10 +170,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"])) {
             $inventory_id,
             $_POST["DESCRIPTION"],
             $_POST["STATUS_ID"],
-            $_POST["MODIFIED_BY"]
+            $_POST["modified_by"]
         );
-    
-        // Envía la respuesta adecuada
         if ($actualizado) {
             echo "success";
         } else {
@@ -183,7 +185,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"])) {
             $_POST["description"],
             $_POST["created_by"]
         );
-        echo $insertado ? "Inventario insertado correctamente" : "Error al insertar el inventario";
+        if ($insertado) {
+            echo "success";
+        } else {
+            echo "Error al insertar el inventario";
+        }
+         
     } else {
         echo "Acción no válida";
     }

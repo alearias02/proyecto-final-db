@@ -97,7 +97,8 @@ oci_close($connection);
             <div class="col-md-9">
                 <div class="card mb-4">
                     <div class="card-header d-flex justify-content-between align-items-center">
-                        <h4 class="text-center">Inventario</h4>
+                        <a href="inventario.php"><button type="button" class="btn" style="color: var(--primarioOscuro) !important;"><</button></a>
+                        <h4 class="text-center">Inventario  <?= $inventory_name; ?></h4>
                         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalAdd3">+</button>
                     </div>
                     <div class="card-body cardAdmin">
@@ -186,10 +187,7 @@ oci_close($connection);
 <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script> -->
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script src="../js/carrito.js"></script>
-<script src="../js/camisas.js"></script>
-<script src="../js/impermeable.js"></script>
-<script src="../js/repuestos.js"></script>
+<!-- <script src="../js/carrito.js"></script> -->
 </body>
 
 </html>
