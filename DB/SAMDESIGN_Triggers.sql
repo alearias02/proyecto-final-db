@@ -63,6 +63,18 @@ END;
 commit;
 
 
+-- Trigger para la tabla inventory_LINES_tb rellenar reserva
+CREATE OR REPLACE TRIGGER FIDE_INVENTORY_LINES_TB_RESERVA_TRG
+BEFORE INSERT ON FIDE_SAMDESIGN.FIDE_INVENTORY_LINES_TB
+FOR EACH ROW
+BEGIN
+  IF :NEW.Quantity_Stocked IS NOT NULL THEN
+    :NEW.Quantity_Reserved := ROUND(:NEW.Quantity_Stocked * 0.20);
+    :NEW.Quantity_Stocked  := :NEW.Quantity_Stocked - :NEW.Quantity_Reserved;
+  END IF;
+END;
+
+
 --REVISAR TRIGGER PARA FACTURACION
 --POSIBLE SOLUCION
 
