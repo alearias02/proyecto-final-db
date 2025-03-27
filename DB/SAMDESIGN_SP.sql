@@ -276,7 +276,389 @@ BEGIN
     COMMIT;
 END ELIMINAR_FIDE_VENDOR_TB_SP;
 
--- Procedimiento para insertar CUSTOMER registros
+--  Procedimiento para insertar EMPLOYEE
+CREATE OR REPLACE PROCEDURE INSERTAR_FIDE_EMPLOYEE_TB_SP
+(
+    P_EMPLOYEE_ID         IN NUMBER,
+    P_EMPLOYEE_NAME       IN VARCHAR2,
+    P_EMPLOYEE_LASTNAME1  IN VARCHAR2,
+    P_EMPLOYEE_LASTNAME2  IN VARCHAR2,
+    P_EMPLOYEE_EMAIL      IN VARCHAR2,
+    P_EMPLOYEE_POSITION   IN VARCHAR2,
+    P_EMPLOYEE_SALARY     IN FLOAT,
+    P_CREATED_BY          IN VARCHAR2,
+    P_CREATED_ON          IN TIMESTAMP,
+    P_STATUS_ID           IN NUMBER
+)
+IS
+BEGIN
+    INSERT INTO FIDE_SAMDESIGN.FIDE_EMPLOYEE_TB
+    (
+        Employee_ID,
+        Employee_Name,
+        Employee_LastName1,
+        Employee_LastName2,
+        Employee_eMail,
+        Employee_Position,
+        Employee_Salary,
+        Created_By,
+        Created_On,
+        Status_ID
+    )
+    VALUES
+    (
+        P_EMPLOYEE_ID,
+        P_EMPLOYEE_NAME,
+        P_EMPLOYEE_LASTNAME1,
+        P_EMPLOYEE_LASTNAME2,
+        P_EMPLOYEE_EMAIL,
+        P_EMPLOYEE_POSITION,
+        P_EMPLOYEE_SALARY,
+        P_CREATED_BY,
+        P_CREATED_ON,
+        P_STATUS_ID
+    );
+    COMMIT;
+END INSERTAR_FIDE_EMPLOYEE_TB_SP;
+
+--Procedimiento para modificar EMPLOYEE
+CREATE OR REPLACE PROCEDURE MODIFICAR_FIDE_EMPLOYEE_TB_SP
+(
+    P_EMPLOYEE_ID         IN NUMBER,
+    P_EMPLOYEE_NAME       IN VARCHAR2,
+    P_EMPLOYEE_LASTNAME1  IN VARCHAR2,
+    P_EMPLOYEE_LASTNAME2  IN VARCHAR2,
+    P_EMPLOYEE_EMAIL      IN VARCHAR2,
+    P_EMPLOYEE_POSITION   IN VARCHAR2,
+    P_EMPLOYEE_SALARY     IN FLOAT,
+    P_MODIFIED_BY         IN VARCHAR2,
+    P_MODIFIED_ON         IN TIMESTAMP
+)
+IS
+BEGIN
+    UPDATE FIDE_SAMDESIGN.FIDE_EMPLOYEE_TB
+    SET Employee_Name       = P_EMPLOYEE_NAME,
+        Employee_LastName1  = P_EMPLOYEE_LASTNAME1,
+        Employee_LastName2  = P_EMPLOYEE_LASTNAME2,
+        Employee_eMail      = P_EMPLOYEE_EMAIL,
+        Employee_Position   = P_EMPLOYEE_POSITION,
+        Employee_Salary     = P_EMPLOYEE_SALARY,
+        Modified_By         = P_MODIFIED_BY,
+        Modified_On         = P_MODIFIED_ON
+    WHERE Employee_ID = P_EMPLOYEE_ID;
+    COMMIT;
+END MODIFICAR_FIDE_EMPLOYEE_TB_SP;
+/
+-- Procedimiento para desactivar EMPLOYEE
+CREATE OR REPLACE PROCEDURE ELIMINAR_FIDE_EMPLOYEE_TB_SP
+(
+    P_EMPLOYEE_ID IN NUMBER,
+    P_MODIFIED_BY IN VARCHAR2,
+    P_MODIFIED_ON IN TIMESTAMP
+)
+IS
+BEGIN
+    UPDATE FIDE_SAMDESIGN.FIDE_EMPLOYEE_TB
+    SET Status_ID   = 0,
+        Modified_By = P_MODIFIED_BY,
+        Modified_On = P_MODIFIED_ON
+    WHERE Employee_ID = P_EMPLOYEE_ID;
+    COMMIT;
+END ELIMINAR_FIDE_EMPLOYEE_TB_SP;
+/
+
+-- Procedimiento para insertar PAYMENT_METHOD
+CREATE OR REPLACE PROCEDURE INSERTAR_FIDE_PAYMENT_METHOD_TB_SP
+(
+    P_PAYMENT_METHOD_ID   IN NUMBER,
+    P_PAYMENT_METHOD_NAME IN VARCHAR2,
+    P_DESCRIPTION         IN VARCHAR2,
+    P_STATUS_ID           IN NUMBER,
+    P_CREATED_BY          IN VARCHAR2,
+    P_CREATED_ON          IN TIMESTAMP
+)
+IS
+BEGIN
+    INSERT INTO FIDE_SAMDESIGN.FIDE_PAYMENT_METHOD_TB
+    (
+        Payment_Method_ID,
+        Payment_Method_Name,
+        Description,
+        Status_ID,
+        Created_By,
+        Created_On
+    )
+    VALUES
+    (
+        P_PAYMENT_METHOD_ID,
+        P_PAYMENT_METHOD_NAME,
+        P_DESCRIPTION,
+        P_STATUS_ID,
+        P_CREATED_BY,
+        P_CREATED_ON
+    );
+    COMMIT;
+END INSERTAR_FIDE_PAYMENT_METHOD_TB_SP;
+/
+
+-- Procedimiento para modificar PAYMENT_METHOD
+CREATE OR REPLACE PROCEDURE MODIFICAR_FIDE_PAYMENT_METHOD_TB_SP
+(
+    P_PAYMENT_METHOD_ID   IN NUMBER,
+    P_PAYMENT_METHOD_NAME IN VARCHAR2,
+    P_DESCRIPTION         IN VARCHAR2,
+    P_STATUS_ID           IN NUMBER,
+    P_MODIFIED_BY         IN VARCHAR2,
+    P_MODIFIED_ON         IN TIMESTAMP
+)
+IS
+BEGIN
+    UPDATE FIDE_SAMDESIGN.FIDE_PAYMENT_METHOD_TB
+    SET Payment_Method_Name = P_PAYMENT_METHOD_NAME,
+        Description         = P_DESCRIPTION,
+        Status_ID           = P_STATUS_ID,
+        Modified_By         = P_MODIFIED_BY,
+        Modified_On         = P_MODIFIED_ON
+    WHERE Payment_Method_ID = P_PAYMENT_METHOD_ID;
+    COMMIT;
+END MODIFICAR_FIDE_PAYMENT_METHOD_TB_SP;
+/
+
+-- Procedimiento para desactivar PAYMENT_METHOD
+CREATE OR REPLACE PROCEDURE ELIMINAR_FIDE_PAYMENT_METHOD_TB_SP
+(
+    P_PAYMENT_METHOD_ID IN NUMBER,
+    P_MODIFIED_BY       IN VARCHAR2,
+    P_MODIFIED_ON       IN TIMESTAMP
+)
+IS
+BEGIN
+    UPDATE FIDE_SAMDESIGN.FIDE_PAYMENT_METHOD_TB
+    SET Status_ID   = 0,
+        Modified_By = P_MODIFIED_BY,
+        Modified_On = P_MODIFIED_ON
+    WHERE Payment_Method_ID = P_PAYMENT_METHOD_ID;
+    COMMIT;
+END ELIMINAR_FIDE_PAYMENT_METHOD_TB_SP;
+/
+
+-- Procedimiento para Insertar CITY_ADDRESS
+CREATE OR REPLACE PROCEDURE INSERTAR_FIDE_CITY_ADDRESS_TB_SP
+(
+    P_CITY_ID    IN NUMBER,
+    P_NAME       IN VARCHAR2,
+    P_STATUS_ID  IN NUMBER,
+    P_CREATED_BY IN VARCHAR2,
+    P_CREATED_ON IN TIMESTAMP
+)
+IS
+BEGIN
+    INSERT INTO FIDE_SAMDESIGN.FIDE_CITY_ADDRESS_TB
+    (
+        City_ID,
+        Name,
+        Status_ID,
+        Created_By,
+        Created_On
+    )
+    VALUES
+    (
+        P_CITY_ID,
+        P_NAME,
+        P_STATUS_ID,
+        P_CREATED_BY,
+        P_CREATED_ON
+    );
+    COMMIT;
+END INSERTAR_FIDE_CITY_ADDRESS_TB_SP;
+/
+
+-- Procedimiento para Modificar CITY_ADDRESS
+CREATE OR REPLACE PROCEDURE MODIFICAR_FIDE_CITY_ADDRESS_TB_SP
+(
+    P_CITY_ID    IN NUMBER,
+    P_NAME       IN VARCHAR2,
+    P_STATUS_ID  IN NUMBER,
+    P_MODIFIED_BY IN VARCHAR2,
+    P_MODIFIED_ON IN TIMESTAMP
+)
+IS
+BEGIN
+    UPDATE FIDE_SAMDESIGN.FIDE_CITY_ADDRESS_TB
+    SET Name        = P_NAME,
+        Status_ID   = P_STATUS_ID,
+        Modified_By = P_MODIFIED_BY,
+        Modified_On = P_MODIFIED_ON
+    WHERE City_ID = P_CITY_ID;
+    COMMIT;
+END MODIFICAR_FIDE_CITY_ADDRESS_TB_SP;
+/
+
+-- Procedimiento para desactivar CITY_ADDRESS
+CREATE OR REPLACE PROCEDURE ELIMINAR_FIDE_CITY_ADDRESS_TB_SP
+(
+    P_CITY_ID    IN NUMBER,
+    P_MODIFIED_BY IN VARCHAR2,
+    P_MODIFIED_ON IN TIMESTAMP
+)
+IS
+BEGIN
+    UPDATE FIDE_SAMDESIGN.FIDE_CITY_ADDRESS_TB
+    SET Status_ID   = 0,
+        Modified_By = P_MODIFIED_BY,
+        Modified_On = P_MODIFIED_ON
+    WHERE City_ID = P_CITY_ID;
+    COMMIT;
+END ELIMINAR_FIDE_CITY_ADDRESS_TB_SP;
+/
+
+ 
+
+-- Procedimiento para Insertar COUNTRIES
+CREATE OR REPLACE PROCEDURE INSERTAR_FIDE_COUNTRIES_TB_SP
+(
+    P_COUNTRY_ID IN NUMBER,
+    P_NAME       IN VARCHAR2,
+    P_STATUS_ID  IN NUMBER,
+    P_CREATED_BY IN VARCHAR2,
+    P_CREATED_ON IN TIMESTAMP
+)
+IS
+BEGIN
+    INSERT INTO FIDE_SAMDESIGN.FIDE_COUNTRIES_TB
+    (
+        Country_ID,
+        Name,
+        Status_ID,
+        Created_By,
+        Created_On
+    )
+    VALUES
+    (
+        P_COUNTRY_ID,
+        P_NAME,
+        P_STATUS_ID,
+        P_CREATED_BY,
+        P_CREATED_ON
+    );
+    COMMIT;
+END INSERTAR_FIDE_COUNTRIES_TB_SP;
+/
+
+-- Procedimiento para Modificar COUNTRIES
+CREATE OR REPLACE PROCEDURE MODIFICAR_FIDE_COUNTRIES_TB_SP
+(
+    P_COUNTRY_ID IN NUMBER,
+    P_NAME       IN VARCHAR2,
+    P_STATUS_ID  IN NUMBER,
+    P_MODIFIED_BY IN VARCHAR2,
+    P_MODIFIED_ON IN TIMESTAMP
+)
+IS
+BEGIN
+    UPDATE FIDE_SAMDESIGN.FIDE_COUNTRIES_TB
+    SET Name        = P_NAME,
+        Status_ID   = P_STATUS_ID,
+        Modified_By = P_MODIFIED_BY,
+        Modified_On = P_MODIFIED_ON
+    WHERE Country_ID = P_COUNTRY_ID;
+    COMMIT;
+END MODIFICAR_FIDE_COUNTRIES_TB_SP;
+/
+
+-- Procedimiento para desactivar COUNTRIES
+CREATE OR REPLACE PROCEDURE ELIMINAR_FIDE_COUNTRIES_TB_SP
+(
+    P_COUNTRY_ID IN NUMBER,
+    P_MODIFIED_BY IN VARCHAR2,
+    P_MODIFIED_ON IN TIMESTAMP
+)
+IS
+BEGIN
+    UPDATE FIDE_SAMDESIGN.FIDE_COUNTRIES_TB
+    SET Status_ID   = 0,
+        Modified_By = P_MODIFIED_BY,
+        Modified_On = P_MODIFIED_ON
+    WHERE Country_ID = P_COUNTRY_ID;
+    COMMIT;
+END ELIMINAR_FIDE_COUNTRIES_TB_SP;
+/
+
+ 
+
+-- Procedimiento para Insertar STATE_ADDRESS
+CREATE OR REPLACE PROCEDURE INSERTAR_FIDE_STATE_ADDRESS_TB_SP
+(
+    P_STATE_ID   IN NUMBER,
+    P_NAME       IN VARCHAR2,
+    P_STATUS_ID  IN NUMBER,
+    P_CREATED_BY IN VARCHAR2,
+    P_CREATED_ON IN TIMESTAMP
+)
+IS
+BEGIN
+    INSERT INTO FIDE_SAMDESIGN.FIDE_STATE_ADDRESS_TB
+    (
+        State_ID,
+        Name,
+        Status_ID,
+        Created_By,
+        Created_On
+    )
+    VALUES
+    (
+        P_STATE_ID,
+        P_NAME,
+        P_STATUS_ID,
+        P_CREATED_BY,
+        P_CREATED_ON
+    );
+    COMMIT;
+END INSERTAR_FIDE_STATE_ADDRESS_TB_SP;
+/
+
+-- Procedimiento para Modificar STATE_ADDRESS
+CREATE OR REPLACE PROCEDURE MODIFICAR_FIDE_STATE_ADDRESS_TB_SP
+(
+    P_STATE_ID   IN NUMBER,
+    P_NAME       IN VARCHAR2,
+    P_STATUS_ID  IN NUMBER,
+    P_MODIFIED_BY IN VARCHAR2,
+    P_MODIFIED_ON IN TIMESTAMP
+)
+IS
+BEGIN
+    UPDATE FIDE_SAMDESIGN.FIDE_STATE_ADDRESS_TB
+    SET Name        = P_NAME,
+        Status_ID   = P_STATUS_ID,
+        Modified_By = P_MODIFIED_BY,
+        Modified_On = P_MODIFIED_ON
+    WHERE State_ID = P_STATE_ID;
+    COMMIT;
+END MODIFICAR_FIDE_STATE_ADDRESS_TB_SP;
+/
+
+-- Procedimiento para desactivar STATE_ADDRESS
+CREATE OR REPLACE PROCEDURE ELIMINAR_FIDE_STATE_ADDRESS_TB_SP
+(
+    P_STATE_ID   IN NUMBER,
+    P_MODIFIED_BY IN VARCHAR2,
+    P_MODIFIED_ON IN TIMESTAMP
+)
+IS
+BEGIN
+    UPDATE FIDE_SAMDESIGN.FIDE_STATE_ADDRESS_TB
+    SET Status_ID   = 0,
+        Modified_By = P_MODIFIED_BY,
+        Modified_On = P_MODIFIED_ON
+    WHERE State_ID = P_STATE_ID;
+    COMMIT;
+END ELIMINAR_FIDE_STATE_ADDRESS_TB_SP;
+/
+
+ 
+
+-- Procedimiento para Insertar CUSTOMER
 CREATE OR REPLACE PROCEDURE INSERTAR_FIDE_CUSTOMER_TB_SP
 (
     P_CUSTOMER_ID           IN NUMBER,
@@ -313,7 +695,52 @@ BEGIN
 END INSERTAR_FIDE_CUSTOMER_TB_SP;
 /
 
--- Procedimiento para insertar ADDRESS registros
+-- Procedimiento para Modificar CUSTOMER
+CREATE OR REPLACE PROCEDURE MODIFICAR_FIDE_CUSTOMER_TB_SP
+(
+    P_CUSTOMER_ID           IN NUMBER,
+    P_CUSTOMER_NAME         IN VARCHAR2,
+    P_CUSTOMER_EMAIL        IN VARCHAR2,
+    P_CUSTOMER_PHONE_NUMBER IN VARCHAR2,
+    P_STATUS_ID             IN NUMBER,
+    P_MODIFIED_BY           IN VARCHAR2,
+    P_MODIFIED_ON           IN TIMESTAMP
+)
+IS
+BEGIN
+    UPDATE FIDE_SAMDESIGN.FIDE_CUSTOMER_TB
+    SET Customer_Name         = P_CUSTOMER_NAME,
+        Customer_Email        = P_CUSTOMER_EMAIL,
+        Customer_Phone_number = P_CUSTOMER_PHONE_NUMBER,
+        Status_ID             = P_STATUS_ID,
+        Modified_By           = P_MODIFIED_BY,
+        Modified_On           = P_MODIFIED_ON
+    WHERE Customer_ID = P_CUSTOMER_ID;
+    COMMIT;
+END MODIFICAR_FIDE_CUSTOMER_TB_SP;
+/
+
+-- Procedimiento para desactivar CUSTOMER
+CREATE OR REPLACE PROCEDURE ELIMINAR_FIDE_CUSTOMER_TB_SP
+(
+    P_CUSTOMER_ID IN NUMBER,
+    P_MODIFIED_BY IN VARCHAR2,
+    P_MODIFIED_ON IN TIMESTAMP
+)
+IS
+BEGIN
+    UPDATE FIDE_SAMDESIGN.FIDE_CUSTOMER_TB
+    SET Status_ID   = 0,
+        Modified_By = P_MODIFIED_BY,
+        Modified_On = P_MODIFIED_ON
+    WHERE Customer_ID = P_CUSTOMER_ID;
+    COMMIT;
+END ELIMINAR_FIDE_CUSTOMER_TB_SP;
+/
+
+ 
+
+-- Procedimiento para Insertar ADDRESS
 CREATE OR REPLACE PROCEDURE INSERTAR_FIDE_ADDRESS_TB_SP
 (
     P_ADDRESS_ID   IN NUMBER,
@@ -359,7 +786,58 @@ BEGIN
 END INSERTAR_FIDE_ADDRESS_TB_SP;
 /
 
--- Procedimiento para insertar PRODUCT registros
+-- Procedimiento para Modificar ADDRESS
+CREATE OR REPLACE PROCEDURE MODIFICAR_FIDE_ADDRESS_TB_SP
+(
+    P_ADDRESS_ID   IN NUMBER,
+    P_ADDRESS      IN VARCHAR2,
+    P_ID_STATE     IN NUMBER,
+    P_ID_CITY      IN NUMBER,
+    P_ZIP_CODE     IN NUMBER,
+    P_ID_COUNTRY   IN NUMBER,
+    P_STATUS_ID    IN NUMBER,
+    P_MODIFIED_BY  IN VARCHAR2,
+    P_MODIFIED_ON  IN TIMESTAMP,
+    P_ID_CUSTOMER  IN NUMBER
+)
+IS
+BEGIN
+    UPDATE FIDE_SAMDESIGN.FIDE_ADDRESS_TB
+    SET Address     = P_ADDRESS,
+        ID_State    = P_ID_STATE,
+        ID_City     = P_ID_CITY,
+        ZIP_Code    = P_ZIP_CODE,
+        ID_Country  = P_ID_COUNTRY,
+        Status_ID   = P_STATUS_ID,
+        Modified_By = P_MODIFIED_BY,
+        Modified_On = P_MODIFIED_ON,
+        ID_Customer = P_ID_CUSTOMER
+    WHERE Address_ID = P_ADDRESS_ID;
+    COMMIT;
+END MODIFICAR_FIDE_ADDRESS_TB_SP;
+/
+
+-- Procedimiento para desactivar ADDRESS
+CREATE OR REPLACE PROCEDURE ELIMINAR_FIDE_ADDRESS_TB_SP
+(
+    P_ADDRESS_ID IN NUMBER,
+    P_MODIFIED_BY IN VARCHAR2,
+    P_MODIFIED_ON IN TIMESTAMP
+)
+IS
+BEGIN
+    UPDATE FIDE_SAMDESIGN.FIDE_ADDRESS_TB
+    SET Status_ID   = 0,
+        Modified_By = P_MODIFIED_BY,
+        Modified_On = P_MODIFIED_ON
+    WHERE Address_ID = P_ADDRESS_ID;
+    COMMIT;
+END ELIMINAR_FIDE_ADDRESS_TB_SP;
+/
+
+ 
+
+-- Procedimiento para Insertar PRODUCT
 CREATE OR REPLACE PROCEDURE INSERTAR_FIDE_PRODUCT_TB_SP
 (
     P_PRODUCT_ID       IN NUMBER,
@@ -367,12 +845,10 @@ CREATE OR REPLACE PROCEDURE INSERTAR_FIDE_PRODUCT_TB_SP
     P_CATEGORY_TYPE_ID IN NUMBER,
     P_COMMENTS         IN VARCHAR2,
     P_UNIT_PRICE       IN NUMBER,
-    P_QUANTITY_ONHAND  IN NUMBER,
-    P_QUANTITY_LEND    IN NUMBER,
-    P_TOTAL_QTY        IN NUMBER,
+    P_IMAGE_PATH       IN VARCHAR2,
     P_STATUS_ID        IN NUMBER,
     P_CREATED_BY       IN VARCHAR2,
-    P_CREATED_ON       IN DATE
+    P_CREATED_ON       IN TIMESTAMP
 )
 IS
 BEGIN
@@ -383,9 +859,7 @@ BEGIN
         Category_Type_ID,
         Comments,
         Unit_price,
-        Quantity_OnHand,
-        Quantity_Lend,
-        Total_Qty,
+        Image_path,
         Status_ID,
         Created_By,
         Created_On
@@ -397,9 +871,7 @@ BEGIN
         P_CATEGORY_TYPE_ID,
         P_COMMENTS,
         P_UNIT_PRICE,
-        P_QUANTITY_ONHAND,
-        P_QUANTITY_LEND,
-        P_TOTAL_QTY,
+        P_IMAGE_PATH,
         P_STATUS_ID,
         P_CREATED_BY,
         P_CREATED_ON
@@ -408,45 +880,79 @@ BEGIN
 END INSERTAR_FIDE_PRODUCT_TB_SP;
 /
 
--- Procedimiento para insertar INVENTORY registros
+-- Procedimiento para Modificar PRODUCT
+CREATE OR REPLACE PROCEDURE MODIFICAR_FIDE_PRODUCT_TB_SP
+(
+    P_PRODUCT_ID       IN NUMBER,
+    P_DESCRIPTION      IN VARCHAR2,
+    P_CATEGORY_TYPE_ID IN NUMBER,
+    P_COMMENTS         IN VARCHAR2,
+    P_UNIT_PRICE       IN NUMBER,
+    P_IMAGE_PATH       IN VARCHAR2,
+    P_STATUS_ID        IN NUMBER,
+    P_MODIFIED_BY      IN VARCHAR2,
+    P_MODIFIED_ON      IN TIMESTAMP
+)
+IS
+BEGIN
+    UPDATE FIDE_SAMDESIGN.FIDE_PRODUCT_TB
+    SET Description      = P_DESCRIPTION,
+        Category_Type_ID = P_CATEGORY_TYPE_ID,
+        Comments         = P_COMMENTS,
+        Unit_price       = P_UNIT_PRICE,
+        Image_path       = P_IMAGE_PATH,
+        Status_ID        = P_STATUS_ID,
+        Modified_By      = P_MODIFIED_BY,
+        Modified_On      = P_MODIFIED_ON
+    WHERE Product_ID = P_PRODUCT_ID;
+    COMMIT;
+END MODIFICAR_FIDE_PRODUCT_TB_SP;
+/
+
+-- Procedimiento para desactivar PRODUCT
+CREATE OR REPLACE PROCEDURE ELIMINAR_FIDE_PRODUCT_TB_SP
+(
+    P_PRODUCT_ID IN NUMBER,
+    P_MODIFIED_BY IN VARCHAR2,
+    P_MODIFIED_ON IN TIMESTAMP
+)
+IS
+BEGIN
+    UPDATE FIDE_SAMDESIGN.FIDE_PRODUCT_TB
+    SET Status_ID   = 0,
+        Modified_By = P_MODIFIED_BY,
+        Modified_On = P_MODIFIED_ON
+    WHERE Product_ID = P_PRODUCT_ID;
+    COMMIT;
+END ELIMINAR_FIDE_PRODUCT_TB_SP;
+/
+
+ 
+
+-- Procedimiento para Insertar INVENTORY
 CREATE OR REPLACE PROCEDURE INSERTAR_FIDE_INVENTORY_TB_SP
 (
-    P_INVENTORY_ID       IN NUMBER,
-    P_PRODUCT_ID         IN NUMBER,
-    P_COMMENTS           IN VARCHAR2,
-    P_QUANTITY_STOCK     IN NUMBER,
-    P_QUANTITY_RESERVED  IN NUMBER,
-    P_QUANTITY_THRESHOLD IN NUMBER,
-    P_STATUS_ID          IN NUMBER,
-    P_LAST_RESTOCK       IN TIMESTAMP,
-    P_CREATED_BY         IN VARCHAR2,
-    P_CREATED_ON         IN TIMESTAMP
+    P_INVENTORY_ID IN NUMBER,
+    P_DESCRIPTION  IN VARCHAR2,
+    P_STATUS_ID    IN NUMBER,
+    P_CREATED_BY   IN VARCHAR2,
+    P_CREATED_ON   IN TIMESTAMP
 )
 IS
 BEGIN
     INSERT INTO FIDE_SAMDESIGN.FIDE_INVENTORY_TB
     (
         Inventory_ID,
-        Product_ID,
-        Comments,
-        Quantity_Stock,
-        Quantity_Reserved,
-        Quantity_Threshold,
+        Description,
         Status_ID,
-        Last_Restock,
         Created_By,
         Created_On
     )
     VALUES
     (
         P_INVENTORY_ID,
-        P_PRODUCT_ID,
-        P_COMMENTS,
-        P_QUANTITY_STOCK,
-        P_QUANTITY_RESERVED,
-        P_QUANTITY_THRESHOLD,
+        P_DESCRIPTION,
         P_STATUS_ID,
-        P_LAST_RESTOCK,
         P_CREATED_BY,
         P_CREATED_ON
     );
@@ -454,7 +960,48 @@ BEGIN
 END INSERTAR_FIDE_INVENTORY_TB_SP;
 /
 
--- Procedimiento para insertar INVENTORY_LINES registros
+-- Procedimiento para Modificar INVENTORY
+CREATE OR REPLACE PROCEDURE MODIFICAR_FIDE_INVENTORY_TB_SP
+(
+    P_INVENTORY_ID IN NUMBER,
+    P_DESCRIPTION  IN VARCHAR2,
+    P_STATUS_ID    IN NUMBER,
+    P_MODIFIED_BY  IN VARCHAR2,
+    P_MODIFIED_ON  IN TIMESTAMP
+)
+IS
+BEGIN
+    UPDATE FIDE_SAMDESIGN.FIDE_INVENTORY_TB
+    SET Description  = P_DESCRIPTION,
+        Status_ID    = P_STATUS_ID,
+        Modified_By  = P_MODIFIED_BY,
+        Modified_On  = P_MODIFIED_ON
+    WHERE Inventory_ID = P_INVENTORY_ID;
+    COMMIT;
+END MODIFICAR_FIDE_INVENTORY_TB_SP;
+/
+
+-- Procedimiento para desactivar INVENTORY
+CREATE OR REPLACE PROCEDURE ELIMINAR_FIDE_INVENTORY_TB_SP
+(
+    P_INVENTORY_ID IN NUMBER,
+    P_MODIFIED_BY  IN VARCHAR2,
+    P_MODIFIED_ON  IN TIMESTAMP
+)
+IS
+BEGIN
+    UPDATE FIDE_SAMDESIGN.FIDE_INVENTORY_TB
+    SET Status_ID   = 0,
+        Modified_By = P_MODIFIED_BY,
+        Modified_On = P_MODIFIED_ON
+    WHERE Inventory_ID = P_INVENTORY_ID;
+    COMMIT;
+END ELIMINAR_FIDE_INVENTORY_TB_SP;
+/
+
+ 
+
+-- Procedimiento para Insertar INVENTORY_LINES
 CREATE OR REPLACE PROCEDURE INSERTAR_FIDE_INVENTORY_LINES_TB_SP
 (
     P_INVENTORY_LINES_ID IN NUMBER,
@@ -463,9 +1010,8 @@ CREATE OR REPLACE PROCEDURE INSERTAR_FIDE_INVENTORY_LINES_TB_SP
     P_COMMENTS           IN VARCHAR2,
     P_QUANTITY_STOCKED   IN NUMBER,
     P_QUANTITY_RESERVED  IN NUMBER,
-    P_QUANTITY_THRESHOLD IN NUMBER,
     P_STATUS_ID          IN NUMBER,
-    P_LAST_RESORT        IN TIMESTAMP,
+    P_LAST_RESTOCKED     IN TIMESTAMP,
     P_CREATED_BY         IN VARCHAR2,
     P_CREATED_ON         IN TIMESTAMP
 )
@@ -479,9 +1025,8 @@ BEGIN
         Comments,
         Quantity_Stocked,
         Quantity_Reserved,
-        Quantity_Threshold,
         Status_ID,
-        Last_Resort,
+        Last_ReStocked,
         Created_By,
         Created_On
     )
@@ -493,9 +1038,8 @@ BEGIN
         P_COMMENTS,
         P_QUANTITY_STOCKED,
         P_QUANTITY_RESERVED,
-        P_QUANTITY_THRESHOLD,
         P_STATUS_ID,
-        P_LAST_RESORT,
+        P_LAST_RESTOCKED,
         P_CREATED_BY,
         P_CREATED_ON
     );
@@ -503,7 +1047,58 @@ BEGIN
 END INSERTAR_FIDE_INVENTORY_LINES_TB_SP;
 /
 
--- Procedimiento para insertar ORDER registros
+-- Procedimiento para Modificar INVENTORY_LINES
+CREATE OR REPLACE PROCEDURE MODIFICAR_FIDE_INVENTORY_LINES_TB_SP
+(
+    P_INVENTORY_LINES_ID IN NUMBER,
+    P_INVENTORY_ID       IN NUMBER,
+    P_PRODUCT_ID         IN NUMBER,
+    P_COMMENTS           IN VARCHAR2,
+    P_QUANTITY_STOCKED   IN NUMBER,
+    P_QUANTITY_RESERVED  IN NUMBER,
+    P_STATUS_ID          IN NUMBER,
+    P_LAST_RESTOCKED     IN TIMESTAMP,
+    P_MODIFIED_BY        IN VARCHAR2,
+    P_MODIFIED_ON        IN TIMESTAMP
+)
+IS
+BEGIN
+    UPDATE FIDE_SAMDESIGN.FIDE_INVENTORY_LINES_TB
+    SET Inventory_ID       = P_INVENTORY_ID,
+        Product_ID         = P_PRODUCT_ID,
+        Comments           = P_COMMENTS,
+        Quantity_Stocked   = P_QUANTITY_STOCKED,
+        Quantity_Reserved  = P_QUANTITY_RESERVED,
+        Status_ID          = P_STATUS_ID,
+        Last_ReStocked     = P_LAST_RESTOCKED,
+        Modified_By        = P_MODIFIED_BY,
+        Modified_On        = P_MODIFIED_ON
+    WHERE Inventory_Lines_ID = P_INVENTORY_LINES_ID;
+    COMMIT;
+END MODIFICAR_FIDE_INVENTORY_LINES_TB_SP;
+/
+
+-- Procedimiento para desactivar INVENTORY_LINES
+CREATE OR REPLACE PROCEDURE ELIMINAR_FIDE_INVENTORY_LINES_TB_SP
+(
+    P_INVENTORY_LINES_ID IN NUMBER,
+    P_MODIFIED_BY        IN VARCHAR2,
+    P_MODIFIED_ON        IN TIMESTAMP
+)
+IS
+BEGIN
+    UPDATE FIDE_SAMDESIGN.FIDE_INVENTORY_LINES_TB
+    SET Status_ID   = 0,
+        Modified_By = P_MODIFIED_BY,
+        Modified_On = P_MODIFIED_ON
+    WHERE Inventory_Lines_ID = P_INVENTORY_LINES_ID;
+    COMMIT;
+END ELIMINAR_FIDE_INVENTORY_LINES_TB_SP;
+/
+
+ 
+
+-- Procedimiento para Insertar ORDER
 CREATE OR REPLACE PROCEDURE INSERTAR_FIDE_ORDER_TB_SP
 (
     P_ORDER_ID          IN NUMBER,
@@ -555,7 +1150,61 @@ BEGIN
 END INSERTAR_FIDE_ORDER_TB_SP;
 /
 
--- Procedimiento para insertar ORDER_LINES registros
+-- Procedimiento para Modificar ORDER
+CREATE OR REPLACE PROCEDURE MODIFICAR_FIDE_ORDER_TB_SP
+(
+    P_ORDER_ID          IN NUMBER,
+    P_CUSTOMER_ID       IN NUMBER,
+    P_ORDER_DATE        IN TIMESTAMP,
+    P_ORDER_AMOUNT      IN NUMBER,
+    P_ORDER_TAX         IN NUMBER,
+    P_COMMENTS          IN VARCHAR2,
+    P_DISPATCH          IN NUMBER,
+    P_FULLFIELD         IN NUMBER,
+    P_STATUS_ID         IN NUMBER,
+    P_PAYMENT_METHOD_ID IN NUMBER,
+    P_MODIFIED_BY       IN VARCHAR2,
+    P_MODIFIED_ON       IN TIMESTAMP
+)
+IS
+BEGIN
+    UPDATE FIDE_SAMDESIGN.FIDE_ORDER_TB
+    SET Customer_ID       = P_CUSTOMER_ID,
+        Order_Date        = P_ORDER_DATE,
+        Order_Amount      = P_ORDER_AMOUNT,
+        Order_Tax         = P_ORDER_TAX,
+        Comments          = P_COMMENTS,
+        Dispatch          = P_DISPATCH,
+        Fullfield         = P_FULLFIELD,
+        Status_ID         = P_STATUS_ID,
+        Payment_Method_ID = P_PAYMENT_METHOD_ID,
+        Modified_By       = P_MODIFIED_BY,
+        Modified_On       = P_MODIFIED_ON
+    WHERE Order_ID = P_ORDER_ID;
+    COMMIT;
+END MODIFICAR_FIDE_ORDER_TB_SP;
+/
+
+-- Procedimiento para desactivar ORDER
+CREATE OR REPLACE PROCEDURE ELIMINAR_FIDE_ORDER_TB_SP
+(
+    P_ORDER_ID    IN NUMBER,
+    P_MODIFIED_BY IN VARCHAR2,
+    P_MODIFIED_ON IN TIMESTAMP
+)
+IS
+BEGIN
+    UPDATE FIDE_SAMDESIGN.FIDE_ORDER_TB
+    SET Status_ID   = 0,
+        Modified_By = P_MODIFIED_BY,
+        Modified_On = P_MODIFIED_ON
+    WHERE Order_ID = P_ORDER_ID;
+    COMMIT;
+END ELIMINAR_FIDE_ORDER_TB_SP;
+/
+
+ 
+-- Procedimiento para Insertar ORDER_LINES
 CREATE OR REPLACE PROCEDURE INSERTAR_FIDE_ORDER_LINES_TB_SP
 (
     P_ORDER_LINE_ID IN NUMBER,
@@ -598,7 +1247,55 @@ BEGIN
 END INSERTAR_FIDE_ORDER_LINES_TB_SP;
 /
 
--- Procedimiento para insertar BILLING registros
+-- Procedimiento para Modificar ORDER_LINES
+CREATE OR REPLACE PROCEDURE MODIFICAR_FIDE_ORDER_LINES_TB_SP
+(
+    P_ORDER_LINE_ID IN NUMBER,
+    P_ORDER_ID      IN NUMBER,
+    P_PRODUCT_ID    IN NUMBER,
+    P_QTY_ITEM      IN NUMBER,
+    P_COMMENTS      IN VARCHAR2,
+    P_STATUS_ID     IN NUMBER,
+    P_TOTAL_PRICE   IN NUMBER,
+    P_MODIFIED_BY   IN VARCHAR2,
+    P_MODIFIED_ON   IN TIMESTAMP
+)
+IS
+BEGIN
+    UPDATE FIDE_SAMDESIGN.FIDE_ORDER_LINES_TB
+    SET Order_ID    = P_ORDER_ID,
+        Product_ID  = P_PRODUCT_ID,
+        Qty_Item    = P_QTY_ITEM,
+        Comments    = P_COMMENTS,
+        Status_ID   = P_STATUS_ID,
+        Total_Price = P_TOTAL_PRICE,
+        Modified_By = P_MODIFIED_BY,
+        Modified_On = P_MODIFIED_ON
+    WHERE Order_Line_ID = P_ORDER_LINE_ID;
+    COMMIT;
+END MODIFICAR_FIDE_ORDER_LINES_TB_SP;
+/
+
+-- Procedimiento para desactivar ORDER_LINES
+CREATE OR REPLACE PROCEDURE ELIMINAR_FIDE_ORDER_LINES_TB_SP
+(
+    P_ORDER_LINE_ID IN NUMBER,
+    P_MODIFIED_BY   IN VARCHAR2,
+    P_MODIFIED_ON   IN TIMESTAMP
+)
+IS
+BEGIN
+    UPDATE FIDE_SAMDESIGN.FIDE_ORDER_LINES_TB
+    SET Status_ID   = 0,
+        Modified_By = P_MODIFIED_BY,
+        Modified_On = P_MODIFIED_ON
+    WHERE Order_Line_ID = P_ORDER_LINE_ID;
+    COMMIT;
+END ELIMINAR_FIDE_ORDER_LINES_TB_SP;
+/
+
+ 
+-- Procedimiento para Insertar BILLING
 CREATE OR REPLACE PROCEDURE INSERTAR_FIDE_BILLING_TB_SP
 (
     P_BILLING_ID         IN NUMBER,
@@ -647,7 +1344,59 @@ BEGIN
 END INSERTAR_FIDE_BILLING_TB_SP;
 /
 
--- Procedimiento para insertar CART registros
+-- Procedimiento para Modificar BILLING
+CREATE OR REPLACE PROCEDURE MODIFICAR_FIDE_BILLING_TB_SP
+(
+    P_BILLING_ID         IN NUMBER,
+    P_ORDER_ID           IN NUMBER,
+    P_CUSTOMER_ID        IN NUMBER,
+    P_INVOICED_ADDRESS_ID IN NUMBER,
+    P_BILLING_DATE       IN TIMESTAMP,
+    P_TOTAL_AMOUNT       IN NUMBER,
+    P_COMMENTS           IN VARCHAR2,
+    P_STATUS_ID          IN NUMBER,
+    P_PAYMENT_METHOD_ID  IN NUMBER,
+    P_MODIFIED_BY        IN VARCHAR2,
+    P_MODIFIED_ON        IN TIMESTAMP
+)
+IS
+BEGIN
+    UPDATE FIDE_SAMDESIGN.FIDE_BILLING_TB
+    SET Order_ID           = P_ORDER_ID,
+        Customer_ID        = P_CUSTOMER_ID,
+        Invoiced_Address_ID = P_INVOICED_ADDRESS_ID,
+        Billing_Date       = P_BILLING_DATE,
+        Total_Amount       = P_TOTAL_AMOUNT,
+        Comments           = P_COMMENTS,
+        Status_ID          = P_STATUS_ID,
+        Payment_Method_ID  = P_PAYMENT_METHOD_ID,
+        Modified_By        = P_MODIFIED_BY,
+        Modified_On        = P_MODIFIED_ON
+    WHERE Billing_ID = P_BILLING_ID;
+    COMMIT;
+END MODIFICAR_FIDE_BILLING_TB_SP;
+/
+
+-- Procedimiento para desactivar BILLING
+CREATE OR REPLACE PROCEDURE ELIMINAR_FIDE_BILLING_TB_SP
+(
+    P_BILLING_ID IN NUMBER,
+    P_MODIFIED_BY IN VARCHAR2,
+    P_MODIFIED_ON IN TIMESTAMP
+)
+IS
+BEGIN
+    UPDATE FIDE_SAMDESIGN.FIDE_BILLING_TB
+    SET Status_ID   = 0,
+        Modified_By = P_MODIFIED_BY,
+        Modified_On = P_MODIFIED_ON
+    WHERE Billing_ID = P_BILLING_ID;
+    COMMIT;
+END ELIMINAR_FIDE_BILLING_TB_SP;
+/
+
+ 
+-- Procedimiento para Insertar CART
 CREATE OR REPLACE PROCEDURE INSERTAR_FIDE_CART_TB_SP
 (
     P_CART_ID           IN NUMBER,
@@ -690,7 +1439,56 @@ BEGIN
 END INSERTAR_FIDE_CART_TB_SP;
 /
 
--- Procedimiento para insertar CART_LINES registros
+-- Procedimiento para Modificar CART
+CREATE OR REPLACE PROCEDURE MODIFICAR_FIDE_CART_TB_SP
+(
+    P_CART_ID           IN NUMBER,
+    P_CUSTOMER_ID       IN NUMBER,
+    P_ADDRESS_ID        IN NUMBER,
+    P_ORDER_DATE        IN TIMESTAMP,
+    P_COMMENTS          IN VARCHAR2,
+    P_STATUS_ID         IN NUMBER,
+    P_PAYMENT_METHOD_ID IN NUMBER,
+    P_MODIFIED_BY       IN VARCHAR2,
+    P_MODIFIED_ON       IN TIMESTAMP
+)
+IS
+BEGIN
+    UPDATE FIDE_SAMDESIGN.FIDE_CART_TB
+    SET Customer_ID       = P_CUSTOMER_ID,
+        Address_ID        = P_ADDRESS_ID,
+        Order_Date        = P_ORDER_DATE,
+        Comments          = P_COMMENTS,
+        Status_ID         = P_STATUS_ID,
+        Payment_Method_ID = P_PAYMENT_METHOD_ID,
+        Modified_By       = P_MODIFIED_BY,
+        Modified_On       = P_MODIFIED_ON
+    WHERE Cart_ID = P_CART_ID;
+    COMMIT;
+END MODIFICAR_FIDE_CART_TB_SP;
+/
+
+-- Procedimiento para desactivar CART
+CREATE OR REPLACE PROCEDURE ELIMINAR_FIDE_CART_TB_SP
+(
+    P_CART_ID    IN NUMBER,
+    P_MODIFIED_BY IN VARCHAR2,
+    P_MODIFIED_ON IN TIMESTAMP
+)
+IS
+BEGIN
+    UPDATE FIDE_SAMDESIGN.FIDE_CART_TB
+    SET Status_ID   = 0,
+        Modified_By = P_MODIFIED_BY,
+        Modified_On = P_MODIFIED_ON
+    WHERE Cart_ID = P_CART_ID;
+    COMMIT;
+END ELIMINAR_FIDE_CART_TB_SP;
+/
+
+ 
+
+-- Procedimiento para Insertar CART_LINES
 CREATE OR REPLACE PROCEDURE INSERTAR_FIDE_CART_LINES_TB_SP
 (
     P_CART_LINE_ID IN NUMBER,
@@ -733,7 +1531,56 @@ BEGIN
 END INSERTAR_FIDE_CART_LINES_TB_SP;
 /
 
--- Procedimiento para insertar SPECIAL_ORDER registros
+-- Procedimiento para Modificar CART_LINES
+CREATE OR REPLACE PROCEDURE MODIFICAR_FIDE_CART_LINES_TB_SP
+(
+    P_CART_LINE_ID IN NUMBER,
+    P_CART_ID      IN NUMBER,
+    P_PRODUCT_ID   IN NUMBER,
+    P_QTY_ITEM     IN NUMBER,
+    P_COMMENTS     IN VARCHAR2,
+    P_STATUS_ID    IN NUMBER,
+    P_TOTAL_PRICE  IN NUMBER,
+    P_MODIFIED_BY  IN VARCHAR2,
+    P_MODIFIED_ON  IN TIMESTAMP
+)
+IS
+BEGIN
+    UPDATE FIDE_SAMDESIGN.FIDE_CART_LINES_TB
+    SET Cart_ID     = P_CART_ID,
+        Product_ID  = P_PRODUCT_ID,
+        Qty_Item    = P_QTY_ITEM,
+        Comments    = P_COMMENTS,
+        Status_ID   = P_STATUS_ID,
+        Total_Price = P_TOTAL_PRICE,
+        Modified_By = P_MODIFIED_BY,
+        Modified_On = P_MODIFIED_ON
+    WHERE Cart_Line_ID = P_CART_LINE_ID;
+    COMMIT;
+END MODIFICAR_FIDE_CART_LINES_TB_SP;
+/
+
+-- Procedimiento para desactivar CART_LINES
+CREATE OR REPLACE PROCEDURE ELIMINAR_FIDE_CART_LINES_TB_SP
+(
+    P_CART_LINE_ID IN NUMBER,
+    P_MODIFIED_BY  IN VARCHAR2,
+    P_MODIFIED_ON  IN TIMESTAMP
+)
+IS
+BEGIN
+    UPDATE FIDE_SAMDESIGN.FIDE_CART_LINES_TB
+    SET Status_ID   = 0,
+        Modified_By = P_MODIFIED_BY,
+        Modified_On = P_MODIFIED_ON
+    WHERE Cart_Line_ID = P_CART_LINE_ID;
+    COMMIT;
+END ELIMINAR_FIDE_CART_LINES_TB_SP;
+/
+
+ 
+
+-- Procedimiento para Insertar SPECIAL_ORDER
 CREATE OR REPLACE PROCEDURE INSERTAR_FIDE_SPECIAL_ORDER_TB_SP
 (
     P_ORDER_ID    IN NUMBER,
@@ -773,122 +1620,48 @@ BEGIN
 END INSERTAR_FIDE_SPECIAL_ORDER_TB_SP;
 /
 
--- Procedimiento para modificar CUSTOMER registros
-CREATE OR REPLACE PROCEDURE MODIFICAR_FIDE_CUSTOMER_TB_SP
+-- Procedimiento para Modificar SPECIAL_ORDER
+CREATE OR REPLACE PROCEDURE MODIFICAR_FIDE_SPECIAL_ORDER_TB_SP
 (
-    P_CUSTOMER_ID           IN NUMBER,
-    P_CUSTOMER_NAME         IN VARCHAR2,
-    P_CUSTOMER_EMAIL        IN VARCHAR2,
-    P_CUSTOMER_PHONE_NUMBER IN VARCHAR2,
-    P_STATUS_ID             IN NUMBER,
-    P_MODIFIED_BY           IN VARCHAR2,
-    P_MODIFIED_ON           IN TIMESTAMP
+    P_ORDER_ID    IN NUMBER,
+    P_CUSTOMER_ID IN NUMBER,
+    P_ORDER_DATE  IN TIMESTAMP,
+    P_ORDER_QTY   IN NUMBER,
+    P_COMMENTS    IN VARCHAR2,
+    P_STATUS_ID   IN NUMBER,
+    P_MODIFIED_BY IN VARCHAR2,
+    P_MODIFIED_ON IN TIMESTAMP
 )
 IS
 BEGIN
-    UPDATE FIDE_SAMDESIGN.FIDE_CUSTOMER_TB
-    SET Customer_Name         = P_CUSTOMER_NAME,
-        Customer_Email        = P_CUSTOMER_EMAIL,
-        Customer_Phone_number = P_CUSTOMER_PHONE_NUMBER,
-        Status_ID             = P_STATUS_ID,
-        Modified_By           = P_MODIFIED_BY,
-        Modified_On           = P_MODIFIED_ON
-    WHERE Customer_ID = P_CUSTOMER_ID;
-    COMMIT;
-END MODIFICAR_FIDE_CUSTOMER_TB_SP;
-/
-
--- Procedimiento para modificar ADDRESS registros
-CREATE OR REPLACE PROCEDURE MODIFICAR_FIDE_ADDRESS_TB_SP
-(
-    P_ADDRESS_ID   IN NUMBER,
-    P_ADDRESS      IN VARCHAR2,
-    P_ID_STATE     IN NUMBER,
-    P_ID_CITY      IN NUMBER,
-    P_ZIP_CODE     IN NUMBER,
-    P_ID_COUNTRY   IN NUMBER,
-    P_STATUS_ID    IN NUMBER,
-    P_MODIFIED_BY  IN VARCHAR2,
-    P_MODIFIED_ON  IN TIMESTAMP,
-    P_ID_CUSTOMER  IN NUMBER
-)
-IS
-BEGIN
-    UPDATE FIDE_SAMDESIGN.FIDE_ADDRESS_TB
-    SET Address     = P_ADDRESS,
-        ID_State    = P_ID_STATE,
-        ID_City     = P_ID_CITY,
-        ZIP_Code    = P_ZIP_CODE,
-        ID_Country  = P_ID_COUNTRY,
+    UPDATE FIDE_SAMDESIGN.FIDE_SPECIAL_ORDER_TB
+    SET Customer_ID = P_CUSTOMER_ID,
+        Order_Date  = P_ORDER_DATE,
+        Order_Qty   = P_ORDER_QTY,
+        Comments    = P_COMMENTS,
         Status_ID   = P_STATUS_ID,
         Modified_By = P_MODIFIED_BY,
-        Modified_On = P_MODIFIED_ON,
-        ID_Customer = P_ID_CUSTOMER
-    WHERE Address_ID = P_ADDRESS_ID;
+        Modified_On = P_MODIFIED_ON
+    WHERE Order_ID = P_ORDER_ID;
     COMMIT;
-END MODIFICAR_FIDE_ADDRESS_TB_SP;
+END MODIFICAR_FIDE_SPECIAL_ORDER_TB_SP;
 /
 
--- Procedimiento para modificar PRODUCT registros
-CREATE OR REPLACE PROCEDURE MODIFICAR_FIDE_PRODUCT_TB_SP
+-- Procedimiento para desactivar SPECIAL_ORDER
+CREATE OR REPLACE PROCEDURE ELIMINAR_FIDE_SPECIAL_ORDER_TB_SP
 (
-    P_PRODUCT_ID       IN NUMBER,
-    P_DESCRIPTION      IN VARCHAR2,
-    P_CATEGORY_TYPE_ID IN NUMBER,
-    P_COMMENTS         IN VARCHAR2,
-    P_UNIT_PRICE       IN NUMBER,
-    P_QUANTITY_ONHAND  IN NUMBER,
-    P_QUANTITY_LEND    IN NUMBER,
-    P_TOTAL_QTY        IN NUMBER,
-    P_STATUS_ID        IN NUMBER,
-    P_MODIFIED_BY      IN VARCHAR2,
-    P_MODIFIED_ON      IN DATE
+    P_ORDER_ID    IN NUMBER,
+    P_MODIFIED_BY IN VARCHAR2,
+    P_MODIFIED_ON IN TIMESTAMP
 )
 IS
 BEGIN
-    UPDATE FIDE_SAMDESIGN.FIDE_PRODUCT_TB
-    SET Description      = P_DESCRIPTION,
-        Category_Type_ID = P_CATEGORY_TYPE_ID,
-        Comments         = P_COMMENTS,
-        Unit_price       = P_UNIT_PRICE,
-        Quantity_OnHand  = P_QUANTITY_ONHAND,
-        Quantity_Lend    = P_QUANTITY_LEND,
-        Total_Qty        = P_TOTAL_QTY,
-        Status_ID        = P_STATUS_ID,
-        Modified_By      = P_MODIFIED_BY,
-        Modified_On      = P_MODIFIED_ON
-    WHERE Product_ID = P_PRODUCT_ID;
+    UPDATE FIDE_SAMDESIGN.FIDE_SPECIAL_ORDER_TB
+    SET Status_ID   = 0,
+        Modified_By = P_MODIFIED_BY,
+        Modified_On = P_MODIFIED_ON
+    WHERE Order_ID = P_ORDER_ID;
     COMMIT;
-END MODIFICAR_FIDE_PRODUCT_TB_SP;
+END ELIMINAR_FIDE_SPECIAL_ORDER_TB_SP;
 /
 
--- Procedimiento para modificar INVENTORY registros
-CREATE OR REPLACE PROCEDURE MODIFICAR_FIDE_INVENTORY_TB_SP
-(
-    P_INVENTORY_ID       IN NUMBER,
-    P_PRODUCT_ID         IN NUMBER,
-    P_COMMENTS           IN VARCHAR2,
-    P_QUANTITY_STOCK     IN NUMBER,
-    P_QUANTITY_RESERVED  IN NUMBER,
-    P_QUANTITY_THRESHOLD IN NUMBER,
-    P_STATUS_ID          IN NUMBER,
-    P_LAST_RESTOCK       IN TIMESTAMP,
-    P_MODIFIED_BY        IN VARCHAR2,
-    P_MODIFIED_ON        IN TIMESTAMP
-)
-IS
-BEGIN
-    UPDATE FIDE_SAMDESIGN.FIDE_INVENTORY_TB
-    SET Product_ID         = P_PRODUCT_ID,
-        Comments           = P_COMMENTS,
-        Quantity_Stock     = P_QUANTITY_STOCK,
-        Quantity_Reserved  = P_QUANTITY_RESERVED,
-        Quantity_Threshold = P_QUANTITY_THRESHOLD,
-        Status_ID          = P_STATUS_ID,
-        Last_Restock       = P_LAST_RESTOCK,
-        Modified_By        = P_MODIFIED_BY,
-        Modified_On        = P_MODIFIED_ON
-    WHERE Inventory_ID = P_INVENTORY_ID;
-    COMMIT;
-END MODIFICAR_FIDE_INVENTORY_TB_SP;
-/
