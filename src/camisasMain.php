@@ -13,3 +13,4 @@ require_once "../include/templates/gridCamisas.php";
 <?php
 require_once "../include/templates/footer.php";
 ?>
+</html>

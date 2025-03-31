@@ -200,7 +200,8 @@ require_once "../DAL/database.php";
 $connection = conectar();
 
 // Consultas
-$products = fetchAll($connection, "SELECT product_id, description FROM fide_samdesign.fide_product_tb where status_id = 1");
+$products = fetchAll($connection, "SELECT product_id, description FROM fide_samdesign.fide_product_tb P  WHERE status_id = 1");
+$products1 = fetchAll($connection, "SELECT P.product_id, P.description FROM fide_samdesign.fide_product_tb P LEFT JOIN fide_samdesign.fide_inventory_lines_tb I ON I.product_id = P.product_id WHERE I.product_id IS NULL AND P.status_id = 1");
 $inventarios = fetchAll($connection, "SELECT inventory_id, description FROM fide_samdesign.fide_inventory_tb where status_id = 1");
 $statuses = fetchAll($connection, "SELECT STATUS_ID, DESCRIPTION FROM FIDE_SAMDESIGN.FIDE_STATUS_TB");
 
@@ -230,7 +231,7 @@ oci_close($connection);
                     <label for="PRODUCT_ID">Producto:</label>
                     <select class="form-control mt-2" name="PRODUCT_ID" id="PRODUCT_ID" required>
                         <option value="" disabled selected>Seleccione un producto</option>
-                        <?php foreach ($products as $product): ?>
+                        <?php foreach ($products1 as $product): ?>
                             <option value="<?= $product['PRODUCT_ID']; ?>">
                                 <?= htmlspecialchars($product['DESCRIPTION']); ?>
                             </option>
