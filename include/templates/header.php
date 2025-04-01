@@ -89,10 +89,10 @@ if (isset($_SESSION['usuario'])) {
                                 TEXTILES
                             </a>
                             <div class="dropdown-menu shadow" style="border-radius: 0; border: none; background-color: #eee/#475a68" aria-labelledby="dropdownMenuLink">
-                                <a class="dropdown-item nav-link text-black " href="../../src/camisasMain.php">SUETAS</a>
+                                <a class="dropdown-item nav-link text-black " href="../../src/impermeableMain.php">SUETAS</a>
                                 <a class="dropdown-item nav-link text-black " href="../../src/camisasMain.php">CAMISAS</a>
-                                <a class="dropdown-item nav-link text-black " href="../../src/impermeableMain.php">GUANTES</a>
-                                <a class="dropdown-item nav-link text-black " href="../../src/impermeableMain.php">UNIFORMES</a>
+                                <a class="dropdown-item nav-link text-black " href="../../src/guantesMain.php">GUANTES</a>
+                                <a class="dropdown-item nav-link text-black " href="../../src/uniformesMain.php">UNIFORMES</a>
                             </div>
                         </div>
                     </li>

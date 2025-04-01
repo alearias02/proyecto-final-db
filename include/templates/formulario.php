@@ -88,13 +88,13 @@
                 </div>
                 <div class="carousel-inner">
                     <div class="carousel-item active">
-                        <img src="../img/sueta1.jpg" class="d-block" style="max-width: 100%; height: auto; object-fit: cover;" alt="Ejemplo de diseño 1">
+                        <a href="../src/impermeableMain.php"><img src="../img/sueta1.jpg" class="d-block" style="max-width: 100%; height: auto; object-fit: cover;" alt="Ejemplo de diseño 1"></a>
                     </div>
                     <div class="carousel-item">
-                        <img src="../img/sueta2.jpg" class="d-block" style="max-width: 100%; height: auto; object-fit: cover;" alt="Ejemplo de diseño 2">
+                    <a href="../src/impermeableMain.php"><img src="../img/sueta2.jpg" class="d-block" style="max-width: 100%; height: auto; object-fit: cover;" alt="Ejemplo de diseño 2"></a>
                     </div>
                     <div class="carousel-item">
-                        <img src="../img/sueta3.jpg" class="d-block" style="max-width: 100%; height: auto; object-fit: cover;" alt="Ejemplo de diseño 3">
+                    <a href="../src/impermeableMain.php"><img src="../img/sueta3.jpg" class="d-block" style="max-width: 100%; height: auto; object-fit: cover;" alt="Ejemplo de diseño 3"></a>
                     </div>
                 </div>
                 <button class="carousel-control-prev" type="button" data-bs-target="#carouselEjemplo" data-bs-slide="prev">

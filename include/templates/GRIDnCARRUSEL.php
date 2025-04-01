@@ -17,17 +17,17 @@
                         </h2>
                         <div class="carousel-inner">
                             <div class="carousel-item active">
-                                <a class="nav-link text-black">
+                                <a class="nav-link text-black" href="../src/camisasMain.php">
                                     <img src="../../img/grafico1.jpg" class="d-block w-100 rounded" style="height: 450px; object-fit: cover;" alt="Imagen 1 de carrusel" />
                                 </a>
                             </div>
                             <div class="carousel-item">
-                                <a class="nav-link text-black">
+                                <a class="nav-link text-black" href="../src/camisasMain.php">
                                     <img src="../../img/grafico2.jpg" class="d-block w-100 rounded" style="height: 450px; object-fit: cover;" alt="Imagen 2 de carrusel" />
                                 </a>
                             </div>
                             <div class="carousel-item">
-                                <a class="nav-link text-black">
+                                <a class="nav-link text-black" href="../src/camisasMain.php">
                                     <img src="../../img/grafico1.jpg" class="d-block w-100 rounded" style="height: 450px; object-fit: cover;" alt="Imagen 3 de carrusel" />
                                 </a>
                             </div>
