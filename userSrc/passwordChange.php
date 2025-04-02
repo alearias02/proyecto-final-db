@@ -1,5 +1,4 @@
 <?php
-session_start();
 require_once "../DAL/conexion.php";
 require_once "../include/templates/headerUser.php";
 require_once "../include/functions/recoge.php";
