@@ -26,19 +26,19 @@ $(document).ready(function() {
           const PRECIO = GUANTE.PRECIO !== null ? `Precio: $${GUANTE.PRECIO}` : 'Precio no disponible';
           
           var guanteHTML = `
-            <div class="col">
-              <div class="card text-dark bg-light h-100 shadow">
-                <div class="image-container">
-                  <img src="${IMAGE_PATH}" class="card-img-top" alt="Imagen Guante">
-                </div>
-                <div class="card-body d-flex flex-column m-auto align-items-center">
-                  <h3 class="card-title text-center">${DESCRIPCION}</h3>
-                  <p class="text-center">${DETALLE}</p>
-                  <p class="text-center"><strong>${PRECIO}</strong></p>
-                  <a href="../srcItem/mostrarGuante.php?PRODUCT_ID=${GUANTE.PRODUCT_ID}" class="btn btn-primary mt-auto">Ver más</a>
-                </div>
-              </div>
-            </div>`;
+                            <div class="col">
+                              <div class="card text-dark bg-light h-100 shadow">
+                                <div class="image-container">
+                                  <img src="${IMAGE_PATH}" class="card-img-top" alt="Imagen Guante">
+                                </div>
+                                <div class="card-body d-flex flex-column m-auto align-items-center">
+                                  <h3 class="card-title text-center">${DESCRIPCION}</h3>
+                                  <p class="text-center">${DETALLE}</p>
+                                  <p class="text-center"><strong>${PRECIO}</strong></p>
+                                  <a href="../srcItem/mostrarGuante.php?PRODUCT_ID=${GUANTE.PRODUCT_ID}" class="btn btn-primary mt-auto">Ver más</a>
+                                </div>
+                              </div>
+                            </div>`;
           $('#guantes-container').append(guanteHTML);
         });
       } else {

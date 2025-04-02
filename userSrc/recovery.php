@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'){
                 'rol_id'    => $user['ROL_ID'],
                 'login'     => true
             ];                
-            header("Location: /passwordChange.php");
+            header("Location: ../userSrc/passwordChange.php");
             exit();
         }
     }
