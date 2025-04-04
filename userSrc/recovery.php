@@ -1,27 +1,32 @@
 <?php
 session_start();
+
 require_once "../DAL/conexion.php";
 require_once "../include/templates/headerUser.php";
 require_once "../include/functions/recoge.php";
+require_once "../include/functions/sendEmail.php"; 
 
+$errores = [];
+$exito = "";
+$user_name = '';
+$email = '';
 
-$errores = array();
-
-if ($_SERVER['REQUEST_METHOD'] == 'POST'){
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $user_name = recogePost('user_name');
     $email = recogePost('email');
 
     if (empty($user_name) && empty($email)) {
         $errores[] = "Debe ingresar el nombre de usuario o el correo.";
+    } elseif (!empty($email) && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $errores[] = "El correo ingresado no es válido.";
     } else {
         $conn = conectar();
-    
+
         if (!empty($user_name)) {
             $query = "SELECT u.user_id, u.user_name, u.user_email, u.password, u.rol_id, r.rol_name AS rol
                       FROM FIDE_USERS_TB u 
                       JOIN FIDE_ROL_TB r ON u.rol_id = r.rol_id 
                       WHERE u.user_name = :user_name";
-    
             $stmt = oci_parse($conn, $query);
             oci_bind_by_name($stmt, ":user_name", $user_name);
         } else {
@@ -29,32 +34,46 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'){
                       FROM FIDE_USERS_TB u 
                       JOIN FIDE_ROL_TB r ON u.rol_id = r.rol_id 
                       WHERE u.user_email = :email";
-    
             $stmt = oci_parse($conn, $query);
             oci_bind_by_name($stmt, ":email", $email);
         }
-    
+
         oci_execute($stmt);
         $user = oci_fetch_assoc($stmt);
-    
+
         if (!$user) {
             $errores[] = "Usuario o correo no encontrado.";
         } else {
-            $_SESSION['usuario'] = [
-                'user_id'   => $user['USER_ID'],
-                'user_name' => $user['USER_NAME'],
-                'email'     => $user['USER_EMAIL'],
-                'rol'       => $user['ROL'],
-                'rol_id'    => $user['ROL_ID'],
-                'login'     => true
-            ];                
-            header("Location: ../userSrc/passwordChange.php");
-            exit();
+            $token = bin2hex(random_bytes(32));
+            $expiration = date('Y-m-d H:i:s', strtotime('+1 hour'));
+
+            $updateQuery = "UPDATE FIDE_USERS_TB 
+                            SET reset_token = :token, 
+                                reset_token_expiration = TO_TIMESTAMP(:expiration, 'YYYY-MM-DD HH24:MI:SS'),
+                                modified_by = :user_name,
+                                modified_on = CURRENT_TIMESTAMP 
+                            WHERE user_id = :user_id";
+            $updateStmt = oci_parse($conn, $updateQuery);
+            oci_bind_by_name($updateStmt, ':token', $token);
+            oci_bind_by_name($updateStmt, ':expiration', $expiration);
+            oci_bind_by_name($updateStmt, ':user_id', $user['USER_ID']);
+            oci_bind_by_name($updateStmt, ':user_name', $user['USER_NAME']);
+            oci_execute($updateStmt);
+
+            $resetLink = "http://localhost:8000/userSrc/passwordReset.php?token=" . $token;
+
+
+            if (enviarCorreoRecuperacion($user['USER_EMAIL'], $user['USER_NAME'], $resetLink)) {
+                $exito = "Se ha enviado un enlace de recuperación a tu correo electrónico.";
+            } else {
+                $errores[] = "No se pudo enviar el correo. Aquí está el enlace de recuperación:";
+                $errores[] = "<a href='$resetLink'>$resetLink</a>"; // debug
+            }
         }
     }
 }
-
 ?>
+
 <main>
     <body style="margin: 0;">
         <div class="center-container">
@@ -62,16 +81,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'){
                 <div class="card-body">
                     <p class="p">Ingrese su usuario o correo electrónico para recuperar la contraseña</p>
 
-                    <label for="user_name" class="label-login">Usuario </label>
+                    <label for="user_name" class="label-login">Usuario</label>
                     <div class="input-form-login">
                         <i class="fa-solid fa-user"></i>    
-                        <input type="text" class="input-login" name="user_name" id="user_name" placeholder="Ingrese su usuario">
+                        <input type="text" class="input-login" name="user_name" id="user_name"
+                               placeholder="Ingrese su usuario" value="<?= htmlspecialchars($user_name) ?>">
                     </div>   
 
                     <label for="email" class="label-login">Correo</label>
                     <div class="input-form-login">
                         <i class="fa-solid fa-envelope"></i>
-                        <input type="email" class="input-login" name="email" id="email" placeholder="Ingrese su correo">
+                        <input type="email" class="input-login" name="email" id="email"
+                               placeholder="Ingrese su correo" value="<?= htmlspecialchars($email) ?>">
                     </div>
 
                     <button type="submit" class="button-submit">
@@ -82,8 +103,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'){
                     <?php if (!empty($errores)): ?>
                         <div class="errores">
                             <?php foreach ($errores as $error): ?>
-                                <p style="color: red;"><?php echo $error; ?></p>
+                                <p style="color: red;"><?= $error ?></p>
                             <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if (!empty($exito)): ?>
+                        <div class="success-msg">
+                            <p style="color: green;"><?= $exito ?></p>
                         </div>
                     <?php endif; ?>
                 </div>  
@@ -97,7 +124,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'){
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 100vh; /* altura completa del viewport */
     }
 
     .card-body {
@@ -137,5 +163,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'){
 
     .button-submit:hover {
         background-color: #333;
+    }
+
+    .errores, .success-msg {
+        margin-top: 1rem;
+        text-align: center;
+    }
+
+    .errores a {
+        color: blue;
+        text-decoration: underline;
     }
 </style>

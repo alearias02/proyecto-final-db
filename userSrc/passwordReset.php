@@ -34,15 +34,17 @@ if (!$token) {
         } elseif ($new_pass !== $confirm_pass) {
             $errores[] = "Las contraseñas no coinciden.";
         } else {
-            // Aquí deberías usar hash seguro. Ejemplo con SHA256
-            $passwordHash = hash("sha256", $new_pass);
+            $passwordHash = password_hash($new_pass, PASSWORD_DEFAULT);
 
             $update = "UPDATE FIDE_USERS_TB 
-                       SET password = :password, reset_token = NULL, reset_token_expiration = NULL 
+                       SET password = :password, reset_token = NULL, reset_token_expiration = NULL,
+                           modified_by = :user_name,
+                           modified_on = CURRENT_TIMESTAMP  
                        WHERE user_id = :user_id";
             $updateStmt = oci_parse($conn, $update);
             oci_bind_by_name($updateStmt, ":password", $passwordHash);
             oci_bind_by_name($updateStmt, ":user_id", $user['USER_ID']);
+            oci_bind_by_name($updateStmt, ':user_name', $user['USER_NAME']);
             oci_execute($updateStmt);
 
             $exito = "Contraseña actualizada correctamente. Ahora puedes iniciar sesión.";
@@ -53,11 +55,10 @@ if (!$token) {
 
 <style>
     .reset-container {
+        margin-top: 2rem;
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 100vh;
-        background-color: #b0c4d4;
     }
 
     .reset-card {
@@ -114,7 +115,7 @@ if (!$token) {
         <?php if (!empty($exito)): ?>
             <div class="success-msg">
                 <p><?= $exito ?></p>
-                <a href="/login.php">Iniciar sesión</a>
+                <a href="../userSrc/login.php">Iniciar sesión</a>
             </div>
         <?php elseif ($user): ?>
             <form method="POST">
