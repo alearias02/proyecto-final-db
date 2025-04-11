@@ -1,53 +1,53 @@
 <div class='row'>
-  <h2 class='text-center justify-content-center'>Repuestos</h2>
+  <h2 class='text-center justify-content-center'>Llantas</h2>
 </div>
-<div class='row row-cols-1 row-cols-md-3 m-3 g-4' id="repuestos-container">
+<div class='row row-cols-1 row-cols-md-3 m-3 g-4' id="llantas-container">
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
 $(document).ready(function() {
   $.ajax({
-    url: '../include/functions/recogeRepuestos.php', 
+    url: '../include/functions/recogeLlantas.php', 
     type: 'GET', 
     dataType: 'json', 
     success: function(data) { 
       console.log("Datos recibidos:", data);
 
       if (data && data.length > 0) {
-        $('#repuestos-container').empty();
+        $('#llantas-container').empty();
 
-        $.each(data, function(index, REPUESTO) {
-          console.log("Repuesto:", REPUESTO);
+        $.each(data, function(index, LLANTA) {
+          console.log("Llanta:", LLANTA);
 
-          const IMAGE_PATH = REPUESTO.IMAGE_PATH ? REPUESTO.IMAGE_PATH.replace('..', '../') : '../../img/default.jpg';
-          const DESCRIPCION = REPUESTO.DESCRIPTION || 'Sin descripción';
-          const DETALLE = REPUESTO.DETALLE || 'Detalles no disponibles';
-          const PRECIO = REPUESTO.PRECIO !== null ? `Precio: $${REPUESTO.PRECIO}` : 'Precio no disponible';
+          const IMAGE_PATH = LLANTA.IMAGE_PATH ? LLANTA.IMAGE_PATH.replace('..', '../') : '../../img/default.jpg';
+          const DESCRIPCION = LLANTA.DESCRIPTION || 'Sin descripción';
+          const DETALLE = LLANTA.DETALLE || 'Detalles no disponibles';
+          const PRECIO = LLANTA.PRECIO !== null ? `Precio: $${LLANTA.PRECIO}` : 'Precio no disponible';
           
-          var repuestoHTML = `
+          var llantaHTML = `
                             <div class="col">
                               <div class="card text-dark bg-light h-100 shadow">
                                 <div class="image-container">
-                                  <img src="${IMAGE_PATH}" class="card-img-top" alt="Imagen Repuesto">
+                                  <img src="${IMAGE_PATH}" class="card-img-top" alt="Imagen Llanta">
                                 </div>
                                 <div class="card-body d-flex flex-column m-auto align-items-center">
                                   <h3 class="card-title text-center">${DESCRIPCION}</h3>
                                   <p class="text-center">${DETALLE}</p>
                                   <p class="text-center"><strong>${PRECIO}</strong></p>
-                                  <a href="../srcItem/mostrarRepuesto.php?PRODUCT_ID=${REPUESTO.PRODUCT_ID}" class="btn btn-primary mt-auto">Ver más</a>
+                                  <a href="../srcItem/mostrarLlanta.php?PRODUCT_ID=${LLANTA.PRODUCT_ID}" class="btn btn-primary mt-auto">Ver más</a>
                                 </div>
                               </div>
                             </div>`;
-          $('#repuestos-container').append(repuestoHTML);
+          $('#llantas-container').append(llantaHTML);
         });
       } else {
-        $('#repuestos-container').html('<p>No hay productos disponibles</p>');
+        $('#llantas-container').html('<p>No hay productos disponibles</p>');
       }
     },
     error: function(xhr, status, error) { 
       console.error('Error al obtener los productos:', error);
-      $('#repuestos-container').html('<p>Ocurrió un error al obtener los productos</p>');
+      $('#llantas-container').html('<p>Ocurrió un error al obtener los productos</p>');
     }
   });
 });

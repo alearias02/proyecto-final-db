@@ -98,14 +98,19 @@ function eliminarCarrito($cart_id, $modified_by) {
 }
 
 // Actualizar un producto
-function actualizarCarrito($cart_id, $description, $status_id, $modified_by) {
+function actualizarCarrito($cart_id, $customer_id, $address_id, $order_date, $comments, $status_id, $payment_method_id, $modified_by) {
     $retorno = false;
 
     try {
         $oConexion = conectar();
         $sql = "UPDATE FIDE_SAMDESIGN.fide_cart_tb 
-                SET description = :description,
+                SET cart_id = :cart_id,
+                    customer_id = :customer_id,
+                    address_id = :address_id,
+                    order_date = TRUNC(:SYSDATE),
+                    comments = :comments,
                     status_id = :status_id,
+                    payment_method_id = :payment_method_id,
                     modified_on = SYSDATE,
                     modified_by = :modified_by 
                 WHERE cart_id = :cart_id";
@@ -113,7 +118,11 @@ function actualizarCarrito($cart_id, $description, $status_id, $modified_by) {
         $stmt = oci_parse($oConexion, $sql);
 
         // Vincular parámetros
-        oci_bind_by_name($stmt, ":description", $description);
+        oci_bind_by_name($stmt, ":customer_id", $customer_id);
+        oci_bind_by_name($stmt, ":address_id", $address_id);
+        oci_bind_by_name($stmt, ":order_date", $order_date);
+        oci_bind_by_name($stmt, ":comments", $comments);
+        oci_bind_by_name($stmt, ":payment_method_id", $payment_method_id);
         oci_bind_by_name($stmt, ":status_id", $status_id);
         oci_bind_by_name($stmt, ":modified_by", $modified_by);
         oci_bind_by_name($stmt, ":cart_id", $cart_id);
@@ -164,7 +173,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"])) {
         error_log("Datos recibidos para actualizar: " . json_encode($_POST));
     
         // Verifica parámetros requeridos
-        $required_fields = ["CART_ID", "DESCRIPTION", "STATUS_ID", "modified_by"];
+        $required_fields = ["CART_ID", "CUSTOMER_ID", "ADDRESS_ID", "ORDER_DATE", "STATUS_ID", "PAYMENT_METHOD_ID", "modified_by"];
         foreach ($required_fields as $field) {
             if (!isset($_POST[$field])) {
                 http_response_code(400); // Código de error 400: Solicitud Incorrecta
@@ -176,8 +185,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"])) {
         // Ejecuta la actualización
         $actualizado = actualizarCarrito(
             $cart_id,
-            $_POST["DESCRIPTION"],
+            $_POST["CUSTOMER_ID"],
+            $_POST["ADDRESS_ID"],
+            $_POST["ORDER_DATE"],
+            $_POST["COMMENTS"],
             $_POST["STATUS_ID"],
+            $_POST["PAYMENT_METHOD_ID"],
             $_POST["modified_by"]
         );
         if ($actualizado) {
@@ -190,7 +203,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"])) {
     } elseif ($action == "insertar") {
 
         $insertado = IngresarCarrito(
-            $_POST["description"],
+            $_POST["customer_id"],
+            $_POST["address_id"],
+            $_POST["order_date"],
+            $_POST["comments"],
+            $_POST["payment_method_id"],
             $_POST["created_by"]
         );
         if ($insertado) {

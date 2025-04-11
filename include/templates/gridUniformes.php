@@ -1,53 +1,53 @@
 <div class='row'>
-  <h2 class='text-center justify-content-center'>Repuestos</h2>
+  <h2 class='text-center justify-content-center'>Uniformes</h2>
 </div>
-<div class='row row-cols-1 row-cols-md-3 m-3 g-4' id="repuestos-container">
+<div class='row row-cols-1 row-cols-md-3 m-3 g-4' id="uniformes-container">
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
 $(document).ready(function() {
   $.ajax({
-    url: '../include/functions/recogeRepuestos.php', 
+    url: '../include/functions/recogeUniformes.php', 
     type: 'GET', 
     dataType: 'json', 
     success: function(data) { 
       console.log("Datos recibidos:", data);
 
       if (data && data.length > 0) {
-        $('#repuestos-container').empty();
+        $('#uniformes-container').empty();
 
-        $.each(data, function(index, REPUESTO) {
-          console.log("Repuesto:", REPUESTO);
+        $.each(data, function(index, UNIFORME) {
+          console.log("Uniforme:", UNIFORME);
 
-          const IMAGE_PATH = REPUESTO.IMAGE_PATH ? REPUESTO.IMAGE_PATH.replace('..', '../') : '../../img/default.jpg';
-          const DESCRIPCION = REPUESTO.DESCRIPTION || 'Sin descripción';
-          const DETALLE = REPUESTO.DETALLE || 'Detalles no disponibles';
-          const PRECIO = REPUESTO.PRECIO !== null ? `Precio: $${REPUESTO.PRECIO}` : 'Precio no disponible';
+          const IMAGE_PATH = UNIFORME.IMAGE_PATH ? UNIFORME.IMAGE_PATH.replace('..', '../') : '../../img/default.jpg';
+          const DESCRIPCION = UNIFORME.DESCRIPTION || 'Sin descripción';
+          const DETALLE = UNIFORME.DETALLE || 'Detalles no disponibles';
+          const PRECIO = UNIFORME.PRECIO !== null ? `Precio: $${UNIFORME.PRECIO}` : 'Precio no disponible';
           
-          var repuestoHTML = `
+          var uniformeHTML = `
                             <div class="col">
                               <div class="card text-dark bg-light h-100 shadow">
                                 <div class="image-container">
-                                  <img src="${IMAGE_PATH}" class="card-img-top" alt="Imagen Repuesto">
+                                  <img src="${IMAGE_PATH}" class="card-img-top" alt="Imagen Uniforme">
                                 </div>
                                 <div class="card-body d-flex flex-column m-auto align-items-center">
                                   <h3 class="card-title text-center">${DESCRIPCION}</h3>
                                   <p class="text-center">${DETALLE}</p>
                                   <p class="text-center"><strong>${PRECIO}</strong></p>
-                                  <a href="../srcItem/mostrarRepuesto.php?PRODUCT_ID=${REPUESTO.PRODUCT_ID}" class="btn btn-primary mt-auto">Ver más</a>
+                                  <a href="../srcItem/mostrarUniforme.php?PRODUCT_ID=${UNIFORME.PRODUCT_ID}" class="btn btn-primary mt-auto">Ver más</a>
                                 </div>
                               </div>
                             </div>`;
-          $('#repuestos-container').append(repuestoHTML);
+          $('#uniformes-container').append(uniformeHTML);
         });
       } else {
-        $('#repuestos-container').html('<p>No hay productos disponibles</p>');
+        $('#uniformes-container').html('<p>No hay productos disponibles</p>');
       }
     },
     error: function(xhr, status, error) { 
       console.error('Error al obtener los productos:', error);
-      $('#repuestos-container').html('<p>Ocurrió un error al obtener los productos</p>');
+      $('#uniformes-container').html('<p>Ocurrió un error al obtener los productos</p>');
     }
   });
 });

@@ -11,10 +11,10 @@
         <container class="col-md-3">
             <div class="carousel-inner ">
                 <div class="carousel-item active">
-                    <img src="../../img/llanta1.jpg" class="d-block w-100" width="395" height="400" alt="Imagen 1 de carrusel" />
+                    <img src="../../img/differents-tires.jpg" class="d-block w-100" width="395" height="400" alt="Imagen 1 de carrusel" />
                 </div>
                 <div class="carousel-item ">
-                    <img src="../../img/llanta2.jpg" class="d-block w-100" width="395" height="400" alt="Imagen 2 de carrusel" />
+                    <img src="../../img/tvs-tyres-product-range.jpg" class="d-block w-100" width="395" height="400" alt="Imagen 2 de carrusel" />
                 </div>
                 <div class="carousel-item ">
                     <img src="../../img/llanta3.jpg" class="d-block w-100 " width="395" height="400" alt="Imagen 3 de carrusel" />

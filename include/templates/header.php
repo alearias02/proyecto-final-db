@@ -76,9 +76,9 @@ if (isset($_SESSION['usuario'])) {
                                 PRODUCTOS
                             </a>
                             <div class="dropdown-menu shadow" style="border-radius: 0; border: none; background-color: #eee/#475a68" aria-labelledby="dropdownMenuLink">
-                                <a class="dropdown-item nav-link text-black " href="../../src/camisasMain.php">ACCESORIOS</a>
-                                <a class="dropdown-item nav-link text-black " href="../../src/impermeableMain.php">REPUESTOS</a>
-                                <a class="dropdown-item nav-link text-black " href="../../src/impermeableMain.php">LLANTAS</a>
+                                <a class="dropdown-item nav-link text-black " href="../../src/accesoriosMain.php">ACCESORIOS</a>
+                                <a class="dropdown-item nav-link text-black " href="../../src/repuestosMain.php">REPUESTOS</a>
+                                <a class="dropdown-item nav-link text-black " href="../../src/llantasMain.php">LLANTAS</a>
                             </div>
                         </div>
                     </li>
