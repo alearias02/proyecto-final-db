@@ -39,8 +39,8 @@ function IngresarCarrito($customer_id, $address_id, $order_date, $comments, $pay
 
     try {
         $oConexion = conectar();
-        $sql = "INSERT INTO FIDE_SAMDESIGN.fide_cart_tb (customer_id, address_id, order_date, comments, status_id, payment_method_id, created_on, created_by)
-                VALUES (:customer_id, :address_id, :order_date, :comments, 1, :payment_method_id, SYSDATE, :created_by)";
+        $sql = "INSERT INTO FIDE_SAMDESIGN.fide_cart_tb (cart_id, customer_id, address_id, order_date, comments, status_id, payment_method_id, created_on, created_by)
+                VALUES (FIDE_CART_SEQ.NEXTVAL, :customer_id, :address_id, :order_date, :comments, 1, :payment_method_id, SYSDATE, :created_by)";
 
         $stmt = oci_parse($oConexion, $sql);
 
@@ -67,37 +67,30 @@ function IngresarCarrito($customer_id, $address_id, $order_date, $comments, $pay
     return $retorno;
 }
 // Eliminar un producto
-function eliminarCarrito($cart_id, $modified_by) {
+function eliminarCarrito($cart_id) {
     $retorno = false;
 
     try {
         $oConexion = conectar();
-        $sql = "UPDATE FIDE_SAMDESIGN.fide_cart_tb
-                SET status_id = 0,
-                    modified_on = SYSDATE,
-                    modified_by = :modified_by 
-                WHERE cart_id = :cart_id";
-        $stmt = oci_parse($oConexion, $sql);
+        $sql_cart = "DELETE FROM FIDE_SAMDESIGN.FIDE_CART_TB WHERE cart_id = :cart_id";
+        $stmt_cart = oci_parse($oConexion, $sql_cart);
+        oci_bind_by_name($stmt_cart, ":cart_id", $cart_id);
 
-        // Vincular el parámetro
-        oci_bind_by_name($stmt, ":cart_id", $cart_id);
-        oci_bind_by_name($stmt, ":modified_by", $modified_by);
-
-        // Ejecutar la consulta
-        if (oci_execute($stmt)) {
+        if (oci_execute($stmt_cart)) {
             $retorno = true;
         }
     } catch (\Throwable $th) {
         echo $th;
     } finally {
-        oci_free_statement($stmt);
+        if (isset($stmt_cart)) oci_free_statement($stmt_cart);
         oci_close($oConexion);
     }
 
     return $retorno;
 }
 
-// Actualizar un producto
+
+// Actualizar un carrito
 function actualizarCarrito($cart_id, $customer_id, $address_id, $order_date, $comments, $status_id, $payment_method_id, $modified_by) {
     $retorno = false;
 
@@ -148,8 +141,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"])) {
 
     if ($action == "eliminar" && isset($_POST["cart_id"])) {
         $cart_id = $_POST["cart_id"];
-        $modified_by = $_POST['modified_by'];
-        $eliminado = eliminarCarrito($cart_id, $modified_by);
+        $eliminado = eliminarCarrito($cart_id);
         if ($eliminado) {
             echo "success";
         } else {
