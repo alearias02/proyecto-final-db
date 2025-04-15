@@ -19,7 +19,7 @@ $(document).ready(function() {
 
         $.each(data, function(index, CAMISA) {
             const IMAGE_PATH = CAMISA.IMAGE_PATH ? CAMISA.IMAGE_PATH.replace('..', '../') : '../../img/default.jpg';
-            const DESCRIPCION = CAMISA.DESCRIPCION || 'Sin descripción';
+            const DESCRIPTION = CAMISA.DESCRIPTION || 'Sin descripción';
             const DETALLE = CAMISA.DETALLE || 'Detalles no disponibles';
             const PRECIO = CAMISA.PRECIO !== null ? `Precio: $${CAMISA.PRECIO}` : 'Precio no disponible';
 
@@ -30,10 +30,15 @@ $(document).ready(function() {
                     <img src="${IMAGE_PATH}" class="card-img-top" alt="Imagen Camisa">
                     </div>
                     <div class="card-body d-flex flex-column align-items-center text-center">
-                    <h3 class="card-title fw-bold">${DESCRIPCION}</h3>
+                    <h3 class="card-title fw-bold">${DESCRIPTION}</h3>
                     <p>${DETALLE}</p>
                     <p class="fw-bold">Precio: $${CAMISA.PRECIO}</p>
-                    <a href="../srcItem/mostrarCamisa.php?ID_CAMISA=${CAMISA.ID_CAMISA}" class="btn btn-primary mt-auto w-100">Ver más</a>
+                    <div class="btn-group mt-auto w-100 gap-2 d-flex flex-column flex-md-row">
+                                        <a href="../srcItem/mostrarCamisa.php?ID_CAMISA=${CAMISA.PRODUCT_ID}" class="btn btn-primary mt-auto w-100">Ver más</a>
+                                        <button class="btn btn-success add-to-cart" data-id="${CAMISA.PRODUCT_ID}">
+                                          <i class="fas fa-cart-plus"></i> Agregar al carrito
+                                        </button>
+                                      </div>
                     </div>
                 </div>
                 </div>`;
@@ -50,6 +55,31 @@ $(document).ready(function() {
     }
   });
 });
+
+
+$(document).on('click', '.add-to-cart', function() {
+  const productId = $(this).data('id');
+
+  $.ajax({
+    url: '../include/functions/addToCart.php', 
+    type: 'POST',
+    dataType: 'json',
+    data: { product_id: productId },
+    success: function(response) {
+      if (response.success) {
+        console.log('Producto asignado al carrito ', response)
+        alert('Producto agregado al carrito 🛒');
+      } else if (response.error) {
+        alert('Error: ' + response.error);
+      }
+    },
+    error: function(xhr, status, error) {
+      console.log('Error AJAX:', error);
+      alert('Hubo un error al agregar el producto.');
+    }
+  });
+});
+
 </script>
 
 <style>

@@ -25,20 +25,26 @@ $(document).ready(function() {
           const DETALLE = ACCESORIO.DETALLE || 'Detalles no disponibles';
           const PRECIO = ACCESORIO.PRECIO !== null ? `Precio: $${ACCESORIO.PRECIO}` : 'Precio no disponible';
           
-          var accesorioHTML = `
-                            <div class="col">
-                              <div class="card text-dark bg-light h-100 shadow">
-                                <div class="image-container">
-                                  <img src="${IMAGE_PATH}" class="card-img-top" alt="Imagen Accesorio">
-                                </div>
-                                <div class="card-body d-flex flex-column m-auto align-items-center">
-                                  <h3 class="card-title text-center">${DESCRIPCION}</h3>
-                                  <p class="text-center">${DETALLE}</p>
-                                  <p class="text-center"><strong>${PRECIO}</strong></p>
-                                  <a href="../srcItem/mostrarAccesorio.php?PRODUCT_ID=${ACCESORIO.PRODUCT_ID}" class="btn btn-primary mt-auto">Ver más</a>
-                                </div>
-                              </div>
-                            </div>`;
+          var accesorioHTML = `<div class="col">
+                                  <div class="card text-dark bg-light h-100 shadow">
+                                    <div class="image-container">
+                                      <img src="${IMAGE_PATH}" class="card-img-top" alt="Imagen Accesorio">
+                                    </div>
+                                    <div class="card-body d-flex flex-column m-auto align-items-center">
+                                      <h3 class="card-title text-center">${DESCRIPCION}</h3>
+                                      <p class="text-center">${DETALLE}</p>
+                                      <p class="text-center"><strong>${PRECIO}</strong></p>
+                                      <div class="btn-group mt-auto w-100 gap-2 d-flex flex-column flex-md-row">
+                                        <a href="../srcItem/mostrarAccesorio.php?PRODUCT_ID=${ACCESORIO.PRODUCT_ID}" class="btn btn-primary">
+                                          Ver más
+                                        </a>
+                                        <button class="btn btn-success add-to-cart" data-id="${ACCESORIO.PRODUCT_ID}">
+                                          <i class="fas fa-cart-plus"></i> Agregar al carrito
+                                        </button>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>`;
           $('#accesorios-container').append(accesorioHTML);
         });
       } else {
@@ -51,6 +57,30 @@ $(document).ready(function() {
     }
   });
 });
+
+$(document).on('click', '.add-to-cart', function() {
+  const productId = $(this).data('id');
+
+  $.ajax({
+    url: '../include/functions/addToCart.php', 
+    type: 'POST',
+    dataType: 'json',
+    data: { product_id: productId },
+    success: function(response) {
+      if (response.success) {
+        console.log('Producto asignado al carrito ', response)
+        alert('Producto agregado al carrito 🛒');
+      } else if (response.error) {
+        alert('Error: ' + response.error);
+      }
+    },
+    error: function(xhr, status, error) {
+      console.log('Error AJAX:', error);
+      alert('Hubo un error al agregar el producto.');
+    }
+  });
+});
+
 </script>
 
 <style>

@@ -25,20 +25,25 @@ $(document).ready(function() {
           const DETALLE = REPUESTO.DETALLE || 'Detalles no disponibles';
           const PRECIO = REPUESTO.PRECIO !== null ? `Precio: $${REPUESTO.PRECIO}` : 'Precio no disponible';
           
-          var repuestoHTML = `
-                            <div class="col">
-                              <div class="card text-dark bg-light h-100 shadow">
-                                <div class="image-container">
-                                  <img src="${IMAGE_PATH}" class="card-img-top" alt="Imagen Repuesto">
+          var repuestoHTML = `<div class="col">
+                                <div class="card text-dark bg-light h-100 shadow">
+                                  <div class="image-container">
+                                    <img src="${IMAGE_PATH}" class="card-img-top" alt="Imagen Repuesto">
+                                  </div>
+                                  <div class="card-body d-flex flex-column m-auto align-items-center">
+                                    <h3 class="card-title text-center">${DESCRIPCION}</h3>
+                                    <p class="text-center">${DETALLE}</p>
+                                    <p class="text-center"><strong>${PRECIO}</strong></p>
+                                    <div class="btn-group mt-auto w-100 gap-2 d-flex flex-column flex-md-row">
+                                        <a href="../srcItem/mostrarRepuesto.php?PRODUCT_ID=${REPUESTO.PRODUCT_ID}" class="btn btn-primary mt-auto">Ver más</a>
+                                        <button class="btn btn-success add-to-cart" data-id="${REPUESTO.PRODUCT_ID}">
+                                          <i class="fas fa-cart-plus"></i> Agregar al carrito
+                                        </button>
+                                      </div>
+                                    
+                                  </div>
                                 </div>
-                                <div class="card-body d-flex flex-column m-auto align-items-center">
-                                  <h3 class="card-title text-center">${DESCRIPCION}</h3>
-                                  <p class="text-center">${DETALLE}</p>
-                                  <p class="text-center"><strong>${PRECIO}</strong></p>
-                                  <a href="../srcItem/mostrarRepuesto.php?PRODUCT_ID=${REPUESTO.PRODUCT_ID}" class="btn btn-primary mt-auto">Ver más</a>
-                                </div>
-                              </div>
-                            </div>`;
+                              </div>`;
           $('#repuestos-container').append(repuestoHTML);
         });
       } else {
@@ -48,6 +53,29 @@ $(document).ready(function() {
     error: function(xhr, status, error) { 
       console.error('Error al obtener los productos:', error);
       $('#repuestos-container').html('<p>Ocurrió un error al obtener los productos</p>');
+    }
+  });
+});
+
+$(document).on('click', '.add-to-cart', function() {
+  const productId = $(this).data('id');
+
+  $.ajax({
+    url: '../include/functions/addToCart.php', 
+    type: 'POST',
+    dataType: 'json',
+    data: { product_id: productId },
+    success: function(response) {
+      if (response.success) {
+        console.log('Producto asignado al carrito ', response)
+        alert('Producto agregado al carrito 🛒');
+      } else if (response.error) {
+        alert('Error: ' + response.error);
+      }
+    },
+    error: function(xhr, status, error) {
+      console.log('Error AJAX:', error);
+      alert('Hubo un error al agregar el producto.');
     }
   });
 });
