@@ -40,8 +40,8 @@ function IngresarDireccion( $address, $id_state, $id_city, $id_country, $zip_cod
 
     try {
         $oConexion = conectar();
-        $sql = "INSERT INTO FIDE_SAMDESIGN.fide_address_tb ( address, id_state, id_city, id_country, zip_code, created_by, created_on, id_customer)
-                VALUES ( :address, :id_state, :id_city, :id_country, :zip_code, 'SELF-USER', CURRENT_TIMESTAMP, :id_customer)";
+        $sql = "INSERT INTO FIDE_SAMDESIGN.fide_address_tb ( address, id_state, id_city, id_country, zip_code, status_id, created_by, created_on, id_customer)
+                VALUES ( :address, :id_state, :id_city, :id_country, :zip_code, 1, 'SELF-USER', CURRENT_TIMESTAMP, :id_customer)";
 
         $stmt = oci_parse($oConexion, $sql);
 

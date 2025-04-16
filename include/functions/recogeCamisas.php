@@ -5,9 +5,9 @@ ini_set('display_errors', 1);
 require_once "../../DAL/database.php";
 
 function obtenerObjetos() {
-    $query = "SELECT Product_ID AS id_camisa, Description AS descripcion, 
+    $query = "SELECT Product_ID, Description, 
                      Comments AS detalle, Unit_price AS precio, 
-                     Image_path AS image_path, Status_ID
+                     Image_path, Status_ID
               FROM FIDE_SAMDESIGN.FIDE_PRODUCT_TB
               WHERE Status_ID = 1 AND Category_Type_ID = 3";
 

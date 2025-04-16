@@ -241,6 +241,44 @@ VALUES
 
 COMMIT;
 
+INSERT INTO FIDE_SAMDESIGN.FIDE_PAYMENT_METHOD_TB 
+    (Payment_Method_ID, Payment_Method_Name, Description, Status_ID, Created_By, Created_On)
+VALUES 
+    (1, 'Transferencia Bancaria', 'Pago mediante transferencia a cuentas bancarias nacionales', 1, 'ADMIN', CURRENT_TIMESTAMP);
+
+INSERT INTO FIDE_SAMDESIGN.FIDE_PAYMENT_METHOD_TB 
+    (Payment_Method_ID, Payment_Method_Name, Description, Status_ID, Created_By, Created_On)
+VALUES 
+    (2, 'Sinpe Móvil', 'Pago instantáneo a través del sistema Sinpe Móvil del Banco Central', 1, 'ADMIN', CURRENT_TIMESTAMP);
+
+INSERT INTO FIDE_SAMDESIGN.FIDE_PAYMENT_METHOD_TB 
+    (Payment_Method_ID, Payment_Method_Name, Description, Status_ID, Created_By, Created_On)
+VALUES 
+    (3, 'Tarjeta de Crédito', 'Pago por medio de tarjetas Visa o Mastercard', 1, 'ADMIN', CURRENT_TIMESTAMP);
+
+INSERT INTO FIDE_SAMDESIGN.FIDE_PAYMENT_METHOD_TB 
+    (Payment_Method_ID, Payment_Method_Name, Description, Status_ID, Created_By, Created_On)
+VALUES 
+    (4, 'Tarjeta de Débito', 'Pago con tarjeta de débito nacional o internacional', 1, 'ADMIN', CURRENT_TIMESTAMP);
+
+INSERT INTO FIDE_SAMDESIGN.FIDE_PAYMENT_METHOD_TB 
+    (Payment_Method_ID, Payment_Method_Name, Description, Status_ID, Created_By, Created_On)
+VALUES 
+    (5, 'Pago Efectivo', 'El cliente paga en efectivo al recibir el producto en su domicilio', 1, 'ADMIN', CURRENT_TIMESTAMP);
+
+    INSERT INTO FIDE_SAMDESIGN.FIDE_PAYMENT_METHOD_TB 
+    (Payment_Method_ID, Payment_Method_Name, Description, Status_ID, Created_By, Created_On)
+VALUES 
+    (6, 'Tarjeta AMEX', 'El cliente paga con una tarjeta AMEX', 1, 'ADMIN', CURRENT_TIMESTAMP);
+COMMIT;
+
+--SEQUENCE
+CREATE SEQUENCE FIDE_CART_SEQ START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE FIDE_CART_LINE_SEQ START WITH 1 INCREMENT BY 1;
+commit;
+CREATE SEQUENCE FIDE_ORDER_SEQ START WITH 1 INCREMENT BY 1;
+CREATE SEQUENCE FIDE_ORDER_LINE_SEQ START WITH 1 INCREMENT BY 1;
+
 
 
 --INSERT INTO sam_design.categoria (id_categoria,descripcion,activo) VALUES 

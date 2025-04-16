@@ -16,9 +16,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $conn = conectar(); // Función que retorna la conexión a Oracle
 
         // Consulta con JOIN para obtener usuario y rol
-        $query = "SELECT u.user_id, u.user_name, u.user_email, u.password, u.rol_id, r.rol_name AS rol
+        $query = "SELECT u.user_id, u.user_name, u.user_email, u.password, c.customer_id, u.rol_id, r.rol_name AS rol
                   FROM FIDE_USERS_TB u 
                   JOIN FIDE_ROL_TB r ON u.rol_id = r.rol_id 
+                  JOIN FIDE_CUSTOMER_TB c ON c.customer_email = u.user_email
                   WHERE u.user_name = :user_name";
 
         $stmt = oci_parse($conn, $query);
@@ -34,6 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 // Contraseña correcta
                 $_SESSION['usuario'] = [
                     'user_id'   => $mySession['USER_ID'],
+                    'customer_id'   => $mySession['CUSTOMER_ID'],
                     'user_name' => $mySession['USER_NAME'],
                     'email'     => $mySession['USER_EMAIL'],
                     'rol'       => $mySession['ROL'],
