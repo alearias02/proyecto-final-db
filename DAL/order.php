@@ -227,3 +227,118 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"])) {
         echo "Acción no válida";
     }
 }
+function obtenerOrdenes() {
+    $conn = conectar();
+
+    $sql = "
+        SELECT 
+            o.ORDER_ID,
+            c.CUSTOMER_NAME,
+            o.ORDER_DATE,
+            o.ORDER_AMOUNT,
+            o.COMMENTS,
+            p.PAYMENT_METHOD_NAME,
+            o.STATUS_ID
+        FROM 
+            FIDE_ORDER_TB o
+        JOIN 
+            FIDE_CUSTOMER_TB c ON o.CUSTOMER_ID = c.CUSTOMER_ID
+        JOIN 
+            FIDE_PAYMENT_METHOD_TB p ON o.PAYMENT_METHOD_ID = p.PAYMENT_METHOD_ID
+        ORDER BY o.ORDER_ID DESC
+    ";
+
+    $stmt = oci_parse($conn, $sql);
+    oci_execute($stmt);
+
+    $ordenes = [];
+    while ($row = oci_fetch_array($stmt, OCI_ASSOC + OCI_RETURN_NULLS)) {
+        $ordenes[] = $row;
+    }
+
+    oci_free_statement($stmt);
+    oci_close($conn);
+
+    return $ordenes;
+}
+
+function obtenerEstados() {
+    $conexion = conectar();
+    $sql = "SELECT status_id, description FROM FIDE_SAMDESIGN.FIDE_STATUS_TB WHERE status_id > 0";
+    $stmt = oci_parse($conexion, $sql);
+    oci_execute($stmt);
+    
+    $estados = [];
+    while ($row = oci_fetch_array($stmt, OCI_ASSOC + OCI_RETURN_NULLS)) {
+        $estados[] = $row;
+    }
+
+    oci_free_statement($stmt);
+    oci_close($conexion);
+    return $estados;
+}
+
+function obtenerLineasOrden($order_id) {
+    $conn = conectar(); // ← conecta usando OCI
+
+    $sql = "SELECT 
+                ol.ORDER_LINE_ID, 
+                p.DESCRIPTION, 
+                ol.QTY_ITEM, 
+                ol.TOTAL_PRICE, 
+                ol.COMMENTS
+            FROM 
+                FIDE_SAMDESIGN.FIDE_ORDER_LINES_TB ol
+            JOIN 
+                FIDE_SAMDESIGN.FIDE_PRODUCT_TB p ON ol.PRODUCT_ID = p.PRODUCT_ID
+            WHERE 
+                ol.ORDER_ID = :order_id";
+
+    $stmt = oci_parse($conn, $sql);
+    oci_bind_by_name($stmt, ':order_id', $order_id);
+    oci_execute($stmt);
+
+    $lineas = [];
+    while ($row = oci_fetch_array($stmt, OCI_ASSOC + OCI_RETURN_NULLS)) {
+        $lineas[] = $row;
+    }
+
+    oci_free_statement($stmt);
+    oci_close($conn);
+
+    return $lineas;
+}
+
+function obtenerOrdenPorId($order_id) {
+    $conn = conectar();
+
+    $sql = "SELECT 
+                o.ORDER_ID,
+                c.CUSTOMER_NAME,
+                o.ORDER_DATE,
+                o.ORDER_AMOUNT,
+                o.COMMENTS,
+                p.PAYMENT_METHOD_NAME,
+                s.DESCRIPTION AS STATUS_DESCRIPTION
+            FROM 
+                FIDE_ORDER_TB o
+            JOIN 
+                FIDE_CUSTOMER_TB c ON o.CUSTOMER_ID = c.CUSTOMER_ID
+            JOIN 
+                FIDE_PAYMENT_METHOD_TB p ON o.PAYMENT_METHOD_ID = p.PAYMENT_METHOD_ID
+            JOIN 
+                FIDE_STATUS_TB s ON o.STATUS_ID = s.STATUS_ID
+            WHERE 
+                o.ORDER_ID = :order_id";
+
+    $stmt = oci_parse($conn, $sql);
+    oci_bind_by_name($stmt, ":order_id", $order_id);
+    oci_execute($stmt);
+
+    $orden = oci_fetch_array($stmt, OCI_ASSOC + OCI_RETURN_NULLS);
+
+    oci_free_statement($stmt);
+    oci_close($conn);
+
+    return $orden;
+}

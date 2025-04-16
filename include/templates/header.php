@@ -32,7 +32,6 @@ if (isset($_SESSION['usuario'])) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- El preload nos va a permitir solicitar recursos html rapidamente -->
     <link rel="preload" href="../../css/styles.css">
     <link rel="stylesheet" href="../../css/styles.css">
 </head>
@@ -55,11 +54,8 @@ if (isset($_SESSION['usuario'])) {
             </div>
         </section>
     </header>
-    <!-- segmento de el navbar -->
-    <!-- aqui modificamos el color del nav atraves de CSS aderido con la etiqueta style para usar los colores hexdec -->
-    <nav class="navbar navbar-expand-md p-0 " style="background-color:/*#A3BFD7*/#475a68; z-index: 1; ">
+    <nav class="navbar navbar-expand-md p-0 " style="background-color:#475a68; z-index: 1;">
         <div class="container-fluid">
-
             <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -69,40 +65,38 @@ if (isset($_SESSION['usuario'])) {
             <div class="collapse navbar-collapse  justify-content-evenly" id="navbarCollapse">
                 <ul class="navbar-nav " style="font-size:1.5rem ; padding: 0 ">
                     <li class="nav-item px-3 py-4"><a class="nav-link text-white" href="../../src/index.php">HOME</a></li>
-
                     <li class="nav-item px-3 py-4">
-                        <div class=" dropdown">
+                        <div class="dropdown">
                             <a class="nav-link text-white dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown">
                                 PRODUCTOS
                             </a>
                             <div class="dropdown-menu shadow" style="border-radius: 0; border: none; background-color: #eee/#475a68" aria-labelledby="dropdownMenuLink">
-                                <a class="dropdown-item nav-link text-black " href="../../src/accesoriosMain.php">ACCESORIOS</a>
-                                <a class="dropdown-item nav-link text-black " href="../../src/repuestosMain.php">REPUESTOS</a>
-                                <a class="dropdown-item nav-link text-black " href="../../src/llantasMain.php">LLANTAS</a>
+                                <a class="dropdown-item nav-link text-black" href="../../src/accesoriosMain.php">ACCESORIOS</a>
+                                <a class="dropdown-item nav-link text-black" href="../../src/repuestosMain.php">REPUESTOS</a>
+                                <a class="dropdown-item nav-link text-black" href="../../src/llantasMain.php">LLANTAS</a>
                             </div>
                         </div>
                     </li>
-
                     <li class="nav-item px-3 py-4">
-                    <div class=" dropdown">
+                        <div class="dropdown">
                             <a class="nav-link text-white dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown">
                                 TEXTILES
                             </a>
                             <div class="dropdown-menu shadow" style="border-radius: 0; border: none; background-color: #eee/#475a68" aria-labelledby="dropdownMenuLink">
-                                <a class="dropdown-item nav-link text-black " href="../../src/impermeableMain.php">SUETAS</a>
-                                <a class="dropdown-item nav-link text-black " href="../../src/camisasMain.php">CAMISAS</a>
-                                <a class="dropdown-item nav-link text-black " href="../../src/guantesMain.php">GUANTES</a>
-                                <a class="dropdown-item nav-link text-black " href="../../src/uniformesMain.php">UNIFORMES</a>
+                                <a class="dropdown-item nav-link text-black" href="../../src/impermeableMain.php">SUETAS</a>
+                                <a class="dropdown-item nav-link text-black" href="../../src/camisasMain.php">CAMISAS</a>
+                                <a class="dropdown-item nav-link text-black" href="../../src/guantesMain.php">GUANTES</a>
+                                <a class="dropdown-item nav-link text-black" href="../../src/uniformesMain.php">UNIFORMES</a>
                             </div>
                         </div>
                     </li>
                     <li class="nav-item px-3 py-4">
-                        <div class=" dropdown">
+                        <div class="dropdown">
                             <a class="nav-link text-white dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown">
                                 ABOUT
                             </a>
                             <div class="dropdown-menu shadow" style="border-radius: 0; border: none; background-color: #eee/#475a68" aria-labelledby="dropdownMenuLink">
-                                <a class="dropdown-item nav-link text-black " href="../../src/contact.php">CONTACTOS</a>
+                                <a class="dropdown-item nav-link text-black" href="../../src/contact.php">CONTACTOS</a>
                                 <a class="dropdown-item nav-link text-black" href="../../src/about.php">NOSOTROS</a>
                             </div>
                         </div>
@@ -118,6 +112,7 @@ if (isset($_SESSION['usuario'])) {
                                 <div class="dropdown-menu shadow" style="border-radius: 0; border: none; background-color: #eee/#475a68" aria-labelledby="dropdownMenuLink">
                                     <a class="dropdown-item nav-link text-black" href="../../src/adminProductos.php">PRODUCTOS</a>
                                     <a class="dropdown-item nav-link text-black" href="../../src/Inventario.php">INVENTARIO</a>
+                                    <a class="dropdown-item nav-link text-black" href="../../src/adminOrdenes.php">ORDENES</a>
                                     <a class="dropdown-item nav-link text-black" href="../../src/adminVentas.php">REPORTE VENTAS</a>
                                     <a class="dropdown-item nav-link text-black" href="../../src/adminFacturas.php">REPORTE FACTURAS</a>
                                 </div>
@@ -144,6 +139,5 @@ if (isset($_SESSION['usuario'])) {
                     </a>
                 <?php endif; ?>
             </div>
-
         </div>
     </nav>

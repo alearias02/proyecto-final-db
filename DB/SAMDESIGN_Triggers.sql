@@ -73,6 +73,7 @@ BEGIN
     :NEW.Quantity_Stocked  := :NEW.Quantity_Stocked - :NEW.Quantity_Reserved;
   END IF;
 END;
+/
 
 
 --REVISAR TRIGGER PARA FACTURACION
@@ -95,3 +96,67 @@ RETURN V_SEQUENCIA;
 END GENERAR_SEQ_ALFANUMERICA;
 
 SELECT GENERAR_SEQ_ALFANUMERICA FROM DUAL;
+
+-- Trigger para la tabla order_tb
+CREATE OR REPLACE TRIGGER FIDE_ORDER_TB_ID_TRG
+BEFORE INSERT ON FIDE_ORDER_TB
+FOR EACH ROW
+BEGIN
+    IF :NEW.Order_ID IS NULL THEN
+        SELECT NVL(MAX(Order_ID), 0) + 1 INTO :NEW.Order_ID FROM FIDE_ORDER_TB;
+    END IF;
+END;
+/
+
+-- Trigger para usuarios: autollenado de timestamps
+CREATE OR REPLACE TRIGGER FIDE_USERS_TB_TIMESTAMP_TRG
+BEFORE INSERT OR UPDATE ON FIDE_USERS_TB
+FOR EACH ROW
+BEGIN
+    IF INSERTING THEN
+        :NEW.Created_On := SYSDATE;
+    END IF;
+    :NEW.Modified_On := SYSDATE;
+END;
+/
+
+-- Trigger para la tabla order_lines_tb
+CREATE OR REPLACE TRIGGER FIDE_ORDER_LINES_CHECK_STOCK
+BEFORE INSERT ON FIDE_ORDER_LINES_TB
+FOR EACH ROW
+DECLARE
+  v_stock NUMBER;
+BEGIN
+  SELECT Quantity_Stocked INTO v_stock
+  FROM FIDE_INVENTORY_LINES_TB
+  WHERE Product_ID = :NEW.Product_ID;
+
+  IF v_stock < :NEW.Qty_Item THEN
+    RAISE_APPLICATION_ERROR(-20001, 'No hay suficiente stock para este producto.');
+  END IF;
+END;
+/
+
+-- Trigger para la tabla order_lines_tb
+CREATE OR REPLACE TRIGGER FIDE_ORDER_LINES_UPDATE_STOCK
+AFTER INSERT ON FIDE_ORDER_LINES_TB
+FOR EACH ROW
+BEGIN
+  UPDATE FIDE_INVENTORY_LINES_TB
+  SET Quantity_Stocked = Quantity_Stocked - :NEW.Qty_Item
+  WHERE Product_ID = :NEW.Product_ID;
+END;
+/
+
+-- Trigger para la tabla order_lines_tb: descuenta stock automáticamente
+CREATE OR REPLACE TRIGGER FIDE_ORDER_LINES_UPDATE_STOCK
+AFTER INSERT ON FIDE_ORDER_LINES_TB
+FOR EACH ROW
+BEGIN
+  UPDATE FIDE_INVENTORY_LINES_TB
+  SET Quantity_Stocked = Quantity_Stocked - :NEW.Qty_Item
+  WHERE Product_ID = :NEW.Product_ID;
+END;
+/
+
+
