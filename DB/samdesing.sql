@@ -284,9 +284,9 @@ CREATE SEQUENCE FIDE_ORDER_LINE_SEQ START WITH 1 INCREMENT BY 1;
 
 
 
--- INSERT INTO sam_design.categoria (id_categoria,descripcion,activo) VALUES 
--- ('1','Respuestos del Motor',true), 
--- ('2','Respuestos de frenos',true),
+--INSERT INTO sam_design.categoria (id_categoria,descripcion,activo) VALUES 
+--('1','Respuestos del Motor',true), 
+--('2','Respuestos de frenos',true),
 -- ('3','Accesorios y decoraciones',true),
 -- ('4','Respuestos de Llantas',true),
 -- ('5','Otros respuestos',true),
@@ -321,8 +321,8 @@ CREATE SEQUENCE FIDE_ORDER_LINE_SEQ START WITH 1 INCREMENT BY 1;
 
   
 -- /*Se insertan 1 tipos de repuesto*/  
--- INSERT INTO sam_design.repuesto (id_repuesto,id_categoria,descripcion,detalle,precio,existencias,ruta_imagen,activo) VALUES
--- (1,1,'KIT DE PISTÓN','KIT DE PISTÓN YAMAHA DT175 74-81 0,5 mm O/S FORSETI 66,5 mm ANILLOS CLIPS PIN',30000,4,'https://firebasestorage.googleapis.com/v0/b/sam-design-a951a.appspot.com/o/SAM%20DESIGN%2Frepuesto%2Fkit-de-piston.jpg?alt=media&token=f56cb7ba-7764-41d5-94a1-3c74482f05ee',true),
+INSERT INTO sam_design.repuesto (id_repuesto,id_categoria,descripcion,detalle,precio,existencias,ruta_imagen,activo) VALUES
+(1,1,'KIT DE PISTÓN','KIT DE PISTÓN YAMAHA DT175 74-81 0,5 mm O/S FORSETI 66,5 mm ANILLOS CLIPS PIN',30000,4,'https://firebasestorage.googleapis.com/v0/b/sam-design-a951a.appspot.com/o/SAM%20DESIGN%2Frepuesto%2Fkit-de-piston.jpg?alt=media&token=f56cb7ba-7764-41d5-94a1-3c74482f05ee',true),
 -- (2,2,'Disco de freno','Disco de Freno Delantero 300MM',7000,4,'https://firebasestorage.googleapis.com/v0/b/sam-design-a951a.appspot.com/o/SAM%20DESIGN%2Frepuesto%2Fdisco-delantero.png?alt=media&token=9b20cb52-4481-4d90-80a7-41c480921305',true),
 -- (3,1,'Carburador','Carburador para Yamaha DT175 DT-175 Dt 175 1978 1979 1980 1981',27000,4,'https://firebasestorage.googleapis.com/v0/b/sam-design-a951a.appspot.com/o/SAM%20DESIGN%2Frepuesto%2Fcarburador-dt125.jpg?alt=media&token=56a12944-a24a-43b6-9afb-72a3e494f1c5',true),
 -- (4,4,'Mufla','Silenciador de Escape Yamaha DT125 DT175 MX Para 1977A 1991',93000,1,'https://firebasestorage.googleapis.com/v0/b/sam-design-a951a.appspot.com/o/SAM%20DESIGN%2Frepuesto%2Fmufla-dt.jpg?alt=media&token=a166e613-de49-45f4-8ab0-be3a0e7caaae',true),
@@ -339,3 +339,18 @@ CREATE SEQUENCE FIDE_ORDER_LINE_SEQ START WITH 1 INCREMENT BY 1;
 -- (15,3,'Foco de luz DT','Foco de luz para DT-175/DT-125 NO INCLUYE BOMBILLOS',17000,3,'https://firebasestorage.googleapis.com/v0/b/sam-design-a951a.appspot.com/o/SAM%20DESIGN%2Frepuesto%2Fluces-dt125.jpg?alt=media&token=847f38ed-0956-4f66-9c32-959e40212358',true)
 -- ;  
   
+-- Inserciones de ejemplo para llantas (en FIDE_SAMDESIGN.FIDE_PRODUCT_TB)
+INSERT INTO FIDE_SAMDESIGN.FIDE_PRODUCT_TB 
+(Product_ID, Description, Category_Type_ID, Comments, Unit_price, Image_path, Status_ID, Created_By, Created_On)
+VALUES 
+(1, 'Llantas Continental', 4, 'Llanta de alto rendimiento para uso urbano y off-road', 37000, 'https://firebasestorage.googleapis.com/v0/b/sam-design-a951a.appspot.com/o/SAM%20DESIGN%2Frepuesto%2Fllanta-continental2.png?alt=media&token=0a1650d8-69a5-47a9-857e-672b8f2b170d', 1, 'admin', SYSTIMESTAMP);
+
+INSERT INTO FIDE_SAMDESIGN.FIDE_PRODUCT_TB 
+(Product_ID, Description, Category_Type_ID, Comments, Unit_price, Image_path, Status_ID, Created_By, Created_On)
+VALUES 
+(2, 'Llantas Michelin', 4, 'Diseño moderno, excelente agarre en lluvia y seco', 37000, 'https://firebasestorage.googleapis.com/v0/b/sam-design-a951a.appspot.com/o/SAM%20DESIGN%2Frepuesto%2FLlantas-Michelin2.jpg?alt=media&token=993cdd74-6c51-4c77-8a38-6d564624b229', 1, 'admin', SYSTIMESTAMP);
+
+INSERT INTO FIDE_SAMDESIGN.FIDE_PRODUCT_TB 
+(Product_ID, Description, Category_Type_ID, Comments, Unit_price, Image_path, Status_ID, Created_By, Created_On)
+VALUES 
+(3, 'Llantas Pirelli', 4, 'Llanta de gran durabilidad, ideal para motos deportivas', 37000, 'https://firebasestorage.googleapis.com/v0/b/sam-design-a951a.appspot.com/o/SAM%20DESIGN%2Frepuesto%2FLLANTAs-PIRELLI2.jpg?alt=media&token=df793841-a5f5-463f-82a6-20d554a8ec87', 1, 'admin', SYSTIMESTAMP);
