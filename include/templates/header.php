@@ -135,6 +135,7 @@ if (isset($_SESSION['usuario'])) {
                             <i class="fas fa-user"></i> <?php echo isset($_SESSION['usuario']['user_name']) ? $_SESSION['usuario']['user_name'] : 'Invitado'; ?>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li><a class="dropdown-item" href="../userSrc/userOrders.php">Mis Ordenes</a></li>
                             <li><a class="dropdown-item" href="../userSrc/logout.php">Cerrar sesión</a></li>
                         </ul>
                     </div>

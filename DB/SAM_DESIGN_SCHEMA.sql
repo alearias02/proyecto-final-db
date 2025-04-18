@@ -308,7 +308,7 @@ CREATE TABLE FIDE_SAMDESIGN.FIDE_ORDER_LINES_TB (
 -- 18
 CREATE TABLE FIDE_SAMDESIGN.FIDE_BILLING_TB (
     Billing_ID         NUMBER CONSTRAINT FIDE_PK_BILLING_ID PRIMARY KEY,
-    Order_ID           NUMBER,
+    Order_ID           VARCHAR2(100),
     Customer_ID        NUMBER,
     Invoiced_Address_ID NUMBER,
     Billing_Date       TIMESTAMP,
