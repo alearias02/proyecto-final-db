@@ -66,7 +66,7 @@ desconectar($conn);
                             <td><?= htmlspecialchars($orden['PAYMENT_METHOD_NAME']) ?></td>
                             <td><span class="badge bg-info text-dark"><?= htmlspecialchars($orden['STATUS']) ?></span></td>
                             <td>
-                                <a href="orden_confirmada.php?order_id=<?= urlencode($orden['ORDER_ID']) ?>" class="btn btn-sm btn-outline-primary">
+                                <a href="../src/detallesOrden.php?order_id=<?= urlencode($orden['ORDER_ID']) ?>" class="btn btn-sm btn-outline-primary">
                                     Ver Detalle
                                 </a>
                             </td>
