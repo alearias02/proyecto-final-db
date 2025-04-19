@@ -113,7 +113,7 @@ if (isset($_SESSION['usuario'])) {
                                     <a class="dropdown-item nav-link text-black" href="../../src/adminProductos.php">PRODUCTOS</a>
                                     <a class="dropdown-item nav-link text-black" href="../../src/Inventario.php">INVENTARIO</a>
                                     <a class="dropdown-item nav-link text-black" href="../../src/adminOrdenes.php">ORDENES</a>
-                                    <a class="dropdown-item nav-link text-black" href="../../src/adminVentas.php">REPORTE VENTAS</a>
+                                    <a class="dropdown-item nav-link text-black" href="../../src/adminBilling.php">FACTURAS</a>
                                     <a class="dropdown-item nav-link text-black" href="../../src/adminFacturas.php">REPORTE FACTURAS</a>
                                 </div>
                             </div>

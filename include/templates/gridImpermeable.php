@@ -40,7 +40,7 @@ $(document).ready(function() {
                   <p class="text-center">${DETALLE}</p>
                   <p class="text-center"><strong>${PRECIO}</strong></p>
                   <div class="btn-group mt-auto w-100 gap-2 d-flex flex-column flex-md-row">
-                    <a href="../srcItem/mostrarImpermeable.php?PRODUCT_ID=${IMPERMEABLE.PRODUCT_ID}" class="btn btn-primary mt-auto">Ver más</a>
+                    <a href="../srcItem/mostrarImpermeable.php?product_id=${IMPERMEABLE.PRODUCT_ID}" class="btn btn-primary mt-auto">Ver más</a>
                     <button class="btn btn-success add-to-cart" data-id="${IMPERMEABLE.PRODUCT_ID}">
                       <i class="fas fa-cart-plus"></i> Agregar al carrito
                     </button>

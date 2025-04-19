@@ -1296,10 +1296,9 @@ END ELIMINAR_FIDE_ORDER_LINES_TB_SP;
 
  
 -- Procedimiento para Insertar BILLING
-CREATE OR REPLACE PROCEDURE INSERTAR_FIDE_BILLING_TB_SP
+create or replace PROCEDURE INSERTAR_FIDE_BILLING_TB_SP
 (
-    P_BILLING_ID         IN NUMBER,
-    P_ORDER_ID           IN NUMBER,
+    P_ORDER_ID           IN VARCHAR2,
     P_CUSTOMER_ID        IN NUMBER,
     P_INVOICED_ADDRESS_ID IN NUMBER,
     P_BILLING_DATE       IN TIMESTAMP,
@@ -1313,33 +1312,33 @@ CREATE OR REPLACE PROCEDURE INSERTAR_FIDE_BILLING_TB_SP
 IS
 BEGIN
     INSERT INTO FIDE_SAMDESIGN.FIDE_BILLING_TB
-    (
-        Billing_ID,
-        Order_ID,
-        Customer_ID,
-        Invoiced_Address_ID,
-        Billing_Date,
-        Total_Amount,
-        Comments,
-        Status_ID,
-        Payment_Method_ID,
-        Created_On,
-        Created_By
-    )
-    VALUES
-    (
-        P_BILLING_ID,
-        P_ORDER_ID,
-        P_CUSTOMER_ID,
-        P_INVOICED_ADDRESS_ID,
-        P_BILLING_DATE,
-        P_TOTAL_AMOUNT,
-        P_COMMENTS,
-        P_STATUS_ID,
-        P_PAYMENT_METHOD_ID,
-        P_CREATED_ON,
-        P_CREATED_BY
-    );
+(
+    Billing_ID,
+    Order_ID,
+    Customer_ID,
+    Invoiced_Address_ID,
+    Billing_Date,
+    Total_Amount,
+    Comments,
+    Status_ID,
+    Payment_Method_ID,
+    Created_On,
+    Created_By
+)
+VALUES
+(
+    FIDE_BILLING_SEQ.NEXTVAL,
+    P_ORDER_ID,
+    P_CUSTOMER_ID,
+    P_INVOICED_ADDRESS_ID,
+    P_BILLING_DATE,
+    P_TOTAL_AMOUNT,
+    P_COMMENTS,
+    P_STATUS_ID,
+    P_PAYMENT_METHOD_ID,
+    P_CREATED_ON,
+    P_CREATED_BY
+);
     COMMIT;
 END INSERTAR_FIDE_BILLING_TB_SP;
 /
@@ -1348,7 +1347,7 @@ END INSERTAR_FIDE_BILLING_TB_SP;
 CREATE OR REPLACE PROCEDURE MODIFICAR_FIDE_BILLING_TB_SP
 (
     P_BILLING_ID         IN NUMBER,
-    P_ORDER_ID           IN NUMBER,
+    P_ORDER_ID           IN VARCHAR2,
     P_CUSTOMER_ID        IN NUMBER,
     P_INVOICED_ADDRESS_ID IN NUMBER,
     P_BILLING_DATE       IN TIMESTAMP,

@@ -35,7 +35,7 @@ $(document).ready(function() {
                                   <p class="text-center">${DETALLE}</p>
                                   <p class="text-center"><strong>${PRECIO}</strong></p>
                                   <div class="btn-group mt-auto w-100 gap-2 d-flex flex-column flex-md-row">
-                                    <a href="../srcItem/mostrarLlanta.php?PRODUCT_ID=${LLANTA.PRODUCT_ID}" class="btn btn-primary mt-auto">Ver más</a>
+                                    <a href="../srcItem/mostrarLlanta.php?product_id=${LLANTA.PRODUCT_ID}" class="btn btn-primary mt-auto">Ver más</a>
                                     <button class="btn btn-success add-to-cart" data-id="${LLANTA.PRODUCT_ID}">
                                       <i class="fas fa-cart-plus"></i> Agregar al carrito
                                     </button>

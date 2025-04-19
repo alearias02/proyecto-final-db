@@ -52,6 +52,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                             <p class="card-text">Precio: $<?= number_format($oProducto['Unit_price'], 2); ?></p>
                             <p><?= $oProducto['Comments']; ?></p>
 
+                            <select class="form-control mb-3" id="COMMENTS">
+                                <option>Small</option>
+                                <option>Medium</option>
+                                <option>Large</option>
+                            </select>
+
                             <button class="btn btn-primary"
                                 onclick="agregarAlCarrito('<?= $oProducto['Product_ID']; ?>',
                                                           '<?= $oProducto['Image_path']; ?>',
@@ -127,12 +133,15 @@ select.form-control {
 
 <script>
 function agregarAlCarrito(productId, imagePath, description, unitPrice) {
+  const talla = document.getElementById("COMMENTS").value;
+
   $.ajax({
     url: '../include/functions/addToCart.php',
     type: 'POST',
     dataType: 'json',
     data: {
-      product_id: productId
+      product_id: productId,
+      talla: talla
     },
     success: function (response) {
       if (response.success) {

@@ -10,7 +10,7 @@ if (!$customer_id) {
 
 $sql = "SELECT 
             o.Order_ID,
-            o.Order_Date,
+            TRUNC(o.Order_Date) AS ORDER_DATE,
             o.Order_Amount,
             o.Order_Tax,
             p.Payment_Method_Name,

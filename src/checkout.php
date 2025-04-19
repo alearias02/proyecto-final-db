@@ -1,5 +1,6 @@
 <?php
 require_once '../DAL/conexion.php';
+require_once '../DAL/billing.php';
 $conn = conectar();
 session_start();
 
@@ -68,22 +69,25 @@ oci_bind_by_name($stmt, ":address_id", $address_id);
 oci_bind_by_name($stmt, ":order_id", $order_id, 100); 
 oci_execute($stmt);
 
-$sqlBilling = "INSERT INTO FIDE_SAMDESIGN.FIDE_BILLING_TB (
-    Billing_ID, Order_ID, Customer_ID, Invoiced_Address_ID, 
-    Billing_Date, Total_Amount, Status_ID, Payment_Method_ID, 
-    Created_On, Created_By 
-) VALUES (
-    FIDE_BILLING_SEQ.NEXTVAL, :order_id, :customer_id, :address_id, 
-    SYSTIMESTAMP, :amount, 1, :payment_method_id, SYSTIMESTAMP, :created_by )";
+//Insertar billing sp
 
-$stmtB = oci_parse($conn, $sqlBilling);
-oci_bind_by_name($stmtB, ":customer_id", $customer_id);
-oci_bind_by_name($stmtB, ":amount", $total_general);
-oci_bind_by_name($stmtB, ":payment_method_id", $payment_method_id);
-oci_bind_by_name($stmtB, ":created_by", $created_by);
-oci_bind_by_name($stmtB, ":address_id", $address_id);
-oci_bind_by_name($stmtB, ":order_id", $order_id); 
-oci_execute($stmtB);
+$comentario_factura = 'Checkout Processed...';
+
+$factura_ok = IngresarBilling(
+    $order_id,
+    $customer_id,
+    $address_id,
+    $total_general,
+    $comentario_factura,
+    $payment_method_id,
+    $created_by
+);
+
+if (!$factura_ok) {
+    oci_rollback($conn);
+    desconectar($conn);
+    die("Error al insertar la factura con el SP.");
+}
 
 
 // 4. Insertar líneas de orden
@@ -111,7 +115,7 @@ foreach ($carrito as $item) {
 
 
 
-// 5. Actualizar estado del carrito
+// Actualizar estado del carrito
 $sql = "UPDATE FIDE_SAMDESIGN.FIDE_CART_TB 
         SET Status_ID = 9, Modified_On = SYSTIMESTAMP, Modified_By = :modified_by
         WHERE Cart_ID = :cart_id";
@@ -119,6 +123,15 @@ $stmt = oci_parse($conn, $sql);
 oci_bind_by_name($stmt, ":modified_by", $created_by);
 oci_bind_by_name($stmt, ":cart_id", $cart_id);
 oci_execute($stmt);
+
+//  Actualizar estado de las lineas carrito
+$sqlLines = "UPDATE FIDE_SAMDESIGN.FIDE_CART_LINES_TB 
+        SET Status_ID = 9, Modified_On = SYSTIMESTAMP, Modified_By = :modified_by
+        WHERE Cart_ID = :cart_id";
+$stmtlines = oci_parse($conn, $sqlLines);
+oci_bind_by_name($stmtlines, ":modified_by", $created_by);
+oci_bind_by_name($stmtlines, ":cart_id", $cart_id);
+oci_execute($stmtlines);
 
 oci_commit($conn);
 desconectar($conn);

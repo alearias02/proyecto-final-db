@@ -254,7 +254,7 @@ function obtenerOrdenes() {
         SELECT 
             o.ORDER_ID,
             c.CUSTOMER_NAME,
-            o.ORDER_DATE,
+            TRUNC(o.ORDER_DATE) AS ORDER_DATE,
             o.ORDER_AMOUNT,
             o.COMMENTS,
             p.PAYMENT_METHOD_NAME,
@@ -335,7 +335,7 @@ function obtenerOrdenPorId($order_id) {
     $sql = "SELECT 
                 o.ORDER_ID,
                 c.CUSTOMER_NAME,
-                o.ORDER_DATE,
+                TRUNC(o.ORDER_DATE) AS ORDER_DATE,
                 o.ORDER_AMOUNT,
                 o.COMMENTS,
                 p.PAYMENT_METHOD_NAME,

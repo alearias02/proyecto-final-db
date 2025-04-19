@@ -35,7 +35,7 @@ $(document).ready(function() {
                                       <p class="text-center">${DETALLE}</p>
                                       <p class="text-center"><strong>${PRECIO}</strong></p>
                                       <div class="btn-group mt-auto w-100 gap-2 d-flex flex-column flex-md-row">
-                                        <a href="../srcItem/mostrarAccesorio.php?PRODUCT_ID=${ACCESORIO.PRODUCT_ID}" class="btn btn-primary">
+                                        <a href="../srcItem/mostrarAccesorio.php?product_id=${ACCESORIO.PRODUCT_ID}" class="btn btn-primary">
                                           Ver más
                                         </a>
                                         <button class="btn btn-success add-to-cart" data-id="${ACCESORIO.PRODUCT_ID}">

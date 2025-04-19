@@ -9,7 +9,7 @@ function obtenerObjetos() {
                      Comments AS detalle, Unit_price AS precio, 
                      Image_path, Status_ID
               FROM FIDE_SAMDESIGN.FIDE_PRODUCT_TB
-              WHERE Status_ID = 1 AND Category_Type_ID = 5";
+              WHERE Status_ID = 1 AND Category_Type_ID = 5 OR Category_Type_ID = 1";
 
     try {
         $myArray = getArray($query);

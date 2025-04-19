@@ -112,15 +112,17 @@ if ($line) {
     $row = oci_fetch_assoc($stmt);
     $price = $row ? $row['UNIT_PRICE'] : 0;
     $price_with_tax = round($price * 1.13, 2);
+    $talla = $_POST['talla'] ?? 'No especificado';
 
     // 8. Insertar nueva línea en el carrito
     $sql = "INSERT INTO FIDE_SAMDESIGN.FIDE_CART_LINES_TB 
-            (Cart_Line_ID, Cart_ID, Product_ID, Qty_Item, Total_Price, Created_On, Created_By, Status_ID)
-            VALUES (FIDE_CART_LINE_SEQ.NEXTVAL, :cart_id, :product_id, 1, :price, SYSTIMESTAMP, :created_by, 1)";
+            (Cart_Line_ID, Cart_ID, Product_ID, Qty_Item, Total_Price, Comments, Created_On, Created_By, Status_ID)
+            VALUES (FIDE_CART_LINE_SEQ.NEXTVAL, :cart_id, :product_id, 1, :price, :comments, SYSTIMESTAMP, :created_by, 1)";
     $stmt = oci_parse($conn, $sql);
     oci_bind_by_name($stmt, ":cart_id", $cart_id);
     oci_bind_by_name($stmt, ":product_id", $product_id);
     oci_bind_by_name($stmt, ":price", $price_with_tax);
+    oci_bind_by_name($stmt, ":comments", $talla); 
     oci_bind_by_name($stmt, ":created_by", $USER);
     oci_execute($stmt, OCI_NO_AUTO_COMMIT);
 }

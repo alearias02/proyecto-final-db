@@ -34,7 +34,7 @@ $(document).ready(function() {
                     <p>${DETALLE}</p>
                     <p class="fw-bold">Precio: $${CAMISA.PRECIO}</p>
                     <div class="btn-group mt-auto w-100 gap-2 d-flex flex-column flex-md-row">
-                                        <a href="../srcItem/mostrarCamisa.php?ID_CAMISA=${CAMISA.PRODUCT_ID}" class="btn btn-primary mt-auto w-100">Ver más</a>
+                                        <a href="../srcItem/mostrarCamisa.php?product_id=${CAMISA.PRODUCT_ID}" class="btn btn-primary mt-auto w-100">Ver más</a>
                                         <button class="btn btn-success add-to-cart" data-id="${CAMISA.PRODUCT_ID}">
                                           <i class="fas fa-cart-plus"></i> Agregar al carrito
                                         </button>

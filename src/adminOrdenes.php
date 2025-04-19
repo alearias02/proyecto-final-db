@@ -1,7 +1,7 @@
 <?php
 require_once "../DAL/order.php";
 require_once "../include/templates/header.php";
-
+$rol_usuario = $_SESSION['usuario']['rol'] ?? null;
 $ordenes = obtenerOrdenes();
 $estados = obtenerEstados();
 ?>
@@ -30,16 +30,27 @@ $estados = obtenerEstados();
         <td><?= date('Y-m-d', strtotime($orden['ORDER_DATE'])) ?></td>
         <td>$<?= number_format($orden['ORDER_AMOUNT'], 2) ?></td>
         <td>
-            <form method="POST" action="actualizarEstado.php" class="d-flex justify-content-center">
-                <input type="hidden" name="order_id" value="<?= $orden['ORDER_ID'] ?>">
-                <select name="status_id" class="form-select form-select-sm" onchange="this.form.submit()">
-                    <?php foreach ($estados as $estado): ?>
-                        <option value="<?= $estado['STATUS_ID'] ?>" <?= $orden['STATUS_ID'] == $estado['STATUS_ID'] ? 'selected' : '' ?>>
-                            <?= htmlspecialchars($estado['DESCRIPTION']) ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-            </form>
+            <?php if ($rol_usuario === 'ROLE_ADMIN'): ?>
+                <form method="POST" action="actualizarEstado.php" class="d-flex justify-content-center">
+                    <input type="hidden" name="order_id" value="<?= $orden['ORDER_ID'] ?>">
+                    <select name="status_id" class="form-select form-select-sm" onchange="this.form.submit()">
+                        <?php foreach ($estados as $estado): ?>
+                            <option value="<?= $estado['STATUS_ID'] ?>" <?= $orden['STATUS_ID'] == $estado['STATUS_ID'] ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($estado['DESCRIPTION']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </form>
+            <?php else: ?>
+                <?php 
+                    // Buscar el nombre del estado actual
+                    $estado_actual = array_filter($estados, function ($e) use ($orden) {
+                        return $e['STATUS_ID'] == $orden['STATUS_ID'];
+                    });
+                    $estado_actual = array_values($estado_actual)[0]['DESCRIPTION'] ?? 'Desconocido';
+                ?>
+                <?= htmlspecialchars($estado_actual) ?>
+            <?php endif; ?>
         </td>
         <td>
             <a href="detallesOrden.php?order_id=<?= $orden['ORDER_ID'] ?>" class="btn btn-info btn-sm">Ver Detalles</a>
