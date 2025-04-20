@@ -10,7 +10,7 @@ function obtenerDetallesBilling($billing_id) {
                 billing_id,
                 order_id,
                 customer_id,
-                invoiced_address_id,
+                invoiced_address_id AS ADDRESS_ID,
                 billing_date,
                 total_amount,
                 comments,
@@ -19,8 +19,7 @@ function obtenerDetallesBilling($billing_id) {
                 created_on,
                 created_by,
                 modified_on,
-                modified_by,
-                address_id 
+                modified_by
             FROM FIDE_SAMDESIGN.fide_billing_tb 
             WHERE billing_id = :billing_id";
     $stmt = oci_parse($oConexion, $sql);
@@ -192,7 +191,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"])) {
     } elseif ($action == "actualizar") {
         error_log("Datos recibidos para actualizar: " . json_encode($_POST));
 
-        $required_fields = ["billing_id", "order_id", "customer_id", "address_id", "billing_date", "total_amount", "comments", "status_id", "payment_method_id", "modified_by"];
+        $required_fields = ["BILLING_ID", "ORDER_ID", "CUSTOMER_ID", "ADDRESS_ID", "BILLING_DATE", "TOTAL_AMOUNT", "COMMENTS", "STATUS_ID", "PAYMENT_METHOD_ID", "modified_by"];
         foreach ($required_fields as $field) {
             if (!isset($_POST[$field])) {
                 http_response_code(400);
@@ -202,15 +201,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"])) {
         }
 
         $actualizado = actualizarBilling(
-            $_POST["billing_id"],
-            $_POST["order_id"],
-            $_POST["customer_id"],
-            $_POST["address_id"],
-            $_POST["billing_date"], 
-            $_POST["total_amount"],
-            $_POST["comments"],
-            $_POST["status_id"],
-            $_POST["payment_method_id"],
+            $_POST["BILLING_ID"],
+            $_POST["ORDER_ID"],
+            $_POST["CUSTOMER_ID"],
+            $_POST["ADDRESS_ID"],
+            $_POST["BILLING_DATE"], 
+            $_POST["TOTAL_AMOUNT"],
+            $_POST["COMMENTS"],
+            $_POST["STATUS_ID"],
+            $_POST["PAYMENT_METHOD_ID"],
             $_POST["modified_by"]
         );
 
@@ -223,7 +222,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"])) {
 
     // 4. Insertar usando SP
     } elseif ($action == "insertar") {
-        $required_fields = ["order_id", "customer_id", "address_id", "total_amount", "comments", "payment_method_id", "created_by"];
+        $required_fields = ["ORDER_ID", "CUSTOMER_ID", "TOTAL_AMOUNT", "ADDRESS_ID", "COMMENTS", "PAYMENT_METHOD_ID", "created_by"];
         foreach ($required_fields as $field) {
             if (!isset($_POST[$field])) {
                 http_response_code(400);
@@ -231,14 +230,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"])) {
                 exit;
             }
         }
+        error_log("Datos insert recibidos: " . print_r($_POST, true));
 
         $insertado = IngresarBilling(
-            $_POST["order_id"],
-            $_POST["customer_id"],
-            $_POST["address_id"],
-            $_POST["total_amount"],
-            $_POST["comments"],
-            $_POST["payment_method_id"],
+            $_POST["ORDER_ID"],
+            $_POST["CUSTOMER_ID"],
+            $_POST["ADDRESS_ID"],
+            $_POST["TOTAL_AMOUNT"],
+            $_POST["COMMENTS"],
+            $_POST["PAYMENT_METHOD_ID"],
             $_POST["created_by"]
         );
 
@@ -248,9 +248,51 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"])) {
             http_response_code(500);
             echo "Error al insertar la línea de facturación";
         }
-
-    // Acción no reconocida
-    } else {
+    } elseif ($action == "getAddressesByCustomer" && isset($_POST["customer_id"])) {
+        $conn = conectar();
+        $sql = "SELECT ADDRESS_ID, ADDRESS FROM FIDE_SAMDESIGN.FIDE_ADDRESS_TB WHERE ID_CUSTOMER = :customer";
+        $stmt = oci_parse($conn, $sql);
+        oci_bind_by_name($stmt, ":customer", $_POST["customer_id"]);
+        oci_execute($stmt);
+    
+        $addresses = [];
+        while ($row = oci_fetch_assoc($stmt)) {
+            $addresses[] = $row;
+        }
+    
+        echo json_encode($addresses);
+        oci_free_statement($stmt);
+        oci_close($conn);
+        exit;
+    } elseif ($action === "getOrderTotal" && isset($_POST["order_id"])) {
+        $conn = conectar();
+    
+        $sql = "SELECT ORDER_AMOUNT FROM FIDE_SAMDESIGN.FIDE_ORDER_TB WHERE ORDER_ID = :order_id";
+        $stmt = oci_parse($conn, $sql);
+        oci_bind_by_name($stmt, ":order_id", $_POST["order_id"]);
+        oci_execute($stmt);
+        
+        $row = oci_fetch_assoc($stmt);
+        echo json_encode(['total' => $row['ORDER_AMOUNT'] ?? 0]);
+    
+        oci_free_statement($stmt);
+        oci_close($conn);
+        exit;
+    } elseif ($action === "getOrderPM" && isset($_POST["order_id"])) {
+        $conn = conectar();
+    
+        $sql = "SELECT PAYMENT_METHOD_ID FROM FIDE_SAMDESIGN.FIDE_ORDER_TB WHERE ORDER_ID = :order_id";
+        $stmt = oci_parse($conn, $sql);
+        oci_bind_by_name($stmt, ":order_id", $_POST["order_id"]);
+        oci_execute($stmt);
+        
+        $row = oci_fetch_assoc($stmt);
+        echo json_encode(['PM' => $row['PAYMENT_METHOD_ID'] ?? 0]);
+    
+        oci_free_statement($stmt);
+        oci_close($conn);
+        exit;
+    }  else {     // Acción no reconocida
         http_response_code(400);
         echo "Acción no válida";
     }

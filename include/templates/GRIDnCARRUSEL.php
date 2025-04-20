@@ -50,14 +50,16 @@
                 <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2 g-1">
                     <div class="col">
                         <div class="p-2 rounded text-white" style="background-color: var(--primarioOscuro);">
-                            <img src="../img/llanta4.jpg" class="img-fluid rounded w-100" style="height: 120px; object-fit: cover;">
+                            <a href="../../src/llantasMain.php">
+                                <img src="../img/llanta4.jpg" class="img-fluid rounded w-100" style="height: 120px; object-fit: cover;">
+                            </a>
                             <h6 class="mt-2 text-white">Llanta de montaña</h6>
                             <h6>$75</h6>
                         </div>
                     </div>
                     <div class="col">
                         <div class="p-2 rounded text-white" style="background-color: var(--primarioOscuro);">
-                            <a href="../../srcItem/mostrarRepuesto.php?id_repuesto=9">
+                            <a href="../../src/repuestosMain.php">
                                 <img src="../img/velocimetro.jpeg" class="img-fluid rounded w-100" style="height: 120px; object-fit: cover;">
                             </a>
                             <h6 class="mt-2 text-white">Velocímetro DT</h6>
@@ -66,16 +68,16 @@
                     </div>
                     <div class="col">
                         <div class="p-2 rounded text-white" style="background-color: var(--primarioOscuro);">
-                            <a href="../../srcItem/mostrarRepuesto.php?id_repuesto=7">
+                            <a href="../../src/repuestosMain.php">
                                 <img src="../img/tapas-frontales.jpg" class="img-fluid rounded w-100" style="height: 120px; object-fit: cover;">
                             </a>
                             <h6 class="mt-2 text-white">Plásticos Frontales</h6>
-                            <h6>$55</h6>
+                            <h6>$66</h6>
                         </div>
                     </div>
                     <div class="col">
                         <div class="p-2 rounded text-white" style="background-color: var(--primarioOscuro);">
-                            <a href="../../">
+                            <a href="../../src/llantasMain.php">
                                 <img src="../img/llanta-continental.jpg" class="img-fluid rounded w-100" style="height: 120px; object-fit: cover;">
                             </a>
                             <h6 class="mt-2 text-white">Llanta continental</h6>
@@ -84,7 +86,7 @@
                     </div>
                     <div class="col">
                         <div class="p-2 rounded text-white" style="background-color: var(--primarioOscuro);">
-                            <a href="../../srcItem/mostrarRepuesto.php?id_repuesto=5">
+                            <a href="../../src/repuestosMain.php">
                                 <img src="../img/empaques-dt.jpg" class="img-fluid rounded w-100" style="height: 120px; object-fit: cover;">
                             </a>
                             <h6 class="mt-2 text-white">Empaques de DT</h6>

@@ -14,10 +14,11 @@ $lineas = obtenerLineasOrden($order_id);
 
 <div class="container mt-5">
     <h2 class="mb-4 text-center">Detalles de la Orden #<?= htmlspecialchars($order_id) ?></h2>
-
+    
     <?php if ($orden): ?>
         <div class="card mb-4">
             <div class="card-body">
+                <a href="../userSrc/userOrders.php"><button type="button" class="btn" style="color: var(--primarioOscuro) !important;"><</button></a>
                 <p><strong>Cliente:</strong> <?= htmlspecialchars($orden['CUSTOMER_NAME']) ?></p>
                 <p><strong>Fecha:</strong> <?= htmlspecialchars($orden['ORDER_DATE']) ?></p>
                 <p><strong>Monto Total:</strong> $<?= number_format($orden['ORDER_AMOUNT'], 2) ?></p>
