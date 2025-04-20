@@ -43,7 +43,7 @@ $inventoryLinesOffset = ($inventoryLinesPage - 1) * $items_per_page;
 $inventoryLinesQuery = "SELECT * FROM (
               SELECT a.*, ROWNUM rnum FROM (
                   SELECT i.inventory_lines_id, e.description AS INVENTARIO, p.description AS PRODUCTO, i.comments, i.quantity_stocked, i.quantity_reserved,
-                   i.status_id, i.last_restocked, i.created_by, i.created_on, i.modified_on, i.modified_by
+                   i.status_id, TRUNC(i.last_restocked) AS LAST_RESTOCKED, i.created_by, i.created_on, i.modified_on, i.modified_by
                   FROM FIDE_SAMDESIGN.FIDE_INVENTORY_LINES_TB i
                   INNER JOIN FIDE_SAMDESIGN.FIDE_INVENTORY_TB e ON e.inventory_id = i.inventory_id
                   INNER JOIN FIDE_SAMDESIGN.FIDE_PRODUCT_TB p ON p.product_id = i.product_id
@@ -131,10 +131,7 @@ oci_close($connection);
                                                 <td><?= !empty($value['QUANTITY_RESERVED']) ? $value['QUANTITY_RESERVED'] : 'N/A'; ?></td>
                                                 <td><?= !empty($value['LAST_RESTOCKED']) ? $value['LAST_RESTOCKED'] : 'N/A'; ?></td>
                                                 <td>
-                                                     <!-- Botón para Ver Detalles -->
-                                                    <a href="inventoryLines.php?inventory_id=<?= urlencode($value['INVENTORY_LINES_ID']); ?>" class="btn btn-info" style="display: inline-block;">
-                                                        <i class="fas fa-box-open"></i> Ver Detalles
-                                                    </a>
+                                                     
                                                     <!-- Botón para eliminar -->
                                                     <button class='btn btn-danger' onclick='eliminarLineaInventario(<?= $value['INVENTORY_LINES_ID']; ?>, "<?= htmlspecialchars($user_name); ?>" )'>
                                                         <i class="fas fa-trash"></i> Eliminar
@@ -162,7 +159,7 @@ oci_close($connection);
                             <ul class="pagination justify-content-center">
                                 <?php for ($i = 1; $i <= $inventoryLines_total_pages; $i++): ?>
                                     <li class="page-item <?= ($i == $inventoryLinesPage) ? 'active' : ''; ?>">
-                                        <a class="page-link" href="?inventoryLinesPage=<?= $i; ?>"><?= $i; ?></a>
+                                    <a class="page-link" href="?inventory_id=<?= $inventory_id; ?>&inventoryLinesPage=<?= $i; ?>"><?= $i; ?></a>
                                     </li>
                                 <?php endfor; ?>
                             </ul>

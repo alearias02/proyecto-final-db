@@ -36,6 +36,7 @@ $billingQuery = "SELECT * FROM (
                   LEFT JOIN FIDE_SAMDESIGN.FIDE_ADDRESS_TB a ON a.ID_CUSTOMER = b.CUSTOMER_ID
                   LEFT JOIN FIDE_SAMDESIGN.FIDE_STATUS_TB s ON s.status_id = b.status_id
                   WHERE b.status_id = 1 or b.status_id = 2 
+                  ORDER BY b.billing_id ASC
               ) a WHERE ROWNUM <= :max_row
           ) WHERE rnum > :min_row";
 
