@@ -40,8 +40,18 @@ function IngresarDireccion( $address, $id_state, $id_city, $id_country, $zip_cod
 
     try {
         $oConexion = conectar();
-        $sql = "INSERT INTO FIDE_SAMDESIGN.fide_address_tb ( address, id_state, id_city, id_country, zip_code, status_id, created_by, created_on, id_customer)
-                VALUES ( :address, :id_state, :id_city, :id_country, :zip_code, 1, 'SELF-USER', CURRENT_TIMESTAMP, :id_customer)";
+        $sql = "BEGIN 
+                    INSERTAR_FIDE_ADDRESS_TB_SP( 
+                                    :address, 
+                                    :id_state, 
+                                    :id_city,
+                                    :zip_code, 
+                                    :id_country,  
+                                    10, 
+                                    'SELF-USER', 
+                                    CURRENT_TIMESTAMP, 
+                                    :id_customer);
+                END;";
 
         $stmt = oci_parse($oConexion, $sql);
 
@@ -97,21 +107,25 @@ function eliminarDireccion($address_id) {
 }
 
 // Actualizar una direccion
-function actualizarDireccion($address_id, $address, $id_state, $id_city, $id_country, $id_customer, $zip_code) {
+function actualizarDireccion($address_id, $address, $id_state, $id_city, $zip_code, $id_country, $status_id, $modified_by, $id_customer) {
     $retorno = false;
 
     try {
         $oConexion = conectar();
-        $sql = "UPDATE FIDE_SAMDESIGN.fide_address_tb 
-                SET address_id = :address_id,
-                    address = :address,
-                    id_state = :id_state,
-                    id_city = :id_city,
-                    id_country = :id_country,
-                    zip_code = :zip_code,
-                    modified_on = SYSDATE,
-                    id_customer = :id_customer
-                WHERE address_id = :address_id";
+        $sql = "BEGIN 
+                    MODIFICAR_FIDE_ADDRESS_TB_SP(
+                    :address_id,
+                    :address,
+                    :id_state,
+                    :id_city,
+                    :zip_code,
+                    :id_country,
+                    :status_id,
+                    :modified_by,
+                    SYSTIMESTAMP,
+                    :id_customer
+                    );
+                END;";
 
         $stmt = oci_parse($oConexion, $sql);
 
@@ -122,7 +136,9 @@ function actualizarDireccion($address_id, $address, $id_state, $id_city, $id_cou
         oci_bind_by_name($stmt, ":id_city", $id_city);
         oci_bind_by_name($stmt, ":id_country", $id_country);
         oci_bind_by_name($stmt, ":id_customer", $id_customer);
+        oci_bind_by_name($stmt, ":status_id", $status_id);
         oci_bind_by_name($stmt, ":zip_code", $zip_code);
+        oci_bind_by_name($stmt, ":modified_by", $modified_by);
 
         // Ejecutar la consulta
         if (oci_execute($stmt)) {
@@ -180,8 +196,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"])) {
             $_POST["ADDRESS"],
             $_POST["ID_STATE"],
             $_POST["ID_CITY"],
-            $_POST["ID_COUNTRY"],
             $_POST["ZIP_CODE"],
+            $_POST["ID_COUNTRY"],
+            $_POST["STATUS_ID"],
+            $_POST["MODIFIED_BY"],
             $_POST["ID_CUSTOMER"]
             );
     

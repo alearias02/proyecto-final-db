@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
                             <button class="btn btn-primary"
                                 onclick="agregarAlCarrito('<?= $oProducto['Product_ID']; ?>',
                                                           '<?= $oProducto['Image_path']; ?>',
-                                                          '<?= $oProducto['Description']; ?>',
+                                                          '<?= addslashes(htmlspecialchars($oProducto['Description'])); ?>',
                                                           '<?= $oProducto['Unit_price']; ?>')">
                                 Agregar al carrito
                             </button>

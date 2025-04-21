@@ -115,7 +115,6 @@ if (isset($_SESSION['usuario'])) {
                                     <a class="dropdown-item nav-link text-black" href="../../src/Inventario.php">INVENTARIO</a>
                                     <a class="dropdown-item nav-link text-black" href="../../src/adminOrdenes.php">ORDENES</a>
                                     <a class="dropdown-item nav-link text-black" href="../../src/adminBilling.php">FACTURAS</a>
-                                    <a class="dropdown-item nav-link text-black" href="../../src/adminFacturas.php">REPORTE FACTURAS</a>
                                 </div>
                             </div>
                         </li>';
@@ -132,6 +131,7 @@ if (isset($_SESSION['usuario'])) {
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                             <li><a class="dropdown-item" href="../userSrc/userOrders.php">Mis Ordenes</a></li>
+                            <li><a class="dropdown-item" href="../userSrc/userAddresses.php">Mis Direcciones</a></li>
                             <li><a class="dropdown-item" href="../userSrc/logout.php">Cerrar sesión</a></li>
                         </ul>
                     </div>

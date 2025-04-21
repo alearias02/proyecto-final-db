@@ -50,7 +50,7 @@ $lineas = obtenerLineasOrden($order_id);
         </div>
 
         <div class="text-center mt-4">
-            <a href="adminOrdenes.php" class="btn btn-secondary">Volver a Órdenes</a>
+            <a href="../userSrc/userOrders.php" class="btn btn-secondary">Volver a Órdenes</a>
         </div>
 
     <?php else: ?>

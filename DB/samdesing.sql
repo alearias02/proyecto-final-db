@@ -29,6 +29,12 @@ VALUES (8, 'Pago Pendiente', 'admin', SYSTIMESTAMP, NULL, NULL);
 
 INSERT INTO FIDE_SAMDESIGN.FIDE_STATUS_TB (Status_ID, Description, Created_By, Created_On, Modified_By, Modified_On) 
 VALUES (9, 'Orden Creada', 'admin', SYSTIMESTAMP, NULL, NULL);
+
+INSERT INTO FIDE_SAMDESIGN.FIDE_STATUS_TB (Status_ID, Description, Created_By, Created_On, Modified_By, Modified_On) 
+VALUES (10, 'Direccion Principal', 'admin', SYSTIMESTAMP, NULL, NULL);
+
+INSERT INTO FIDE_SAMDESIGN.FIDE_STATUS_TB (Status_ID, Description, Created_By, Created_On, Modified_By, Modified_On) 
+VALUES (11, 'Direccion Secundaria', 'admin', SYSTIMESTAMP, NULL, NULL);
 COMMIT;
 
 

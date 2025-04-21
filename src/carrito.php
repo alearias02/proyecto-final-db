@@ -20,7 +20,7 @@ if ($customer_id) {
             LEFT JOIN FIDE_SAMDESIGN.FIDE_CITY_ADDRESS_TB c ON c.City_ID = a.ID_City
             LEFT JOIN FIDE_SAMDESIGN.FIDE_STATE_ADDRESS_TB s ON s.State_ID = a.ID_State
             LEFT JOIN FIDE_SAMDESIGN.FIDE_COUNTRIES_TB co ON co.Country_ID = a.ID_Country
-            WHERE a.ID_Customer = :customer_id AND a.Status_ID = 1
+            WHERE a.ID_Customer = :customer_id AND a.Status_ID = 10
             FETCH FIRST 1 ROWS ONLY";
 
     $stmt = oci_parse($conn, $sql);
