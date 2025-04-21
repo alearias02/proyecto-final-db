@@ -13,7 +13,7 @@ if (!$customer_id) {
 // 1. Obtener información del carrito
 $sql = "SELECT c.Cart_ID, c.Payment_Method_ID, a.Address_ID
         FROM FIDE_SAMDESIGN.FIDE_CART_TB c
-        JOIN FIDE_SAMDESIGN.FIDE_ADDRESS_TB a ON a.ID_Customer = c.Customer_ID AND a.Status_ID = 1
+        JOIN FIDE_SAMDESIGN.FIDE_ADDRESS_TB a ON a.ID_Customer = c.Customer_ID AND a.Status_ID = 10
         WHERE c.Customer_ID = :customer_id AND c.Status_ID = 1
         FETCH FIRST 1 ROWS ONLY";
 $stmt = oci_parse($conn, $sql);
@@ -35,7 +35,7 @@ $total_general = 0;
 
 $sql = "SELECT Product_ID, Qty_Item, Total_Price, (Qty_Item * Total_Price) AS Subtotal
         FROM FIDE_SAMDESIGN.FIDE_CART_LINES_TB
-        WHERE Cart_ID = :cart_id";
+        WHERE Cart_ID = :cart_id AND Status_ID = 1";
 $stmt = oci_parse($conn, $sql);
 oci_bind_by_name($stmt, ":cart_id", $cart_id);
 oci_execute($stmt);

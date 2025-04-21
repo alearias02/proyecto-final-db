@@ -11,14 +11,19 @@
 <?php
 require_once "../include/templates/header.php";
 require_once "../DAL/database.php";
-require_once "../DAL/billing.php";
+require_once "../DAL/address.php";
+
+$customer_id = $_SESSION['usuario']['customer_id'] ?? null;
+if (!$customer_id) {
+    die("Error: Falta el ID del cliente.");
+}
 
 $user_name = $_SESSION['usuario']['user_name']; 
 
 // Lógica de paginación
-$billingPage = isset($_GET['billingPage']) ? (int)$_GET['billingPage'] : 1; // Página actual (por defecto 1)
+$addressPage = isset($_GET['addressPage']) ? (int)$_GET['addressPage'] : 1; // Página actual (por defecto 1)
 $items_per_page = 10; // Número de filas por página
-$billingOffset = ($billingPage - 1) * $items_per_page;
+$addressOffset = ($addressPage - 1) * $items_per_page;
 
 // Conexión
 $connection = conectar();
@@ -27,43 +32,45 @@ if (!$connection) {
 }
 
 // Consulta paginada
-$billingQuery = "SELECT * FROM (
+$addressQuery = "SELECT * FROM (
               SELECT a.*, ROWNUM rnum FROM (
-                  SELECT b.billing_id, b.order_id, c.CUSTOMER_NAME, a.ADDRESS, TRUNC(b.BILLING_DATE) as  BILLING_DATE, b.total_amount, b.comments, s.description as STATUS, b.payment_method_id,
-                         b.created_by, b.created_on, b.modified_on, b.modified_by
-                  FROM FIDE_SAMDESIGN.FIDE_BILLING_TB b
-                  LEFT JOIN FIDE_SAMDESIGN.FIDE_CUSTOMER_TB c ON c.CUSTOMER_ID = b.CUSTOMER_ID
-                  LEFT JOIN FIDE_SAMDESIGN.FIDE_ADDRESS_TB a ON a.ID_CUSTOMER = b.CUSTOMER_ID
-                  LEFT JOIN FIDE_SAMDESIGN.FIDE_STATUS_TB s ON s.status_id = b.status_id
-                  WHERE b.status_id = 1 or b.status_id = 2 
-                  ORDER BY b.billing_id ASC
+                  SELECT ad.ADDRESS_ID, ad.ADDRESS, ad.ZIP_CODE, s.DESCRIPTION, co.NAME AS COUNTRY, s.NAME AS STATE, c.NAME AS CITY
+                    FROM FIDE_SAMDESIGN.FIDE_ADDRESS_TB ad
+                    LEFT JOIN FIDE_SAMDESIGN.FIDE_COUNTRIES_TB co ON co.COUNTRY_ID = ad.ID_COUNTRY
+                    LEFT JOIN FIDE_SAMDESIGN.FIDE_STATE_ADDRESS_TB s ON s.STATE_ID = ad.ID_STATE
+                    LEFT JOIN FIDE_SAMDESIGN.FIDE_CITY_ADDRESS_TB c ON c.CITY_ID = ad.ID_CITY
+                    LEFT JOIN FIDE_SAMDESIGN.FIDE_STATUS_TB s ON s.STATUS_ID = ad.STATUS_ID
+                    WHERE ad.ID_CUSTOMER = :customer_id AND ad.STATUS_ID IN (1, 10, 11)
+                    ORDER BY ad.ADDRESS_ID ASC
               ) a WHERE ROWNUM <= :max_row
           ) WHERE rnum > :min_row";
 
-$statement = oci_parse($connection, $billingQuery);
+
+$statement = oci_parse($connection, $addressQuery);
 if (!$statement) {
     die("Error en la preparación de la consulta: " . oci_error($connection));
 }
 
-$max_row = $billingOffset + $items_per_page;
-$min_row = $billingOffset;
+$max_row = $addressOffset + $items_per_page;
+$min_row = $addressOffset;
 oci_bind_by_name($statement, ':max_row', $max_row);
 oci_bind_by_name($statement, ':min_row', $min_row);
+oci_bind_by_name($statement, ":customer_id", $customer_id);
 oci_execute($statement);
 
 // Obtener las reservaciones
-$oBills = [];
+$oAddys = [];
 while ($row = oci_fetch_assoc($statement)) {
-    $oBills[] = $row;
+    $oAddys[] = $row;
 }
 
 // Consulta total para la paginación
-$total_count_query = "SELECT COUNT(*) AS total FROM FIDE_SAMDESIGN.FIDE_BILLING_TB";
+$total_count_query = "SELECT COUNT(*) AS total FROM FIDE_SAMDESIGN.FIDE_ADDRESS_TB";
 $total_stmt = oci_parse($connection, $total_count_query);
 oci_execute($total_stmt);
 $total_row = oci_fetch_assoc($total_stmt);
 $total_items = $total_row['TOTAL'];
-$billing_total_pages = ceil($total_items / $items_per_page);
+$address_total_pages = ceil($total_items / $items_per_page);
 
 // Liberar recursos
 oci_free_statement($statement);
@@ -71,7 +78,7 @@ oci_free_statement($total_stmt);
 oci_close($connection);
 
 // Mostrar advertencia si no hay datos
-if (!is_array($oBills) || empty($oBills)) {
+if (!is_array($oAddys) || empty($oAddys)) {
     // echo "<div class='container mt-4'>
     //         <div class='alert alert-warning' role='alert'>
     //             No hay registros disponibles.
@@ -85,57 +92,50 @@ if (!is_array($oBills) || empty($oBills)) {
         <div class="row justify-content-center">
             <!-- Sección izquierda -->
             <div class="col-md-3 text-center">
-                <h3>🧾 Listado de Facturas</h3>
-                <span><strong>Bienvenido,</strong> <?= htmlspecialchars($user_name); ?></span>
-                <p>FACTURAS A LA FECHA: <strong><?= date("d/m/Y"); ?></strong>.</p>
+                <h3><i class="fa-solid fa-map-location-dot"></i> Listado de Direcciones</h3>
+                <span>Bienvenido,<strong> <?= htmlspecialchars($user_name); ?></strong>,</span>
+                <p>sus direcciones a la fecha: <strong><?= date("d/m/Y"); ?></strong>.</p>
             </div>
 
             <!-- Sección derecha -->
             <div class="col-md-9">
                 <div class="card mb-4">
                     <div class="card-header d-flex justify-content-between align-items-center">
-                        <h4 class="text-center">Facturas</h4>
+                        <h4 class="text-center">Direcciones</h4>
                         <button type="button" class="btn btn-primary" data-bs-toggle="offcanvas" data-bs-target="#offcanvasAdd">+</button>
                     </div>
                     <div class="card-body cardAdmin">
                         <div class="table-responsive">
-                            <table class="table table-striped" id="billingTable">
+                            <table class="table table-striped" id="addressTable">
                                 <thead class="table-dark">
                                     <tr>
-                                        <th># Factura</th>
-                                        <th># Orden</th>
-                                        <th>A nombre de:</th>
-                                        <th>Direccion</th>
-                                        <th>Fecha</th>
-                                        <th>Monto $</th>
-                                        <th>Comentarios</th>
-                                        <th>Estado</th>
+                                        <th># Direccion</th>
+                                        <th>Señas</th>
+                                        <th>Canton:</th>
+                                        <th>Provincia</th>
+                                        <th>Pais</th>
+                                        <th>ZIP Code</th>
+                                        <th>ESTADO</th>
                                         <th>Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php if (!empty($oBills)): ?>
-                                        <?php foreach ($oBills as $value): ?>
+                                    <?php if (!empty($oAddys)): ?>
+                                        <?php foreach ($oAddys as $value): ?>
                                             <tr>
-                                                <td><?= !empty($value['BILLING_ID']) ? $value['BILLING_ID'] : 'N/A'; ?></td>
-                                                <td><?= !empty($value['ORDER_ID']) ? $value['ORDER_ID'] : 'N/A'; ?></td>
-                                                <td><?= !empty($value['CUSTOMER_NAME']) ? $value['CUSTOMER_NAME'] : 'N/A'; ?></td>
+                                                <td><?= !empty($value['ADDRESS_ID']) ? $value['ADDRESS_ID'] : 'N/A'; ?></td>
                                                 <td><?= !empty($value['ADDRESS']) ? $value['ADDRESS'] : 'N/A'; ?></td>
-                                                <td><?= !empty($value['BILLING_DATE']) ? $value['BILLING_DATE'] : 'N/A'; ?></td>
-                                                <td><?= !empty($value['TOTAL_AMOUNT']) ? $value['TOTAL_AMOUNT'] : 'N/A'; ?></td>
-                                                <td><?= !empty($value['COMMENTS']) ? $value['COMMENTS'] : 'N/A'; ?></td>
-                                                <td><?= !empty($value['STATUS']) ? $value['STATUS'] : 'N/A'; ?></td>
+                                                <td><?= !empty($value['CITY']) ? $value['CITY'] : 'N/A'; ?></td>
+                                                <td><?= !empty($value['STATE']) ? $value['STATE'] : 'N/A'; ?></td>
+                                                <td><?= !empty($value['COUNTRY']) ? $value['COUNTRY'] : 'N/A'; ?></td>
+                                                <td><?= !empty($value['ZIP_CODE']) ? $value['ZIP_CODE'] : 'N/A'; ?></td>
+                                                <td><?= !empty($value['DESCRIPTION']) ? $value['DESCRIPTION'] : 'N/A'; ?></td>
                                                 <td>
-                                                    <!-- Botón para Ver Detalles -->
-                                                    <a href="billingLines.php?billing_id=<?= urlencode($value['BILLING_ID']); ?>" class="btn btn-info" style="display: inline-block;">
-                                                        <i class="fas fa-box-open"></i> Ver Detalles
-                                                    </a>
-
-                                                    <button class='btn btn-danger' onclick='eliminarFactura(<?= $value['BILLING_ID']; ?>, "<?= htmlspecialchars($user_name); ?>" )'>
+                                                    <button class='btn btn-danger' onclick='eliminarDireccion(<?= $value['ADDRESS_ID']; ?>, "<?= htmlspecialchars($user_name); ?>" )'>
                                                         <i class='fas fa-trash'></i> Eliminar
                                                     </button>
-                                                    <a href="#" class="btn btn-success actualizarFactura"
-                                                    data-billing-id="<?= $value['BILLING_ID']; ?>">
+                                                    <a href="#" class="btn btn-success actualizarDireccion"
+                                                    data-address-id="<?= $value['ADDRESS_ID']; ?>">
                                                     <i class="fas fa-pencil"></i> Actualizar
                                                     </a>
                                                 </td>
@@ -143,7 +143,7 @@ if (!is_array($oBills) || empty($oBills)) {
                                         <?php endforeach; ?>
                                     <?php else: ?>
                                         <tr>
-                                            <td colspan="8" class="text-center">No hay registros en el billing.</td>
+                                            <td colspan="8" class="text-center">No hay registros en el address.</td>
                                         </tr>
                                     <?php endif; ?>
                                 </tbody>
@@ -153,9 +153,9 @@ if (!is_array($oBills) || empty($oBills)) {
                         <!-- Paginación -->
                         <nav aria-label="Page navigation" class="mt-3">
                             <ul class="pagination justify-content-center">
-                                <?php for ($i = 1; $i <= $billing_total_pages; $i++): ?>
-                                    <li class="page-item <?= ($i == $billingPage) ? 'active' : ''; ?>">
-                                        <a class="page-link" href="?billingPage=<?= $i; ?>"><?= $i; ?></a>
+                                <?php for ($i = 1; $i <= $address_total_pages; $i++): ?>
+                                    <li class="page-item <?= ($i == $addressPage) ? 'active' : ''; ?>">
+                                        <a class="page-link" href="?addressPage=<?= $i; ?>"><?= $i; ?></a>
                                     </li>
                                 <?php endfor; ?>
                             </ul>
@@ -194,64 +194,69 @@ require_once "../DAL/database.php"; // Incluye la conexión a la base de datos
 $connection = conectar();
 // Consultas
 $statuses = fetchAll($connection, "SELECT STATUS_ID, DESCRIPTION FROM FIDE_SAMDESIGN.FIDE_STATUS_TB");
-$payment_ms = fetchAll($connection, "SELECT PAYMENT_METHOD_ID, PAYMENT_METHOD_NAME FROM FIDE_SAMDESIGN.FIDE_PAYMENT_METHOD_TB");
-$customers = fetchAll($connection, "SELECT CUSTOMER_ID, CUSTOMER_NAME FROM FIDE_SAMDESIGN.FIDE_CUSTOMER_TB");
-$customers = fetchAll($connection, "SELECT CUSTOMER_ID, CUSTOMER_NAME FROM FIDE_SAMDESIGN.FIDE_CUSTOMER_TB");
-$orders = fetchAll($connection, "SELECT ORDER_ID, ORDER_AMOUNT FROM FIDE_SAMDESIGN.FIDE_ORDER_TB WHERE STATUS_ID = 1 OR STATUS_ID = 8 OR STATUS_ID = 9");
+$countries = fetchAll($connection, "SELECT COUNTRY_ID, NAME FROM FIDE_SAMDESIGN.FIDE_COUNTRIES_TB");
+$provincias = fetchAll($connection, "SELECT STATE_ID, NAME FROM FIDE_SAMDESIGN.FIDE_STATE_ADDRESS_TB");
+$cantones = fetchAll($connection, "SELECT CITY_ID, NAME FROM FIDE_SAMDESIGN.FIDE_CITY_ADDRESS_TB");
+
 // Cierra la conexión después de obtener los datos
 oci_close($connection);
 
 ?>
 
-<!-- Offcanvas para agregar un billing -->
+<!-- Offcanvas para agregar un address -->
 <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasAdd" aria-labelledby="offcanvasAddLabel">
     <div class="offcanvas-header text-white" style="background-color: #475A68;">
-        <h5 id="offcanvasAddLabel3">Agregar una factura</h5>
+        <h5 id="offcanvasAddLabel3">Agregar una direccion</h5>
         <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
-    <form id="addBillingForm" class="was-validated h-100 d-flex flex-column" enctype="multipart/form-data">
+    <form id="addAddressForm" class="was-validated h-100 d-flex flex-column" enctype="multipart/form-data">
         <input type="hidden" name="action" value="insertar">
-        <input type="hidden" name="created_by" value="<?= htmlspecialchars($user_name); ?>">
+        <input type="hidden" name="ID_CUSTOMER" value="<?= htmlspecialchars($customer_id); ?>">
 
         <div class="offcanvas-body flex-grow-1 d-flex flex-column justify-content-between" style="background-color: #eee;">
             <div>
 
-            <label for="ORDER_ID"># Orden:</label>
-            <select class="form-control mt-2" name="ORDER_ID" id="ORDER_ID" required>
-                <option value="" disabled selected>Seleccione una orden</option>
-                    <?php foreach ($orders as $order): ?>
-                        <option value="<?= $order['ORDER_ID']; ?>" 
-                            <?= $order['ORDER_ID'] == 1 ? 'selected' : '' ?>>
-                            <?= htmlspecialchars($order['ORDER_ID']); ?>
+            <div class="mb-3">
+                    <label for="ADDRESS">Señas</label>
+                    <textarea class="form-control mt-2" name="ADDRESS" id="ADDRESS" rows="1" required></textarea>
+            </div>
+
+            <label for="CITY_ID">Canton:</label>
+            <select class="form-control mt-2" name="CITY_ID" id="CITY_ID" required>
+                <option value="" disabled selected>Seleccione un canton</option>
+                    <?php foreach ($cantones as $canton): ?>
+                        <option value="<?= $canton['CITY_ID']; ?>" 
+                            <?= $canton['CITY_ID'] == 1 ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($canton['NAME']); ?>
                         </option>
                     <?php endforeach;?>
             </select>
 
-            <label for="CUSTOMER_ID">Cliente:</label>
-            <select class="form-control mt-2" name="CUSTOMER_ID" id="CUSTOMER_ID" required>
-                <option value="" disabled selected>Seleccione un cliente</option>
-                    <?php foreach ($customers as $customer): ?>
-                        <option value="<?= $customer['CUSTOMER_ID']; ?>" 
-                            <?= $customer['CUSTOMER_ID'] == 1 ? 'selected' : '' ?>>
-                            <?= htmlspecialchars($customer['CUSTOMER_NAME']); ?>
+            <label for="STATE_ID">Provincia:</label>
+            <select class="form-control mt-2" name="STATE_ID" id="STATE_ID" required>
+                <option value="" disabled selected>Seleccione una provincia</option>
+                    <?php foreach ($provincias as $provincia): ?>
+                        <option value="<?= $provincia['STATE_ID']; ?>" 
+                            <?= $provincia['STATE_ID'] == 1 ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($provincia['NAME']); ?>
                         </option>
                     <?php endforeach;?>
             </select>
 
-            <!-- ADDRESS -->
-            <label for="ADDRESS_ID">Dirección de cliente:</label>
-            <select class="form-control mt-2" name="ADDRESS_ID" id="ADDRESS_ID" required>
-                <option value="" disabled selected>Seleccione una dirección</option>
-                <!-- Se llenará dinámicamente -->
+            <label for="COUNTRY_ID">Pais:</label>
+            <select class="form-control mt-2" name="COUNTRY_ID" id="COUNTRY_ID" required>
+                <option value="" disabled selected>Seleccione un pais</option>
+                    <?php foreach ($countries as $country): ?>
+                        <option value="<?= $country['COUNTRY_ID']; ?>" 
+                            <?= $country['COUNTRY_ID'] == 1 ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($country['NAME']); ?>
+                        </option>
+                    <?php endforeach;?>
             </select>
-
-            <!-- Monto Total de la Orden -->
-            <label for="TOTAL_AMOUNT">Monto Total:</label>
-            <input type="text" class="form-control mt-2" name="TOTAL_AMOUNT" id="TOTAL_AMOUNT" readonly required>
 
             <div class="mb-3">
-                    <label for="COMMENTS">Comentarios</label>
-                    <textarea class="form-control mt-2" name="COMMENTS" id="COMMENTS" rows="1" required></textarea>
+                    <label for="COUNTRY_ID">Codigo postal:</label>
+                    <textarea class="form-control mt-2" name="ZIP_CODE" id="ZIP_CODE" rows="1" required></textarea>
             </div>
 
             <label for="STATUS_ID">Estado:</label>
@@ -264,19 +269,7 @@ oci_close($connection);
                         </option>
                     <?php endforeach; ?>
             </select>
-
-            <label for="PAYMENT_METHOD_ID">Metodo de pago:</label>
-            <select class="form-control mt-2" name="PAYMENT_METHOD_ID" id="PAYMENT_METHOD_ID" required>
-                <option value="" disabled selected>Seleccione un tipo</option>
-                    <?php foreach ($payment_ms as $payment): ?>
-                        <option value="<?= $payment['PAYMENT_METHOD_ID']; ?>" 
-                            <?= $payment['PAYMENT_METHOD_ID'] == 1 ? 'selected' : '' ?>>
-                            <?= htmlspecialchars($payment['PAYMENT_METHOD_NAME']); ?>
-                        </option>
-                    <?php endforeach; ?>
-            </select>
             </div>
-
 
             <div class="text-center">
                 <button type="submit" class="btn btn-primary">+ Agregar...</button>
@@ -302,59 +295,64 @@ oci_close($connection);
     </div>
 </div>
 
-<!-- Offcanvas para actualizar un billing -->
+
+<!-- Offcanvas para actualizar un address -->
 <div class="offcanvas offcanvas-end" id="offcanvasUpdate" aria-labelledby="offcanvasUpdateLabel">
     <div class="offcanvas-header text-white" style="background-color: #475A68;">
-        <h5 id="offcanvasUpdateLabel">Actualizar Factura</h5>
+        <h5 id="offcanvasUpdateLabel">Actualizar Dirección</h5>
         <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
 
-    <form id="updateBillingForm" class="was-validated h-100 d-flex flex-column" enctype="multipart/form-data">
+    <form id="updateAddressForm" class="was-validated h-100 d-flex flex-column" enctype="multipart/form-data">
         <input type="hidden" name="action" value="actualizar">
         <input type="hidden" name="modified_by" value="<?= htmlspecialchars($user_name); ?>">
-        <input type="hidden" name="BILLING_DATE" value="" id="BILLING_DATE">
 
         <div class="offcanvas-body flex-grow-1 d-flex flex-column justify-content-between" style="background-color: #eee;">
             <div>
-                <label for="BILLING_ID">ID Factura:</label>
-                <input type="text" class="form-control mt-2" name="BILLING_ID" id="BILLING_ID" readonly required>
+                <label for="ADDRESS_ID">ID Dirección:</label>
+                <input type="text" class="form-control mt-2" name="ADDRESS_ID" id="ADDRESS_ID" readonly required>
 
-                <label for="ORDER_ID"># Orden:</label>
-                <input type="text" class="form-control mt-2" name="ORDER_ID" id="UPDATE_ORDER_ID" readonly required>
+                <input type="hidden" name="ID_CUSTOMER" value="<?= htmlspecialchars($customer_id); ?>">
 
-                <label for="CUSTOMER_ID">Cliente:</label>
-                <select class="form-control mt-2" name="CUSTOMER_ID" id="UPDATE_CUSTOMER_ID" required>
-                    <option value="" disabled selected>Seleccione un cliente</option>
-                    <?php foreach ($customers as $customer): ?>
-                        <option value="<?= $customer['CUSTOMER_ID']; ?>"><?= htmlspecialchars($customer['CUSTOMER_NAME']); ?></option>
+                <div class="mb-3">
+                    <label for="ADDRESS">Señas</label>
+                    <textarea class="form-control mt-2" name="ADDRESS" id="UPDATE_ADDRESS" rows="1" required></textarea>
+                </div>
+
+                <label for="CITY_ID">Cantón:</label>
+                <select class="form-control mt-2" name="ID_CITY" id="UPDATE_CITY_ID" required>
+                    <option value="" disabled selected>Seleccione un cantón</option>
+                    <?php foreach ($cantones as $canton): ?>
+                        <option value="<?= $canton['CITY_ID']; ?>"><?= htmlspecialchars($canton['NAME']); ?></option>
                     <?php endforeach; ?>
                 </select>
 
-                <label for="ADDRESS_ID">Dirección de cliente:</label>
-                <select class="form-control mt-2" name="ADDRESS_ID" id="UPDATE_ADDRESS_ID" required>
-                    <option value="" disabled selected>Seleccione una dirección</option>
-                    <!-- Se llena por AJAX -->
+                <label for="STATE_ID">Provincia:</label>
+                <select class="form-control mt-2" name="ID_STATE" id="UPDATE_STATE_ID" required>
+                    <option value="" disabled selected>Seleccione una provincia</option>
+                    <?php foreach ($provincias as $provincia): ?>
+                        <option value="<?= $provincia['STATE_ID']; ?>"><?= htmlspecialchars($provincia['NAME']); ?></option>
+                    <?php endforeach; ?>
                 </select>
 
-                <label for="TOTAL_AMOUNT">Monto Total:</label>
-                <input type="text" class="form-control mt-2" name="TOTAL_AMOUNT" id="UPDATE_TOTAL_AMOUNT" readonly required>
+                <label for="COUNTRY_ID">País:</label>
+                <select class="form-control mt-2" name="ID_COUNTRY" id="UPDATE_COUNTRY_ID" required>
+                    <option value="" disabled selected>Seleccione un país</option>
+                    <?php foreach ($countries as $country): ?>
+                        <option value="<?= $country['COUNTRY_ID']; ?>"><?= htmlspecialchars($country['NAME']); ?></option>
+                    <?php endforeach; ?>
+                </select>
 
-                <label for="COMMENTS">Comentarios:</label>
-                <textarea class="form-control mt-2" name="COMMENTS" id="UPDATE_COMMENTS" rows="2" required></textarea>
+                <div class="mb-3">
+                    <label for="ZIP_CODE">Código Postal:</label>
+                    <textarea class="form-control mt-2" name="ZIP_CODE" id="UPDATE_ZIP_CODE" rows="1" required></textarea>
+                </div>
 
                 <label for="STATUS_ID">Estado:</label>
                 <select class="form-control mt-2" name="STATUS_ID" id="UPDATE_STATUS_ID" required>
                     <option value="" disabled selected>Seleccione un estado</option>
                     <?php foreach ($statuses as $status): ?>
                         <option value="<?= $status['STATUS_ID']; ?>"><?= htmlspecialchars($status['DESCRIPTION']); ?></option>
-                    <?php endforeach; ?>
-                </select>
-
-                <label for="PAYMENT_METHOD_ID">Método de Pago:</label>
-                <select class="form-control mt-2" name="PAYMENT_METHOD_ID" id="UPDATE_PAYMENT_METHOD_ID" required>
-                    <option value="" disabled selected>Seleccione un tipo</option>
-                    <?php foreach ($payment_ms as $payment): ?>
-                        <option value="<?= $payment['PAYMENT_METHOD_ID']; ?>"><?= htmlspecialchars($payment['PAYMENT_METHOD_NAME']); ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
@@ -368,77 +366,29 @@ oci_close($connection);
 
 
 
+
 <!-- Incluye jQuery desde CDN -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
 $(document).ready(function () {
 
-    $('#ORDER_ID').on('change', function () {
-    const orderId = $(this).val();
-
-    $.ajax({
-        url: '../DAL/billing.php',
-        method: 'POST',
-        data: {
-            action: 'getOrderTotal',
-            order_id: orderId
-        },
-        success: function (response) {
-            try {
-                const data = JSON.parse(response);
-                $('#TOTAL_AMOUNT').val(data.total);
-            } catch (e) {
-                console.error("Error al parsear el monto total:", e);
-                $('#TOTAL_AMOUNT').val('');
-            }
-        },
-        error: function (xhr) {
-            console.error("Error AJAX:", xhr.responseText);
-            $('#TOTAL_AMOUNT').val('');
-        }
-    });
-
-    $.ajax({
-        url: '../DAL/billing.php',
-        method: 'POST',
-        data: {
-            action: 'getOrderPM',
-            order_id: orderId
-        },
-        success: function (response) {
-            try {
-                const data = JSON.parse(response);
-                $('#PAYMENT_METHOD_ID').val(data.PM);
-            } catch (e) {
-                console.error("Error al parsear el metodo de pago:", e);
-                $('#PAYMENT_METHOD_ID').val('');
-            }
-        },
-        error: function (xhr) {
-            console.error("Error AJAX:", xhr.responseText);
-            $('#PAYMENT_METHOD_ID').val('');
-        }
-    });
-});
-
-
-    // Abrir y rellenar el offcanvas de ACTUALIZAR billing
-    $(document).on('click', '.actualizarFactura', function (e) {
+    // Abrir y rellenar el offcanvas de ACTUALIZAR address
+    $(document).on('click', '.actualizarDireccion', function (e) {
         e.preventDefault();
 
-        const billingID = $(this).data('billing-id');
+        const addressID = $(this).data('address-id');
 
-        if (!billingID) {
-            console.error("No se proporcionó un ID de billing.");
+        if (!addressID) {
+            console.error("No se proporcionó un ID de address.");
             return;
         }
 
         $.ajax({
             method: "POST",
-            url: "../DAL/billing.php",
+            url: "../DAL/address.php",
             data: {
                 action: "obtenerDetalles",
-                billing_id: billingID
+                address_id: addressID
             },
             success: function (response) {
                 try {
@@ -454,13 +404,13 @@ $(document).ready(function () {
                     });
                     // Forzar asignación correcta a los selects específicos
                     $('#STATUS_ID').val(String(data.Status_ID));
-                    $('#CUSTOMER_ID').val(String(data.Customer_ID));
-                    $('#ORDER_ID').val(String(data.Order_ID));
-                    $('#PAYMENT_METHOD_ID').val(String(data.Payment_Method_ID));
+                    $('#STATE_ID').val(String(data.State_ID));
+                    $('#CITY_ID').val(String(data.City_ID));
+                    $('#COUNTRY_ID').val(String(data.Country_ID));
 
                     $.ajax({
                         method: 'POST',
-                        url: '../DAL/billing.php',
+                        url: '../DAL/address.php',
                         data: {
                             action: 'getAddressesByCustomer',
                             customer_id: data.CUSTOMER_ID
@@ -491,15 +441,16 @@ $(document).ready(function () {
 
                 } catch (error) {
                     console.error("Error al parsear JSON:", error);
-                    alert("Error al cargar los datos del billing.");
+                    alert("Error al cargar los datos del address.");
                 }
             },
             error: function (xhr) {
                 console.error("Error AJAX:", xhr.responseText);
-                alert("No se pudieron cargar los detalles del billing.");
+                alert("No se pudieron cargar los detalles del address.");
             }
         });
     });
+
 });
 
 
@@ -508,7 +459,7 @@ $('#CUSTOMER_ID').on('change', function () {
 
     $.ajax({
         method: 'POST',
-        url: '../DAL/billing.php',
+        url: '../DAL/address.php',
         data: {
             action: 'getAddressesByCustomer',
             customer_id: customerId
@@ -534,8 +485,8 @@ $('#CUSTOMER_ID').on('change', function () {
 });
 
 
-//AGREGAR billing
-$('#addBillingForm').on('submit', function (e) {
+//AGREGAR address
+$('#addAddressForm').on('submit', function (e) {
         e.preventDefault();
 
         const formData = $(this).serialize();
@@ -543,17 +494,17 @@ $('#addBillingForm').on('submit', function (e) {
         submitButton.prop('disabled', true);
 
         $.ajax({
-            url: '../DAL/billing.php',
+            url: '../DAL/address.php',
             type: 'POST',
             data: formData,
             success: function (response) {
                 console.log("Response from server:", response);
 
                 if (response.includes("success")) {
-                    alert("Factura agregado correctamente.");
+                    alert("Direccion agregado correctamente.");
                     location.reload();
                 } else {
-                    alert("Error al agregar el billing: " + response);
+                    alert("Error al agregar el address: " + response);
                 }
             },
             error: function (xhr, status, error) {
@@ -567,23 +518,23 @@ $('#addBillingForm').on('submit', function (e) {
     });
 
 //Enviar el formulario de ACTUALIZACIÓN
-$('#updateBillingForm').on('submit', function (e) {
+$('#updateAddressForm').on('submit', function (e) {
         e.preventDefault();
 
         const formData = $(this).serialize();
         const submitBtn = $(this).find('button[type="submit"]');
         submitBtn.prop('disabled', true);
-        console.log("Actualizando billing con datos:", formData);
+        console.log("Actualizando address con datos:", formData);
 
         $.ajax({
-            url: '../DAL/billing.php',
+            url: '../DAL/address.php',
             method: 'POST',
             data: formData,
             success: function (response) {
                 console.log("Respuesta del servidor:", response);
 
                 if (response.includes("success")) {
-                    alert("Factura actualizado correctamente.");
+                    alert("Direccion actualizado correctamente.");
                     location.reload();
                 } else {
                     alert("Error al actualizar: " + response);
@@ -591,7 +542,7 @@ $('#updateBillingForm').on('submit', function (e) {
             },
             error: function (xhr) {
                 console.error("Error al actualizar:", xhr.responseText);
-                alert("Hubo un error al actualizar el billing.");
+                alert("Hubo un error al actualizar el address.");
             },
             complete: function () {
                 submitBtn.prop('disabled', false);
@@ -600,29 +551,29 @@ $('#updateBillingForm').on('submit', function (e) {
     });
 
 // Función para eliminar un INVENTARIO
-function eliminarFactura(id, user) {
-            console.log("Intentando eliminar billing con ID:", id);
-            if (confirm("¿Estás seguro de que deseas eliminar este billing?")) {
+function eliminarDireccion(id, user) {
+            console.log("Intentando eliminar address con ID:", id);
+            if (confirm("¿Estás seguro de que deseas eliminar este address?")) {
                 $.ajax({
                     method: "POST",
-                    url: "../DAL/billing.php",
+                    url: "../DAL/address.php",
                     data: {
                         action: "eliminar",
-                        billing_id: id,
+                        address_id: id,
                         modified_by: user
                     },
                     success: function (response) {
                         console.log("Respuesta de eliminación:", response);
                         if (response.includes("success")) {
-                            alert("Factura eliminado correctamente.");
+                            alert("Direccion eliminado correctamente.");
                             location.reload(); // Refresca la página para reflejar los cambios
                         } else {
-                            alert("No se pudo eliminar el Factura: " + response);
+                            alert("No se pudo eliminar el Direccion: " + response);
                         }
                     },
                     error: function (xhr) {
                         console.error("Error al eliminar:", xhr.responseText);
-                        alert("No se pudo eliminar el Factura.");
+                        alert("No se pudo eliminar el Direccion.");
                     }
                 });
             }

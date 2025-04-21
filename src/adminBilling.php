@@ -32,9 +32,9 @@ $billingQuery = "SELECT * FROM (
                   SELECT b.billing_id, b.order_id, c.CUSTOMER_NAME, a.ADDRESS, TRUNC(b.BILLING_DATE) as  BILLING_DATE, b.total_amount, b.comments, s.description as STATUS, b.payment_method_id,
                          b.created_by, b.created_on, b.modified_on, b.modified_by
                   FROM FIDE_SAMDESIGN.FIDE_BILLING_TB b
-                  LEFT JOIN FIDE_SAMDESIGN.FIDE_CUSTOMER_TB c ON c.CUSTOMER_ID = b.CUSTOMER_ID
-                  LEFT JOIN FIDE_SAMDESIGN.FIDE_ADDRESS_TB a ON a.ID_CUSTOMER = b.CUSTOMER_ID
-                  LEFT JOIN FIDE_SAMDESIGN.FIDE_STATUS_TB s ON s.status_id = b.status_id
+                  INNER JOIN FIDE_SAMDESIGN.FIDE_CUSTOMER_TB c ON c.CUSTOMER_ID = b.CUSTOMER_ID
+                  INNER JOIN FIDE_SAMDESIGN.FIDE_ADDRESS_TB a ON a.ADDRESS_ID = b.INVOICED_ADDRESS_ID
+                  INNER JOIN FIDE_SAMDESIGN.FIDE_STATUS_TB s ON s.status_id = b.status_id
                   WHERE b.status_id = 1 or b.status_id = 2 
                   ORDER BY b.billing_id ASC
               ) a WHERE ROWNUM <= :max_row

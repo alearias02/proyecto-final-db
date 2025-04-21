@@ -131,7 +131,7 @@ if (isset($_SESSION['usuario'])) {
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                             <li><a class="dropdown-item" href="../userSrc/userOrders.php">Mis Ordenes</a></li>
-                            <li><a class="dropdown-item" href="../userSrc/userAddresses.php">Mis Direcciones</a></li>
+                            <li><a class="dropdown-item" href="../userSrc/userAddys.php">Mis Direcciones</a></li>
                             <li><a class="dropdown-item" href="../userSrc/logout.php">Cerrar sesión</a></li>
                         </ul>
                     </div>

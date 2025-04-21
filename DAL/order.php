@@ -265,7 +265,7 @@ function obtenerOrdenes() {
             FIDE_CUSTOMER_TB c ON o.CUSTOMER_ID = c.CUSTOMER_ID
         JOIN 
             FIDE_PAYMENT_METHOD_TB p ON o.PAYMENT_METHOD_ID = p.PAYMENT_METHOD_ID
-        ORDER BY o.ORDER_ID DESC
+        ORDER BY o.ORDER_DATE DESC
     ";
 
     $stmt = oci_parse($conn, $sql);

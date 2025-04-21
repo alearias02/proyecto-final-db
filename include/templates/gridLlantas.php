@@ -77,27 +77,6 @@ $(document).on('click', '.add-to-cart', function() {
       alert('Hubo un error al agregar el producto.');
     }
   });
-});$(document).on('click', '.add-to-cart', function() {
-  const productId = $(this).data('id');
-
-  $.ajax({
-    url: '../include/functions/addToCart.php', 
-    type: 'POST',
-    dataType: 'json',
-    data: { product_id: productId },
-    success: function(response) {
-      if (response.success) {
-        console.log('Producto asignado al carrito ', response)
-        alert('Producto agregado al carrito 🛒');
-      } else if (response.error) {
-        alert('Error: ' + response.error);
-      }
-    },
-    error: function(xhr, status, error) {
-      console.log('Error AJAX:', error);
-      alert('Hubo un error al agregar el producto.');
-    }
-  });
 });
 </script>
 

@@ -80,7 +80,7 @@ if ($customer_id) {
                     (l.Qty_Item * l.Total_Price) AS Subtotal
                 FROM FIDE_SAMDESIGN.FIDE_CART_LINES_TB l
                 JOIN FIDE_SAMDESIGN.FIDE_PRODUCT_TB p ON p.Product_ID = l.Product_ID
-                WHERE l.Cart_ID = :cart_id";
+                WHERE l.Cart_ID = :cart_id AND l.STATUS_ID = 1";
 
         $stmt = oci_parse($conn, $sql);
         oci_bind_by_name($stmt, ":cart_id", $cart_id);
@@ -174,6 +174,9 @@ desconectar($conn);
                     <td class="text-end">$<?= number_format($item['TOTAL_PRICE'], 2) ?></td>
                     <td class="text-end fw-bold">$<?= number_format($item['SUBTOTAL'], 2) ?></td>
                     <td class="text-center">
+                      <button type="submit" name="eliminar_linea" value="<?= $item['CART_LINE_ID'] ?>" class="btn btn-sm btn-outline-danger">
+                        <i class="fa-solid fa-trash"></i>
+                      </button>
                       <button type="submit" name="actualizar_linea" value="<?= $item['CART_LINE_ID'] ?>" class="btn btn-sm btn-outline-primary">
                         <i class="fas fa-sync"></i>
                       </button>

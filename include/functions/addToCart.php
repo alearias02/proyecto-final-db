@@ -36,7 +36,7 @@ $cart_id = null;
 
 // ENCONTRAR DIRECCION RELACIONADA AL USER.
 $sqlAddy = "SELECT Address_ID FROM FIDE_SAMDESIGN.FIDE_ADDRESS_TB 
-        WHERE ID_Customer = :customer_id AND Status_ID = 1
+        WHERE ID_Customer = :customer_id AND Status_ID = 10
         FETCH FIRST 1 ROWS ONLY";
 
 $stmtAddy = oci_parse($conn, $sqlAddy);
@@ -85,7 +85,7 @@ if ($row) {
 
 // 5. Buscar si ya existe el producto en el carrito
 $sql = "SELECT Cart_Line_ID, Qty_Item FROM FIDE_SAMDESIGN.FIDE_CART_LINES_TB 
-        WHERE Cart_ID = :cart_id AND Product_ID = :product_id";
+        WHERE Cart_ID = :cart_id AND Product_ID = :product_id AND Status_ID = 1";
 $stmt = oci_parse($conn, $sql);
 oci_bind_by_name($stmt, ":cart_id", $cart_id);
 oci_bind_by_name($stmt, ":product_id", $product_id);

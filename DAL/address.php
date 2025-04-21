@@ -160,11 +160,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"])) {
     $action = $_POST["action"];
 
     if ($action == "eliminar" && isset($_POST["address_id"])) {
-        $room_id = $_POST["address_id"];
+        $address_id = $_POST["address_id"];
         $eliminado = eliminarDireccion($address_id);
         echo $eliminado ? "La direccion ha sido eliminado exitosamente" : "Error al intentar eliminar la direccion";
     } elseif ($action == "obtenerDetalles" && isset($_POST["address_id"])) {
-        $room_id = $_POST["address_id"];
+        $address_id = $_POST["address_id"];
         error_log("Obteniendo detalles para ID: " . $address_id); // Depuración
 
         $detalles = obtenerDetallesDireccion($address_id);
@@ -199,7 +199,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"])) {
             $_POST["ZIP_CODE"],
             $_POST["ID_COUNTRY"],
             $_POST["STATUS_ID"],
-            $_POST["MODIFIED_BY"],
+            $_POST["modified_by"],
             $_POST["ID_CUSTOMER"]
             );
     
@@ -214,40 +214,46 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"])) {
     } elseif ($action == "insertar") {
         error_log("Datos recibidos en insertar: " . json_encode($_POST));
     
-        // Verificar si customer_id es válido
-        if (!isset($_POST["ID_CUSTOMER"]) || empty($_POST["ID_CUSTOMER"])) {
-            http_response_code(400);
-            echo "Error: El ID del usuario es obligatorio.";
-            exit;
-        }
+        // Validaciones de campos requeridos
+        $text_fields = ["ADDRESS", "ZIP_CODE"];
+        $id_fields = ["STATE_ID", "CITY_ID", "COUNTRY_ID", "ID_CUSTOMER"];
     
-        // Verificar los otros campos
-        $required_fields = ["ADDRESS", "ID_STATE", "ID_CITY", "ID_COUNTRY", "ZIP_CODE"];
-        foreach ($required_fields as $field) {
-            if (!isset($_POST[$field]) || empty(trim($_POST[$field]))) {
+        foreach ($text_fields as $field) {
+            if (!isset($_POST[$field]) || trim($_POST[$field]) === '') {
                 http_response_code(400);
                 echo "Error: El campo $field es obligatorio.";
+                error_log("Fallo validación en $field (texto)");
                 exit;
             }
         }
     
-        // Insertar dirección en la BD
+        foreach ($id_fields as $field) {
+            if (!isset($_POST[$field]) || $_POST[$field] === '') {
+                http_response_code(400);
+                echo "Error: El campo $field es obligatorio.";
+                error_log("Fallo validación en $field (ID)");
+                exit;
+            }
+        }
+    
+        // Insertar
         $insertado = IngresarDireccion(
             $_POST["ADDRESS"],
-            $_POST["ID_STATE"],
-            $_POST["ID_CITY"],
-            $_POST["ID_COUNTRY"],
+            $_POST["STATE_ID"],
+            $_POST["CITY_ID"],
+            $_POST["COUNTRY_ID"],
             $_POST["ZIP_CODE"],
             $_POST["ID_CUSTOMER"]
         );
     
         if ($insertado) {
-            echo "Direccion insertada correctamente";
+            echo "success";
         } else {
             http_response_code(500);
             echo "Error al insertar direccion";
         }
-    } else {
+    }
+     else {
         echo "Acción no válida";
     }
 }
